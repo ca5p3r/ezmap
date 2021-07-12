@@ -28,3 +28,27 @@ html, body, #root #application {
     text-align: center;
     background: white;
 }
+
+.bookmarks {
+    position: absolute;
+    top: 4rem;
+    right: 1rem;
+    background: #43a3b8;
+    width: 30%;
+    height: 35%;
+}
+
+.bookmarks label {
+    display: inline-block;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.bookmarks button {
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+.bookmarks h2 {
+    text-align: center;
+}

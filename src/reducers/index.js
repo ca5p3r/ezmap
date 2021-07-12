@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import { isLoggedReducer } from "./isLogged";
-import { showLoginModalReducer } from "./showLoginModal";
+import { loginReducer } from "./login";
 import { mapInfoReducer } from './map';
+import { bookmarksReducer } from "./bookmarks";
 
 export const reducers = combineReducers({
-    isLogged: isLoggedReducer,
-    showLoginModal: showLoginModalReducer,
-    mapInfo: mapInfoReducer
+    login: loginReducer,
+    mapInfo: mapInfoReducer,
+    bookmarks: bookmarksReducer
 });

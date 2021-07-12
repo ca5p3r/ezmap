@@ -1,24 +1,24 @@
 export const login = () => {
     return {
-        type: 'LOGIN'
+        type: 'setLogin'
     };
 };
 
 export const logout = () => {
     return {
-        type: 'LOGOUT'
+        type: 'setLogout'
     };
 };
 
 export const showlogin = () => {
     return {
-        type: 'ShowLogin'
+        type: 'showLogin'
     };
 };
 
 export const hidelogin = () => {
     return {
-        type: 'HideLogin'
+        type: 'hideLogin'
     };
 };
 
@@ -40,5 +40,37 @@ export const setCursor = (x) => {
     return {
         type: 'setCursor',
         payload: x
+    };
+};
+
+export const removeBookmark = (x) => {
+    return {
+        type: 'removeBookmark',
+        payload: x
+    };
+};
+
+export const removeAllBookmarks = () => {
+    return {
+        type: 'removeAllBookmarks'
+    };
+};
+
+export const addBookmark = (x) => {
+    return {
+        type: 'addBookmark',
+        payload: x
+    };
+};
+
+export const showBookmarks = () => {
+    return {
+        type: 'showBookmarks'
+    };
+};
+
+export const hideBookmarks = () => {
+    return {
+        type: 'hideBookmarks'
     };
 };
