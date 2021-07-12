@@ -1,0 +1,30 @@
+html, body, #root #application {
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+}
+
+#map {
+    height: 94%;
+    width: 100%;
+    position: absolute;
+    border: black double;
+    background-color: #ffffffe0;
+}
+
+#map-info {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+}
+
+#map-info label {
+    display: inline-block;
+    padding: 0.5rem;
+    width: 180px;
+    font-size: small;
+    font-family: 'Times New Roman', Times, serif;
+    border: #43a3b8 1px solid;
+    text-align: center;
+    background: white;
+}
