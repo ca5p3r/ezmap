@@ -3,7 +3,7 @@ import { Map } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import 'ol/ol.css';
-import { setCursor, setMapCenter, setMapZoom, resetPendingLayer } from "../../actions";
+import { setCursor, setMapCenter, setMapZoom, resetPendingLayer, setLayers } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 
@@ -26,6 +26,7 @@ const MyMap = () => {
             title: 'OpenStreetMap',
             source: new OSM()
         }));
+        dispatch(setLayers(olmap.getLayers().array_));
     }, []);
 
     useEffect(() => {
@@ -38,6 +39,7 @@ const MyMap = () => {
         if (Object.keys(workspaceInfo.pendingLayer).length > 0) {
             olmap.addLayer(workspaceInfo.pendingLayer);
             dispatch(resetPendingLayer());
+            dispatch(setLayers(olmap.getLayers().array_));
             window.alert('Layer has been added!');
         };
     }, [workspaceInfo.pendingLayer]);

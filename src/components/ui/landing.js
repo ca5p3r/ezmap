@@ -13,7 +13,7 @@ const LandingPage = () => {
                     </div>
                 </div>
                 <div className="landing-footer">
-                    <footer class="py-5 bg-light">
+                    <footer className="py-5 bg-light">
                         <div className="container">
                             <div className="row">
                                 <div className="col-12 text-center">

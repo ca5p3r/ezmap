@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { hidelogin, login } from "../../actions";
 
 const LoginModal = () => {
-    const loginState = useSelector(state => state.login);
+    const showLogin = useSelector(state => state.login.showLoginModal);
     const dispatch = useDispatch();
 
     const handleHide = () => {
@@ -15,7 +15,7 @@ const LoginModal = () => {
     };
 
     return (
-        <Modal show={loginState.showLoginModal} onHide={handleHide}>
+        <Modal show={showLogin} onHide={handleHide}>
             <Modal.Header closeButton>
                 <Modal.Title>Login</Modal.Title>
             </Modal.Header>

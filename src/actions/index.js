@@ -36,6 +36,13 @@ export const setMapZoom = (x) => {
     };
 };
 
+export const setLayers = (x) => {
+    return {
+        type: 'setLayers',
+        payload: x
+    }
+}
+
 export const setCursor = (x) => {
     return {
         type: 'setCursor',
@@ -110,5 +117,17 @@ export const addPendingLayer = (x) => {
 export const resetPendingLayer = () => {
     return {
         type: 'resetPendingLayer'
+    };
+};
+
+export const showTOC = () => {
+    return {
+        type: 'showTOC'
+    };
+};
+
+export const hideTOC = () => {
+    return {
+        type: 'hideTOC'
     };
 };

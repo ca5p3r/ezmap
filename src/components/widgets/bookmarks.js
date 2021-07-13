@@ -5,11 +5,9 @@ import { useState } from "react";
 
 const Bookmarks = () => {
     const [title, setTitle] = useState('');
-    const appState = useSelector(state => state);
-    const mapinfo = appState.mapInfo;
-    const bookmarksList = appState.bookmarks.list;
+    const mapinfo = useSelector(state => state.mapInfo);
+    const bookmarksList = useSelector(state => state.bookmarks.list);
     const dispatch = useDispatch();
-
     const handleDismiss = () => {
         dispatch(hideBookmarks());
     };

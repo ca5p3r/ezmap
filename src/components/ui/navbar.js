@@ -6,7 +6,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import LoginModal from "./login";
 import WorkspaceModal from "./workspace";
-import { showlogin, logout, showBookmarks, hideBookmarks, showWorkspace, hideWorkspace } from '../../actions';
+import { showlogin, logout, showBookmarks, hideBookmarks, showWorkspace, hideWorkspace, showTOC, hideTOC } from '../../actions';
 
 const AppNavBar = () => {
     const isLogged = useSelector(state => state.login.isLogged);
@@ -19,12 +19,16 @@ const AppNavBar = () => {
         dispatch(logout());
         dispatch(hideBookmarks());
         dispatch(hideWorkspace());
+        dispatch(hideTOC());
     };
     const handleShowBookmarks = () => {
         dispatch(showBookmarks());
     };
     const handleShowWorkspace = () => {
         dispatch(showWorkspace());
+    };
+    const handleShowTOC = () => {
+        dispatch(showTOC());
     };
     return (
         <Navbar bg="info" expand="lg">
@@ -35,7 +39,7 @@ const AppNavBar = () => {
                     {isLogged && <NavDropdown title="Map tools" id="basic-nav-dropdown">
                         <NavDropdown.Item onClick={handleShowBookmarks}>Bookmarks</NavDropdown.Item>
                         <NavDropdown.Item onClick={handleShowWorkspace}>Layers manager</NavDropdown.Item>
-                        <NavDropdown.Item>Table of contents</NavDropdown.Item>
+                        <NavDropdown.Item onClick={handleShowTOC}>Table of contents</NavDropdown.Item>
                     </NavDropdown>}
                     {!isLogged && <Nav.Link onClick={handleShowLogin}>Login</Nav.Link>}
                     {isLogged && <Nav.Link style={{ width: '70px' }} onClick={handleLogout}>Logout</Nav.Link>}

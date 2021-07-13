@@ -75,3 +75,31 @@ html, body, #root #application {
 .landing-header {
     height: 77%;
 }
+
+.toc {
+    position: absolute;
+    top: 4rem;
+    right: 1rem;
+    background: #43a3b8;
+    width: 30%;
+    height: 35%;
+}
+
+.toc label {
+    display: inline-block;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.toc button {
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+.toc h2 {
+    text-align: center;
+}
+
+.toc ul {
+    list-style-type: none;
+}

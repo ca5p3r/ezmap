@@ -4,17 +4,21 @@ import MyMap from './components/widgets/map';
 import Navbar from './components/ui/navbar';
 import { useSelector } from 'react-redux';
 import LandingPage from './components/ui/landing';
+import TOC from './components/widgets/toc';
 
 
 function App() {
-    const appState = useSelector(state => state);
+    const login = useSelector(state => state.login.isLogged);
+    const showBookmark = useSelector(state => state.bookmarks.visibility);
+    const showTOC = useSelector(state => state.toc.visibility);
     return (
         <div className="App">
             <Navbar />
-            {!appState.login.isLogged && <LandingPage />}
-            {appState.login.isLogged && <MyMap />}
-            {appState.login.isLogged && <MapInfo />}
-            {appState.bookmarks.visibility && appState.login.isLogged && <Bookmarks />}
+            {!login && <LandingPage />}
+            {login && <MyMap />}
+            {login && <MapInfo />}
+            {login && showBookmark && <Bookmarks />}
+            {login && showTOC && <TOC />}
         </div>
     );
 };
