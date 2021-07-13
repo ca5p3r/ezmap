@@ -99,3 +99,16 @@ export const resetLayers = () => {
         type: 'resetLayers'
     };
 };
+
+export const addPendingLayer = (x) => {
+    return {
+        type: 'addPendingLayer',
+        payload: x
+    };
+};
+
+export const resetPendingLayer = () => {
+    return {
+        type: 'resetPendingLayer'
+    };
+};

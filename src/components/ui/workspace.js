@@ -1,6 +1,6 @@
 import { Modal, Button, Form } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
-import { updateLayers, resetLayers } from "../../actions";
+import { updateLayers, resetLayers, addPendingLayer } from "../../actions";
 import { hideWorkspace } from "../../actions";
 import { useState } from "react";
 import WMSCapabilities from 'ol/format/WMSCapabilities';
@@ -31,7 +31,6 @@ const WorkspaceModal = () => {
             .then((arr) => {
                 dispatch(updateLayers(arr));
                 setAvailability(true);
-                console.log(arr);
             })
             .catch((err) => {
                 window.alert(err);
@@ -43,9 +42,8 @@ const WorkspaceModal = () => {
         let layerName = document.getElementById('formBasicLayer').value;
         let selectedElement = document.getElementById(`option${layerName}`);
         let layerTitle = selectedElement.getAttribute('title');
-        console.log(layerTitle, layerName, url);
         const layerObj = setter(url, layerName, layerTitle);
-        console.log(layerObj);
+        dispatch(addPendingLayer(layerObj));
     };
 
     return (

@@ -1,7 +1,9 @@
 const myState = {
     showWorkspaceModal: false,
-    layers: []
-}
+    layers: [],
+    pendingLayer: {}
+};
+
 export const workspaceReducer = (
     state = myState,
     action
@@ -26,6 +28,16 @@ export const workspaceReducer = (
             return {
                 ...state,
                 layers: []
+            };
+        case 'addPendingLayer':
+            return {
+                ...state,
+                pendingLayer: action.payload
+            };
+        case 'resetPendingLayer':
+            return {
+                ...state,
+                pendingLayer: {}
             };
         default:
             return state;
