@@ -52,3 +52,12 @@ html, body, #root #application {
 .bookmarks h2 {
     text-align: center;
 }
+
+.form-group {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.dropdown-menu {
+    left: -70px;
+}

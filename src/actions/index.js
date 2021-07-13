@@ -74,3 +74,28 @@ export const hideBookmarks = () => {
         type: 'hideBookmarks'
     };
 };
+
+export const showWorkspace = () => {
+    return {
+        type: 'showWorkspace'
+    };
+};
+
+export const hideWorkspace = () => {
+    return {
+        type: 'hideWorkspace'
+    };
+};
+
+export const updateLayers = (x) => {
+    return {
+        type: 'updateLayers',
+        payload: x
+    };
+};
+
+export const resetLayers = () => {
+    return {
+        type: 'resetLayers'
+    };
+};

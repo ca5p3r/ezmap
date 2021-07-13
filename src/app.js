@@ -1,18 +1,18 @@
-import Navbar from './components/ui/navbar';
-import MyMap from './components/widgets/map';
-import MapInfo from './components/widgets/info';
 import Bookmarks from './components/widgets/bookmarks';
+import MapInfo from './components/widgets/info';
+import MyMap from './components/widgets/map';
+import Navbar from './components/ui/navbar';
 import { useSelector } from 'react-redux';
 
 
 function App() {
-    const bookmarksVisibility = useSelector(state => state.bookmarks.visibility);
+    const appState = useSelector(state => state);
     return (
         <div className="App">
             <Navbar />
             <MyMap />
-            <MapInfo />
-            {bookmarksVisibility && <Bookmarks />}
+            {appState.login.isLogged && <MapInfo />}
+            {appState.bookmarks.visibility && appState.login.isLogged && <Bookmarks />}
         </div>
     );
 };

@@ -5,23 +5,27 @@ import {
 } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import LoginModal from "./login";
-import { showlogin, logout, showBookmarks } from '../../actions';
+import WorkspaceModal from "./workspace";
+import { showlogin, logout, showBookmarks, hideBookmarks, showWorkspace, hideWorkspace } from '../../actions';
 
 const AppNavBar = () => {
     const isLogged = useSelector(state => state.login.isLogged);
     const dispatch = useDispatch();
 
-    const handleModalShow = () => {
+    const handleShowLogin = () => {
         dispatch(showlogin());
     };
     const handleLogout = () => {
         dispatch(logout());
+        dispatch(hideBookmarks());
+        dispatch(hideWorkspace());
     };
-
     const handleShowBookmarks = () => {
         dispatch(showBookmarks());
     };
-
+    const handleShowWorkspace = () => {
+        dispatch(showWorkspace());
+    };
     return (
         <Navbar bg="info" expand="lg">
             <Navbar.Brand>EasyMap</Navbar.Brand>
@@ -29,18 +33,16 @@ const AppNavBar = () => {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="menavbar-nav ml-auto">
                     {isLogged && <NavDropdown title="Map tools" id="basic-nav-dropdown">
-                        <NavDropdown.Item>Table of contents</NavDropdown.Item>
                         <NavDropdown.Item onClick={handleShowBookmarks}>Bookmarks</NavDropdown.Item>
+                        <NavDropdown.Item onClick={handleShowWorkspace}>Layers manager</NavDropdown.Item>
+                        <NavDropdown.Item>Table of contents</NavDropdown.Item>
                     </NavDropdown>}
-                    {isLogged && <NavDropdown title="Advanced" id="basic-nav-dropdown">
-                        <NavDropdown.Item>Layers manager</NavDropdown.Item>
-                        <NavDropdown.Item>Map tweaks</NavDropdown.Item>
-                    </NavDropdown>}
-                    {!isLogged && <Nav.Link onClick={handleModalShow}>Login</Nav.Link>}
-                    {isLogged && <Nav.Link onClick={handleLogout}>Logout</Nav.Link>}
+                    {!isLogged && <Nav.Link onClick={handleShowLogin}>Login</Nav.Link>}
+                    {isLogged && <Nav.Link style={{ width: '70px' }} onClick={handleLogout}>Logout</Nav.Link>}
                 </Nav>
             </Navbar.Collapse>
             <LoginModal />
+            <WorkspaceModal />
         </Navbar>
     );
 };
