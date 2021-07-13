@@ -61,3 +61,17 @@ html, body, #root #application {
 .dropdown-menu {
     left: -70px;
 }
+
+.landing {
+    height: 94%;
+    width: 100%;
+    position: absolute;
+}
+
+.landing-footer {
+    height: 7%;
+}
+
+.landing-header {
+    height: 77%;
+}
