@@ -131,3 +131,15 @@ export const hideTOC = () => {
         type: 'hideTOC'
     };
 };
+
+export const orderOn = () => {
+    return {
+        type: 'orderOn'
+    };
+};
+
+export const orderOff = () => {
+    return {
+        type: 'orderOff'
+    };
+};

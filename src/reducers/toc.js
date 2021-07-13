@@ -1,6 +1,7 @@
 const tocState = {
     visibility: false,
-    activeLayers: null
+    activeLayers: null,
+    orderChanged: false
 };
 
 export const tocReducer = (
@@ -22,6 +23,16 @@ export const tocReducer = (
             return {
                 ...state,
                 visibility: false
+            };
+        case 'orderOn':
+            return {
+                ...state,
+                orderChanged: true
+            };
+        case 'orderOff':
+            return {
+                ...state,
+                orderChanged: false
             };
         default:
             return state;

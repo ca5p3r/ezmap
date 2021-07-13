@@ -3,7 +3,7 @@ import { Map } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import 'ol/ol.css';
-import { setCursor, setMapCenter, setMapZoom, resetPendingLayer, setLayers } from "../../actions";
+import { setCursor, setMapCenter, setMapZoom, resetPendingLayer, setLayers, orderOff } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
     const workspaceInfo = useSelector(state => state.workspace);
+    const tocOrder = useSelector(state => state.toc.orderChanged);
     const [olmap] = useState(new Map());
 
     useEffect(() => {
@@ -32,7 +33,6 @@ const MyMap = () => {
     useEffect(() => {
         olmap.getView().setCenter(mapInfo.mapCenter);
         olmap.getView().setZoom(mapInfo.mapZoom);
-
     }, [mapInfo.mapZoom, mapInfo.mapCenter]);
 
     useEffect(() => {
@@ -43,6 +43,13 @@ const MyMap = () => {
             window.alert('Layer has been added!');
         };
     }, [workspaceInfo.pendingLayer]);
+
+    useEffect(() => {
+        if (tocOrder) {
+            olmap.render();
+            dispatch(orderOff());
+        };
+    }, [tocOrder]);
 
     return (
         <div id="map">

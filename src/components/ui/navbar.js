@@ -23,12 +23,18 @@ const AppNavBar = () => {
     };
     const handleShowBookmarks = () => {
         dispatch(showBookmarks());
+        dispatch(hideWorkspace());
+        dispatch(hideTOC());
     };
     const handleShowWorkspace = () => {
         dispatch(showWorkspace());
+        dispatch(hideBookmarks());
+        dispatch(hideTOC());
     };
     const handleShowTOC = () => {
         dispatch(showTOC());
+        dispatch(hideBookmarks());
+        dispatch(hideWorkspace());
     };
     return (
         <Navbar bg="info" expand="lg">
