@@ -29,13 +29,15 @@ const TOC = () => {
         dispatch(hideTOC());
     };
     const handleVisibility = (title) => {
-        activeLayers.forEach(layer => {
-            if (layer.values_.title === title) {
-                layer.values_.visible = !layer.values_.visible
-            }
-        });
-        dispatch(setLayers(activeLayers));
-        dispatch(triggerChange());
+        if (activeLayers) {
+            activeLayers.forEach(layer => {
+                if (layer.values_.title === title) {
+                    layer.values_.visible = !layer.values_.visible
+                }
+            });
+            dispatch(setLayers(activeLayers));
+            dispatch(triggerChange());
+        }
     };
     const handleRemove = (title) => {
         let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
