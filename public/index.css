@@ -53,15 +53,6 @@ html, body, #root #application {
     text-align: center;
 }
 
-.form-group {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-.dropdown-menu {
-    left: -70px;
-}
-
 .landing {
     height: 94%;
     width: 100%;
@@ -83,17 +74,7 @@ html, body, #root #application {
     background: #43a3b8;
     width: 20%;
     height: 80%;
-}
-
-.toc label {
-    display: inline-block;
-    padding: 0.5rem;
     text-align: center;
-}
-
-.toc button {
-    margin: 0.5rem;
-    padding: 0.5rem;
 }
 
 .toc h2 {
@@ -107,15 +88,36 @@ html, body, #root #application {
 
 .toc li {
     text-align: center;
-}
-
-#toc-buttons {
-    height: 7%;
-    border: solid .5px black;
+    border: ridge white 0.5px;
 }
 
 #toc-body {
-    height: 93%;
+    height: 95%;
+    width: 100%;
+    padding: 5px;
     overflow-y: scroll;
     border: solid .5px black;
+}
+
+#toc-buttons {
+    height: 5%;
+    width: 100%;
+    border: solid .5px black;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+#toc-body input[type='checkbox'] {
+    float: left;
+}
+
+#toc-body button {
+    float: right;
+}
+
+.form-group {
+    margin: 10px;
 }

@@ -1,6 +1,5 @@
 import ImageWMS from 'ol/source/ImageWMS';
 import Image from 'ol/layer/Image';
-
 const setter = (url, name, title) => {
     const obj = new Image(
         {
@@ -18,5 +17,4 @@ const setter = (url, name, title) => {
     );
     return obj;
 };
-
 export default setter;

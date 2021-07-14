@@ -1,17 +1,26 @@
-import { Modal, Button, Form } from "react-bootstrap";
-import { useSelector, useDispatch } from 'react-redux';
-import { updateLayers, resetLayers, addPendingLayer } from "../../actions";
+import {
+    Modal,
+    Button,
+    Form
+} from "react-bootstrap";
+import {
+    useSelector,
+    useDispatch
+} from 'react-redux';
+import {
+    updateLayers,
+    resetLayers,
+    addPendingLayer
+} from "../../actions";
 import { hideWorkspace } from "../../actions";
 import { useState } from "react";
 import WMSCapabilities from 'ol/format/WMSCapabilities';
 import setter from "../../utils/layers/setter";
-
 const WorkspaceModal = () => {
     const [url, setUrl] = useState('');
     const [availability, setAvailability] = useState(false);
     const workspaceState = useSelector(state => state.workspace);
     const dispatch = useDispatch();
-
     const handleHide = () => {
         dispatch(hideWorkspace());
         setAvailability(false);
@@ -20,32 +29,47 @@ const WorkspaceModal = () => {
     };
     const handleFetch = () => {
         const parser = new WMSCapabilities();
-        fetch(`${url}?request=getCapabilities`)
-            .then((response) => {
-                return response.text();
-            })
-            .then((text) => {
-                const result = parser.read(text);
-                return result.Capability.Layer.Layer;
-            })
-            .then((arr) => {
-                dispatch(updateLayers(arr));
-                setAvailability(true);
-            })
-            .catch((err) => {
-                window.alert(err);
-                dispatch(resetLayers());
-                setAvailability(false);
-            });
+        if (url && url !== '') {
+            fetch(`${url}?request=getCapabilities`)
+                .then((response) => {
+                    return response.text();
+                })
+                .then((text) => {
+                    const result = parser.read(text);
+                    return result.Capability.Layer.Layer;
+                })
+                .then((arr) => {
+                    dispatch(updateLayers(arr));
+                    setAvailability(true);
+                })
+                .catch((err) => {
+                    window.alert(err);
+                    dispatch(resetLayers());
+                    setAvailability(false);
+                });
+        }
+        else {
+            window.alert('Please enter URL')
+        };
+
     };
     const handleAdd = () => {
-        let layerName = document.getElementById('formBasicLayer').value;
-        let selectedElement = document.getElementById(`option${layerName}`);
-        let layerTitle = selectedElement.getAttribute('title');
-        const layerObj = setter(url, layerName, layerTitle);
-        dispatch(addPendingLayer(layerObj));
+        if (availability) {
+            let layerName = document.getElementById('formBasicLayer').value;
+            let selectedElement = document.getElementById(`option${layerName}`);
+            let layerTitle = selectedElement.getAttribute('title');
+            if (layerName && layerName !== 'Selector') {
+                const layerObj = setter(url, layerName, layerTitle);
+                dispatch(addPendingLayer(layerObj));
+            }
+            else {
+                window.alert('Please select a layer')
+            };
+        }
+        else {
+            window.alert('Please enter URL')
+        };
     };
-
     return (
         <Modal show={workspaceState.showWorkspaceModal} onHide={handleHide}>
             <Modal.Header closeButton>
@@ -80,6 +104,5 @@ const WorkspaceModal = () => {
             </Modal.Footer>
         </Modal>
     );
-}
-
+};
 export default WorkspaceModal;

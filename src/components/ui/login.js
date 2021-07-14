@@ -1,11 +1,19 @@
-import { Modal, Button, Form } from "react-bootstrap";
-import { useSelector, useDispatch } from 'react-redux';
-import { hidelogin, login } from "../../actions";
-
+import {
+    Modal,
+    Button,
+    Form
+} from "react-bootstrap";
+import {
+    useSelector,
+    useDispatch
+} from 'react-redux';
+import {
+    hidelogin,
+    login
+} from "../../actions";
 const LoginModal = () => {
     const showLogin = useSelector(state => state.login.showLoginModal);
     const dispatch = useDispatch();
-
     const handleHide = () => {
         dispatch(hidelogin());
     };
@@ -13,7 +21,6 @@ const LoginModal = () => {
         dispatch(login());
         dispatch(hidelogin());
     };
-
     return (
         <Modal show={showLogin} onHide={handleHide}>
             <Modal.Header closeButton>
@@ -38,6 +45,5 @@ const LoginModal = () => {
             </Modal.Footer>
         </Modal>
     );
-}
-
+};
 export default LoginModal;

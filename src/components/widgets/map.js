@@ -3,17 +3,26 @@ import { Map } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import 'ol/ol.css';
-import { setCursor, setMapCenter, setMapZoom, resetPendingLayer, setLayers, orderOff } from "../../actions";
-import { useSelector, useDispatch } from "react-redux";
+import {
+    setCursor,
+    setMapCenter,
+    setMapZoom,
+    resetPendingLayer,
+    setLayers,
+    disableChange
+} from "../../actions";
+import {
+    useSelector,
+    useDispatch
+} from "react-redux";
 import { useState } from "react";
-
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
     const workspaceInfo = useSelector(state => state.workspace);
-    const tocOrder = useSelector(state => state.toc.orderChanged);
+    const tocOrder = useSelector(state => state.toc.comonentChanged);
+    const activeLayers = useSelector(state => state.toc.activeLayers);
     const [olmap] = useState(new Map());
-
     useEffect(() => {
         olmap.setTarget("map");
         olmap.on('pointermove', (e) => {
@@ -29,12 +38,10 @@ const MyMap = () => {
         }));
         dispatch(setLayers(olmap.getLayers().array_));
     }, []);
-
     useEffect(() => {
         olmap.getView().setCenter(mapInfo.mapCenter);
         olmap.getView().setZoom(mapInfo.mapZoom);
     }, [mapInfo.mapZoom, mapInfo.mapCenter]);
-
     useEffect(() => {
         if (Object.keys(workspaceInfo.pendingLayer).length > 0) {
             olmap.addLayer(workspaceInfo.pendingLayer);
@@ -43,18 +50,19 @@ const MyMap = () => {
             window.alert('Layer has been added!');
         };
     }, [workspaceInfo.pendingLayer]);
-
     useEffect(() => {
         if (tocOrder) {
             olmap.render();
-            dispatch(orderOff());
+            dispatch(disableChange());
         };
     }, [tocOrder]);
-
+    useEffect(() => {
+        olmap.getLayers().array_ = activeLayers;
+        olmap.render();
+    }, [activeLayers]);
     return (
         <div id="map">
         </div>
     );
-}
-
+};
 export default MyMap;

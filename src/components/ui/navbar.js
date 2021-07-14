@@ -3,15 +3,25 @@ import {
     Nav,
     NavDropdown
 } from "react-bootstrap";
-import { useSelector, useDispatch } from 'react-redux';
+import {
+    useSelector,
+    useDispatch
+} from 'react-redux';
 import LoginModal from "./login";
 import WorkspaceModal from "./workspace";
-import { showlogin, logout, showBookmarks, hideBookmarks, showWorkspace, hideWorkspace, showTOC, hideTOC } from '../../actions';
-
+import {
+    showlogin,
+    logout,
+    showBookmarks,
+    hideBookmarks,
+    showWorkspace,
+    hideWorkspace,
+    showTOC,
+    hideTOC
+} from '../../actions';
 const AppNavBar = () => {
     const isLogged = useSelector(state => state.login.isLogged);
     const dispatch = useDispatch();
-
     const handleShowLogin = () => {
         dispatch(showlogin());
     };
@@ -56,5 +66,4 @@ const AppNavBar = () => {
         </Navbar>
     );
 };
-
 export default AppNavBar;

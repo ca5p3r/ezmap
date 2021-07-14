@@ -4,7 +4,6 @@ const mapInfoState = {
     mapZoom: 6.8282764481106195,
     activeLayers: []
 };
-
 export const mapInfoReducer = (
     state = mapInfoState,
     action

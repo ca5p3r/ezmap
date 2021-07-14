@@ -1,7 +1,7 @@
 const myState = {
     isLogged: false,
     showLoginModal: false
-}
+};
 export const loginReducer = (
     state = myState,
     action

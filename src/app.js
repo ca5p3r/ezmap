@@ -5,8 +5,6 @@ import Navbar from './components/ui/navbar';
 import { useSelector } from 'react-redux';
 import LandingPage from './components/ui/landing';
 import TOC from './components/widgets/toc';
-
-
 function App() {
     const login = useSelector(state => state.login.isLogged);
     const showBookmark = useSelector(state => state.bookmarks.visibility);
@@ -22,5 +20,4 @@ function App() {
         </div>
     );
 };
-
 export default App;

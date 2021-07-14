@@ -1,8 +1,20 @@
-import { Form, Button } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
-import { hideBookmarks, addBookmark, removeAllBookmarks, removeBookmark, setMapZoom, setMapCenter } from "../../actions";
+import {
+    Form,
+    Button
+} from "react-bootstrap";
+import {
+    useSelector,
+    useDispatch
+} from "react-redux";
+import {
+    hideBookmarks,
+    addBookmark,
+    removeAllBookmarks,
+    removeBookmark,
+    setMapZoom,
+    setMapCenter
+} from "../../actions";
 import { useState } from "react";
-
 const Bookmarks = () => {
     const [title, setTitle] = useState('');
     const mapinfo = useSelector(state => state.mapInfo);
@@ -11,7 +23,6 @@ const Bookmarks = () => {
     const handleDismiss = () => {
         dispatch(hideBookmarks());
     };
-
     const handleSave = () => {
         if (title) {
             const myObj = {
@@ -27,12 +38,10 @@ const Bookmarks = () => {
             window.alert('Please enter bookmark title!');
         };
     };
-
     const handleRemoveAll = () => {
         dispatch(removeAllBookmarks());
         window.alert('All bookmarks are deleted!');
     };
-
     const handleRemove = () => {
         let item = document.getElementById('formBasicDropdown').value;
         if (item && item !== 'Selector') {
@@ -41,9 +50,8 @@ const Bookmarks = () => {
         }
         else {
             window.alert('Please select a bookmark first');
-        }
+        };
     };
-
     const handleLoad = () => {
         let selectedBookmark = document.getElementById('formBasicDropdown').value;
         let selectedElement = document.getElementById(`option${selectedBookmark}`);
@@ -53,7 +61,6 @@ const Bookmarks = () => {
         dispatch(setMapZoom(zoom));
         dispatch(setMapCenter([centerx, centery]));
     };
-
     return (
         <div className="bookmarks">
             <Form>
@@ -93,6 +100,5 @@ const Bookmarks = () => {
             </Form>
         </div>
     );
-}
-
+};
 export default Bookmarks;

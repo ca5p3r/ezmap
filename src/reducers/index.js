@@ -4,7 +4,6 @@ import { mapInfoReducer } from './map';
 import { bookmarksReducer } from "./bookmarks";
 import { workspaceReducer } from './workspace';
 import { tocReducer } from './toc';
-
 export const reducers = combineReducers({
     login: loginReducer,
     mapInfo: mapInfoReducer,

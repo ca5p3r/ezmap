@@ -2,7 +2,6 @@ const myState = {
     visibility: false,
     list: []
 };
-
 export const bookmarksReducer = (
     state = myState,
     action

@@ -1,9 +1,8 @@
 const tocState = {
     visibility: false,
     activeLayers: null,
-    orderChanged: false
+    comonentChanged: false
 };
-
 export const tocReducer = (
     state = tocState,
     action
@@ -24,15 +23,15 @@ export const tocReducer = (
                 ...state,
                 visibility: false
             };
-        case 'orderOn':
+        case 'triggerChange':
             return {
                 ...state,
-                orderChanged: true
+                comonentChanged: true
             };
-        case 'orderOff':
+        case 'disableChange':
             return {
                 ...state,
-                orderChanged: false
+                comonentChanged: false
             };
         default:
             return state;

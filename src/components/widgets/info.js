@@ -1,10 +1,8 @@
 import { useSelector } from "react-redux";
 import { transform } from "ol/proj";
-
 const MapInfo = () => {
     const mapInfo = useSelector(state => state.mapInfo);
     const transformedCenter = transform(mapInfo.mapCenter, 'EPSG:3857', 'EPSG:4326');
-
     return (
         <div id="map-info">
             <label id="xcursor">Cursor X: {mapInfo.cursorCenter[0].toFixed(2)} meter</label>
@@ -15,5 +13,4 @@ const MapInfo = () => {
         </div>
     );
 };
-
 export default MapInfo;
