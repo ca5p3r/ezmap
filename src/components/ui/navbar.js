@@ -1,7 +1,6 @@
 import {
     Navbar,
-    Nav,
-    NavDropdown
+    Nav
 } from "react-bootstrap";
 import {
     useSelector,
