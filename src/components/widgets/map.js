@@ -57,8 +57,10 @@ const MyMap = () => {
         };
     }, [tocOrder]);
     useEffect(() => {
-        olmap.getLayers().array_ = activeLayers;
-        olmap.render();
+        if (olmap.getLayers()) {
+            olmap.getLayers().array_ = activeLayers;
+            olmap.render();
+        }
     }, [activeLayers]);
     return (
         <div id="map">
