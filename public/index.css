@@ -14,8 +14,8 @@ html, body, #root #application {
 
 #map-info {
     position: absolute;
-    bottom: 1rem;
-    left: 1rem;
+    bottom: 0rem;
+    left: 30rem;
 }
 
 .toast-message {
@@ -132,4 +132,8 @@ html, body, #root #application {
 
 .form-group {
     margin: 10px;
+}
+
+.ol-scale-line {
+    left: 180px!important;
 }

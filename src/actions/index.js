@@ -137,11 +137,6 @@ export const setMessage = (x) => {
         payload: x
     };
 };
-export const resetMessage = () => {
-    return {
-        type: 'resetMessage'
-    };
-};
 export const setToastColor = (x) => {
     return {
         type: 'setToastColor',

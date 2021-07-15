@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Map } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
+import { ZoomToExtent, FullScreen, OverviewMap, ScaleLine, defaults as defaultControls } from 'ol/control';
 import 'ol/ol.css';
 import {
     setCursor,
@@ -25,7 +26,24 @@ const MyMap = () => {
     const workspaceInfo = useSelector(state => state.workspace);
     const tocOrder = useSelector(state => state.toc.comonentChanged);
     const activeLayers = useSelector(state => state.toc.activeLayers);
-    const [olmap] = useState(new Map());
+    const [olmap] = useState(new Map({
+        controls: defaultControls().extend([
+            new ZoomToExtent({
+                extent: mapInfo.defaultExtent,
+            }),
+            new FullScreen(),
+            new OverviewMap({
+                layers: [
+                    new TileLayer({
+                        source: new OSM(),
+                    }),
+                ],
+            }),
+            new ScaleLine({
+                units: 'metric',
+            }),
+        ])
+    }));
     useEffect(() => {
         olmap.setTarget("map");
         olmap.on('pointermove', (e) => {

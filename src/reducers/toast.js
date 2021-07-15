@@ -23,11 +23,6 @@ export const toastReducer = (
                 ...state,
                 message: action.payload
             };
-        case 'resetMessage':
-            return {
-                ...state,
-                message: ''
-            };
         case 'setToastColor':
             return {
                 ...state,
