@@ -18,6 +18,18 @@ html, body, #root #application {
     left: 1rem;
 }
 
+.toast-message {
+    position: absolute;
+    bottom: 55px;
+    right: 0px;
+    width: 20%;
+}
+
+.toast-message button {
+    position: fixed;
+    right: 35px;
+}
+
 #map-info label {
     display: inline-block;
     padding: 0.5rem;

@@ -10,7 +10,10 @@ import {
 import {
     updateLayers,
     resetLayers,
-    addPendingLayer
+    addPendingLayer,
+    showToast,
+    setMessage,
+    setToastColor
 } from "../../actions";
 import { hideWorkspace } from "../../actions";
 import { useState } from "react";
@@ -43,13 +46,17 @@ const WorkspaceModal = () => {
                     setAvailability(true);
                 })
                 .catch((err) => {
-                    window.alert(err);
+                    dispatch(setToastColor('danger'));
+                    dispatch(setMessage(err.toString()));
+                    dispatch(showToast());
                     dispatch(resetLayers());
                     setAvailability(false);
                 });
         }
         else {
-            window.alert('Please enter URL')
+            dispatch(setToastColor('warning'));
+            dispatch(setMessage('Please enter URL'));
+            dispatch(showToast());
         };
 
     };
@@ -63,11 +70,15 @@ const WorkspaceModal = () => {
                 dispatch(addPendingLayer(layerObj));
             }
             else {
-                window.alert('Please select a layer')
+                dispatch(setToastColor('warning'));
+                dispatch(setMessage('Please select a layer'));
+                dispatch(showToast());
             };
         }
         else {
-            window.alert('Please enter URL')
+            dispatch(setToastColor('warning'));
+            dispatch(setMessage('Please enter URL'));
+            dispatch(showToast());
         };
     };
     return (

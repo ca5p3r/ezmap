@@ -4,10 +4,12 @@ import { mapInfoReducer } from './map';
 import { bookmarksReducer } from "./bookmarks";
 import { workspaceReducer } from './workspace';
 import { tocReducer } from './toc';
+import { toastReducer } from "./toast";
 export const reducers = combineReducers({
     login: loginReducer,
     mapInfo: mapInfoReducer,
     bookmarks: bookmarksReducer,
     workspace: workspaceReducer,
-    toc: tocReducer
+    toc: tocReducer,
+    toast: toastReducer
 });

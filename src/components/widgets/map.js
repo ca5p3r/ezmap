@@ -9,7 +9,10 @@ import {
     setMapZoom,
     resetPendingLayer,
     setLayers,
-    disableChange
+    disableChange,
+    showToast,
+    setMessage,
+    setToastColor
 } from "../../actions";
 import {
     useSelector,
@@ -47,7 +50,9 @@ const MyMap = () => {
             olmap.addLayer(workspaceInfo.pendingLayer);
             dispatch(resetPendingLayer());
             dispatch(setLayers(olmap.getLayers().array_));
-            window.alert('Layer has been added!');
+            dispatch(setToastColor('success'));
+            dispatch(setMessage('Layer has been added!'));
+            dispatch(showToast());
         };
     }, [workspaceInfo.pendingLayer]);
     useEffect(() => {

@@ -12,7 +12,10 @@ import {
     removeAllBookmarks,
     removeBookmark,
     setMapZoom,
-    setMapCenter
+    setMapCenter,
+    showToast,
+    setMessage,
+    setToastColor
 } from "../../actions";
 import { useState } from "react";
 const Bookmarks = () => {
@@ -32,24 +35,34 @@ const Bookmarks = () => {
             };
             dispatch(addBookmark(myObj));
             setTitle('');
-            window.alert('Bookmark saved!');
+            dispatch(setToastColor('success'));
+            dispatch(setMessage('Bookmark saved'));
+            dispatch(showToast());
         }
         else {
-            window.alert('Please enter bookmark title!');
+            dispatch(setToastColor('warning'));
+            dispatch(setMessage('Please enter bookmark title!'));
+            dispatch(showToast());
         };
     };
     const handleRemoveAll = () => {
         dispatch(removeAllBookmarks());
-        window.alert('All bookmarks are deleted!');
+        dispatch(setToastColor('info'));
+        dispatch(setMessage('All bookmarks are deleted!'));
+        dispatch(showToast());
     };
     const handleRemove = () => {
         let item = document.getElementById('formBasicDropdown').value;
         if (item && item !== 'Selector') {
             dispatch(removeBookmark(item));
-            window.alert('Bookmark is deleted!');
+            dispatch(setToastColor('info'));
+            dispatch(setMessage('Bookmark is deleted!'));
+            dispatch(showToast());
         }
         else {
-            window.alert('Please select a bookmark first');
+            dispatch(setToastColor('warning'));
+            dispatch(setMessage('Please select a bookmark first!'));
+            dispatch(showToast());
         };
     };
     const handleLoad = () => {

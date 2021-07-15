@@ -121,3 +121,30 @@ export const disableChange = () => {
         type: 'disableChange'
     };
 };
+export const showToast = () => {
+    return {
+        type: 'showToast'
+    };
+};
+export const hideToast = () => {
+    return {
+        type: 'hideToast'
+    };
+};
+export const setMessage = (x) => {
+    return {
+        type: 'setMessage',
+        payload: x
+    };
+};
+export const resetMessage = () => {
+    return {
+        type: 'resetMessage'
+    };
+};
+export const setToastColor = (x) => {
+    return {
+        type: 'setToastColor',
+        payload: x
+    };
+};
