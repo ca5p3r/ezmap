@@ -13,12 +13,15 @@ import {
     addPendingLayer,
     showToast,
     setMessage,
-    setToastColor
+    setToastColor,
+    insertHistoricalLayer
 } from "../../actions";
 import { hideWorkspace } from "../../actions";
 import { useState } from "react";
 import WMSCapabilities from 'ol/format/WMSCapabilities';
 import setter from "../../utils/layers/setter";
+import { transform } from "ol/proj";
+import { v4 as uuidv4 } from 'uuid';
 const WorkspaceModal = () => {
     const [url, setUrl] = useState('');
     const [availability, setAvailability] = useState(false);
@@ -71,9 +74,17 @@ const WorkspaceModal = () => {
             let layerName = document.getElementById('formBasicLayer').value;
             let selectedElement = document.getElementById(`option${layerName}`);
             let layerTitle = selectedElement.getAttribute('title');
+            let uniqueID = uuidv4();
+            let extentGeographic = selectedElement.getAttribute('extent');
+            let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
+            let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
             if (layerName && layerName !== 'Selector') {
-                const layerObj = setter(url, layerName, layerTitle);
+                const layerObj = setter(url, layerName, `${layerTitle}&${uniqueID}`);
                 dispatch(addPendingLayer(layerObj));
+                dispatch(insertHistoricalLayer({
+                    id: uniqueID,
+                    extent: [...p1, ...p2]
+                }));
             }
             else {
                 dispatch(setToastColor('warning'));
@@ -114,7 +125,7 @@ const WorkspaceModal = () => {
                             <option id="optionSelector" value="Selector">Select</option>
                             {workspaceState.layers.map(
                                 (layer, key) => {
-                                    return <option id={`option${layer.Name}`} key={key} value={layer.Name} title={layer.Title}>{layer.Title}</option>;
+                                    return <option id={`option${layer.Name}`} key={key} value={layer.Name} title={layer.Title} extent={layer.EX_GeographicBoundingBox}>{layer.Title}</option>;
                                 }
                             )}
                         </Form.Control>

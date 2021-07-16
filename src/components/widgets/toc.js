@@ -11,12 +11,14 @@ import {
 import {
     setLayers,
     hideTOC,
-    triggerChange
+    triggerChange,
+    setMapExtent
 } from '../../actions';
 import { useEffect } from "react";
 const TOC = () => {
     const activeLayers = useSelector(state => state.toc.activeLayers);
     const trigger = useSelector(state => state.toc.comonentChanged);
+    const data = useSelector(state => state.toc.historicalData);
     const dispatch = useDispatch();
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
@@ -40,6 +42,11 @@ const TOC = () => {
     const handleRemove = (title) => {
         let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
         dispatch(setLayers(remainingLayers));
+    };
+    const handleGoTo = (title) => {
+        let uniqueID = title.split('&')[1];
+        let newExtent = (data.filter(item => item.id === uniqueID))[0].extent;
+        dispatch(setMapExtent(newExtent));
     };
     useEffect(() => { }, [trigger]);
     return (
@@ -65,7 +72,7 @@ const TOC = () => {
                                                             handleVisibility(title);
                                                         }}
                                                     />
-                                                    {layer.values_.title}
+                                                    {layer.values_.title.split('&')[0]}
                                                     <button
                                                         title={layer.values_.title}
                                                         disabled={layer.values_.title === 'OpenStreetMap'}
@@ -75,6 +82,15 @@ const TOC = () => {
                                                             handleRemove(title);
                                                         }}
                                                     >Remove</button>
+                                                    <button
+                                                        title={layer.values_.title}
+                                                        disabled={layer.values_.title === 'OpenStreetMap'}
+                                                        onClick={(e) => {
+                                                            let element = e.target;
+                                                            let title = element.getAttribute('title');
+                                                            handleGoTo(title);
+                                                        }}
+                                                    >GoTo</button>
                                                 </li>
                                             )}
                                         </Draggable>

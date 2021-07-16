@@ -13,7 +13,8 @@ import {
     disableChange,
     showToast,
     setMessage,
-    setToastColor
+    setToastColor,
+    resetMapExtent
 } from "../../actions";
 import {
     useSelector,
@@ -93,6 +94,13 @@ const MyMap = () => {
         }
         // eslint-disable-next-line
     }, [activeLayers]);
+    useEffect(() => {
+        if (mapInfo.mapExtent.length > 0) {
+            olmap.getView().fit(mapInfo.mapExtent);
+            dispatch(resetMapExtent());
+        }
+        // eslint-disable-next-line
+    }, [mapInfo.mapExtent.length]);
     return (
         <div id="map">
         </div>

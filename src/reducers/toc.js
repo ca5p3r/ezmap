@@ -1,7 +1,8 @@
 const tocState = {
     visibility: false,
     activeLayers: null,
-    comonentChanged: false
+    comonentChanged: false,
+    historicalData: []
 };
 export const tocReducer = (
     state = tocState,
@@ -32,6 +33,13 @@ export const tocReducer = (
             return {
                 ...state,
                 comonentChanged: false
+            };
+        case 'insertHistoricalLayer':
+            let data = state.historicalData;
+            data.push(action.payload);
+            return {
+                ...state,
+                historicalData: data
             };
         default:
             return state;

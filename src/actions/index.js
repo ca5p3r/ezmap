@@ -143,3 +143,20 @@ export const setToastColor = (x) => {
         payload: x
     };
 };
+export const insertHistoricalLayer = (x) => {
+    return {
+        type: 'insertHistoricalLayer',
+        payload: x
+    };
+};
+export const setMapExtent = (x) => {
+    return {
+        type: 'setMapExtent',
+        payload: x
+    };
+};
+export const resetMapExtent = () => {
+    return {
+        type: 'resetMapExtent'
+    };
+};
