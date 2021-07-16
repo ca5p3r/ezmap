@@ -9,30 +9,20 @@ export const tocReducer = (
     action
 ) => {
     switch (action.type) {
-        case 'setLayers':
+        case 'setActiveLayers':
             return {
                 ...state,
                 activeLayers: action.payload
             }
-        case 'showTOC':
+        case 'triggerShowTOC':
             return {
                 ...state,
-                visibility: true
+                visibility: action.payload
             };
-        case 'hideTOC':
+        case 'triggerTOCChange':
             return {
                 ...state,
-                visibility: false
-            };
-        case 'triggerChange':
-            return {
-                ...state,
-                comonentChanged: true
-            };
-        case 'disableChange':
-            return {
-                ...state,
-                comonentChanged: false
+                comonentChanged: action.payload
             };
         case 'insertHistoricalLayer':
             let data = state.historicalData;

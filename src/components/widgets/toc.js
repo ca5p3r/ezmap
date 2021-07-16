@@ -9,9 +9,9 @@ import {
     useDispatch
 } from 'react-redux';
 import {
-    setLayers,
-    hideTOC,
-    triggerChange,
+    setActiveLayers,
+    triggerShowTOC,
+    triggerTOCChange,
     setMapExtent
 } from '../../actions';
 import { useEffect } from "react";
@@ -24,11 +24,11 @@ const TOC = () => {
         if (!result.destination) return;
         const [reorderedItem] = activeLayers.splice(result.source.index, 1);
         activeLayers.splice(result.destination.index, 0, reorderedItem);
-        dispatch(setLayers(activeLayers));
-        dispatch(triggerChange());
+        dispatch(setActiveLayers(activeLayers));
+        dispatch(triggerTOCChange(true));
     };
     const handleDismiss = () => {
-        dispatch(hideTOC());
+        dispatch(triggerShowTOC());
     };
     const handleVisibility = (title) => {
         activeLayers.forEach(layer => {
@@ -36,12 +36,12 @@ const TOC = () => {
                 layer.values_.visible = !layer.values_.visible
             }
         });
-        dispatch(setLayers(activeLayers));
-        dispatch(triggerChange());
+        dispatch(setActiveLayers(activeLayers));
+        dispatch(triggerTOCChange(true));
     };
     const handleRemove = (title) => {
         let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
-        dispatch(setLayers(remainingLayers));
+        dispatch(setActiveLayers(remainingLayers));
     };
     const handleGoTo = (title) => {
         let uniqueID = title.split('&')[1];

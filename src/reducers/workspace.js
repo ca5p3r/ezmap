@@ -24,7 +24,7 @@ export const workspaceReducer = (
                 ...state,
                 layers: action.payload
             };
-        case 'resetLayers':
+        case 'resetActiveLayers':
             return {
                 ...state,
                 layers: []

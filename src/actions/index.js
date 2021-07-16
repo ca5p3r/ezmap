@@ -22,9 +22,9 @@ export const setMapZoom = (x) => {
         payload: x
     };
 };
-export const setLayers = (x) => {
+export const setActiveLayers = (x) => {
     return {
-        type: 'setLayers',
+        type: 'setActiveLayers',
         payload: x
     };
 };
@@ -73,9 +73,9 @@ export const updateLayers = (x) => {
         payload: x
     };
 };
-export const resetLayers = () => {
+export const resetActiveLayers = () => {
     return {
-        type: 'resetLayers'
+        type: 'resetActiveLayers'
     };
 };
 export const addPendingLayer = (x) => {
@@ -89,24 +89,16 @@ export const resetPendingLayer = () => {
         type: 'resetPendingLayer'
     };
 };
-export const showTOC = () => {
+export const triggerShowTOC = (x = false) => {
     return {
-        type: 'showTOC'
+        type: 'triggerShowTOC',
+        payload: x
     };
 };
-export const hideTOC = () => {
+export const triggerTOCChange = (x = false) => {
     return {
-        type: 'hideTOC'
-    };
-};
-export const triggerChange = () => {
-    return {
-        type: 'triggerChange'
-    };
-};
-export const disableChange = () => {
-    return {
-        type: 'disableChange'
+        type: 'triggerTOCChange',
+        payload: x
     };
 };
 export const triggerShowToast = (x = false) => {

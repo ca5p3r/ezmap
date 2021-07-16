@@ -9,7 +9,7 @@ import {
 } from 'react-redux';
 import {
     updateLayers,
-    resetLayers,
+    resetActiveLayers,
     addPendingLayer,
     triggerShowToast,
     setMessage,
@@ -30,7 +30,7 @@ const WorkspaceModal = () => {
     const handleHide = () => {
         dispatch(hideWorkspace());
         setAvailability(false);
-        dispatch(resetLayers());
+        dispatch(resetActiveLayers());
         setUrl('');
     };
     const handleFetch = () => {
@@ -55,7 +55,7 @@ const WorkspaceModal = () => {
                         message: err.toString()
                     }));
                     dispatch(triggerShowToast(true));
-                    dispatch(resetLayers());
+                    dispatch(resetActiveLayers());
                     setAvailability(false);
                 });
         }

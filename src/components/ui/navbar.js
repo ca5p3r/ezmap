@@ -14,35 +14,35 @@ import {
     triggerBookmarks,
     showWorkspace,
     hideWorkspace,
-    showTOC,
-    hideTOC
+    triggerShowTOC
 } from '../../actions';
 const AppNavBar = () => {
     const isLogged = useSelector(state => state.login.isLogged);
     const bookmarkState = useSelector(state => state.bookmarks.visibility);
+    const TOCState = useSelector(state => state.toc.visibility);
     const dispatch = useDispatch();
     const handleShowLogin = () => {
         dispatch(triggerShowLogin(true));
     };
     const handleLogout = () => {
-        dispatch(triggerLogin(false));
-        dispatch(triggerBookmarks(false));
+        dispatch(triggerLogin());
+        dispatch(triggerBookmarks());
         dispatch(hideWorkspace());
-        dispatch(hideTOC());
+        dispatch(triggerShowTOC());
     };
     const hancleBookmarkClick = () => {
         dispatch(triggerBookmarks(!bookmarkState));
         dispatch(hideWorkspace());
-        dispatch(hideTOC());
+        dispatch(triggerShowTOC());
     };
     const handleShowWorkspace = () => {
         dispatch(showWorkspace());
-        dispatch(triggerBookmarks(false));
-        dispatch(hideTOC());
+        dispatch(triggerBookmarks());
+        dispatch(triggerShowTOC());
     };
     const handleShowTOC = () => {
-        dispatch(showTOC());
-        dispatch(triggerBookmarks(false));
+        dispatch(triggerShowTOC(!TOCState));
+        dispatch(triggerBookmarks());
         dispatch(hideWorkspace());
     };
     return (

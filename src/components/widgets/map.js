@@ -9,8 +9,8 @@ import {
     setMapCenter,
     setMapZoom,
     resetPendingLayer,
-    setLayers,
-    disableChange,
+    setActiveLayers,
+    triggerTOCChange,
     triggerShowToast,
     setMessage,
     setToastColor,
@@ -58,7 +58,7 @@ const MyMap = () => {
             title: 'OpenStreetMap',
             source: new OSM()
         }));
-        dispatch(setLayers(olmap.getLayers().array_));
+        dispatch(setActiveLayers(olmap.getLayers().array_));
         // eslint-disable-next-line
     }, []);
     useEffect(() => {
@@ -70,7 +70,7 @@ const MyMap = () => {
         if (Object.keys(workspaceInfo.pendingLayer).length > 0) {
             olmap.addLayer(workspaceInfo.pendingLayer);
             dispatch(resetPendingLayer());
-            dispatch(setLayers(olmap.getLayers().array_));
+            dispatch(setActiveLayers(olmap.getLayers().array_));
             dispatch(setToastColor('success'));
             dispatch(setMessage({
                 title: 'Success',
@@ -83,7 +83,7 @@ const MyMap = () => {
     useEffect(() => {
         if (tocOrder) {
             olmap.render();
-            dispatch(disableChange());
+            dispatch(triggerTOCChange());
         };
         // eslint-disable-next-line
     }, [tocOrder]);
