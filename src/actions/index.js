@@ -59,14 +59,10 @@ export const addBookmark = (x) => {
         payload: x
     };
 };
-export const showBookmarks = () => {
+export const triggerBookmarks = (x = false) => {
     return {
-        type: 'showBookmarks'
-    };
-};
-export const hideBookmarks = () => {
-    return {
-        type: 'hideBookmarks'
+        type: 'triggerBookmarks',
+        payload: x
     };
 };
 export const showWorkspace = () => {

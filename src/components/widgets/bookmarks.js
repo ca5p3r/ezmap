@@ -7,7 +7,7 @@ import {
     useDispatch
 } from "react-redux";
 import {
-    hideBookmarks,
+    triggerBookmarks,
     addBookmark,
     removeAllBookmarks,
     removeBookmark,
@@ -24,7 +24,7 @@ const Bookmarks = () => {
     const bookmarksList = useSelector(state => state.bookmarks.list);
     const dispatch = useDispatch();
     const handleDismiss = () => {
-        dispatch(hideBookmarks());
+        dispatch(triggerBookmarks(false));
     };
     const handleSave = () => {
         if (title) {

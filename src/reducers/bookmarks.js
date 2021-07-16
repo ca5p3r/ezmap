@@ -25,15 +25,10 @@ export const bookmarksReducer = (
                 ...state,
                 list: []
             };
-        case 'showBookmarks':
+        case 'triggerBookmarks':
             return {
                 ...state,
-                visibility: true
-            };
-        case 'hideBookmarks':
-            return {
-                ...state,
-                visibility: false
+                visibility: action.payload
             };
         default:
             return state;
