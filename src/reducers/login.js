@@ -7,25 +7,15 @@ export const loginReducer = (
     action
 ) => {
     switch (action.type) {
-        case 'setLogin':
+        case 'triggerLogin':
             return {
                 ...state,
-                isLogged: true
+                isLogged: action.payload
             };
-        case 'setLogout':
+        case 'triggerShowLogin':
             return {
                 ...state,
-                isLogged: false
-            };
-        case 'showLogin':
-            return {
-                ...state,
-                showLoginModal: true
-            };
-        case 'hideLogin':
-            return {
-                ...state,
-                showLoginModal: false
+                showLoginModal: action.payload
             };
         default:
             return state;

@@ -1,21 +1,13 @@
-export const login = () => {
+export const triggerLogin = (x = false) => {
     return {
-        type: 'setLogin'
+        type: 'triggerLogin',
+        payload: x
     };
 };
-export const logout = () => {
+export const triggerShowLogin = (x = false) => {
     return {
-        type: 'setLogout'
-    };
-};
-export const showlogin = () => {
-    return {
-        type: 'showLogin'
-    };
-};
-export const hidelogin = () => {
-    return {
-        type: 'hideLogin'
+        type: 'triggerShowLogin',
+        payload: x
     };
 };
 export const setMapCenter = (x) => {

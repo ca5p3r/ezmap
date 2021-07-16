@@ -8,18 +8,18 @@ import {
     useDispatch
 } from 'react-redux';
 import {
-    hidelogin,
-    login
+    triggerShowLogin,
+    triggerLogin
 } from "../../actions";
 const LoginModal = () => {
     const showLogin = useSelector(state => state.login.showLoginModal);
     const dispatch = useDispatch();
     const handleHide = () => {
-        dispatch(hidelogin());
+        dispatch(triggerShowLogin(false));
     };
     const handleLogin = () => {
-        dispatch(login());
-        dispatch(hidelogin());
+        dispatch(triggerLogin(true));
+        dispatch(triggerShowLogin(false));
     };
     return (
         <Modal show={showLogin} onHide={handleHide}>

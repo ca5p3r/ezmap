@@ -9,8 +9,8 @@ import {
 import LoginModal from "./login";
 import WorkspaceModal from "./workspace";
 import {
-    showlogin,
-    logout,
+    triggerShowLogin,
+    triggerLogin,
     triggerBookmarks,
     showWorkspace,
     hideWorkspace,
@@ -22,10 +22,10 @@ const AppNavBar = () => {
     const bookmarkState = useSelector(state => state.bookmarks.visibility);
     const dispatch = useDispatch();
     const handleShowLogin = () => {
-        dispatch(showlogin());
+        dispatch(triggerShowLogin(true));
     };
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(triggerLogin(false));
         dispatch(triggerBookmarks(false));
         dispatch(hideWorkspace());
         dispatch(hideTOC());
