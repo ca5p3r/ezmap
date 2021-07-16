@@ -16,13 +16,13 @@ function App() {
             <Navbar />
             {!login && <LandingPage />}
             {login && <>
-                {<MyMap />}
-                {<MapInfo />}
-                {<MyToast />}
+                <MyMap />
+                <MapInfo />
+                <MyToast />
                 {showBookmark && <Bookmarks />}
                 {showTOC && <TOC />}
             </>}
-            {<FontAwesomeLicense />}
+            <FontAwesomeLicense />
         </div>
     );
 };
