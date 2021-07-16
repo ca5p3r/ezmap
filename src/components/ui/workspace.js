@@ -11,7 +11,7 @@ import {
     updateLayers,
     resetLayers,
     addPendingLayer,
-    showToast,
+    triggerShowToast,
     setMessage,
     setToastColor,
     insertHistoricalLayer
@@ -54,7 +54,7 @@ const WorkspaceModal = () => {
                         title: 'Fetch error',
                         message: err.toString()
                     }));
-                    dispatch(showToast());
+                    dispatch(triggerShowToast(true));
                     dispatch(resetLayers());
                     setAvailability(false);
                 });
@@ -65,7 +65,7 @@ const WorkspaceModal = () => {
                 title: 'Warning',
                 message: 'Please enter URL!'
             }));
-            dispatch(showToast());
+            dispatch(triggerShowToast(true));
         };
 
     };
@@ -92,7 +92,7 @@ const WorkspaceModal = () => {
                     title: 'Warning',
                     message: 'Please select a layer!'
                 }));
-                dispatch(showToast());
+                dispatch(triggerShowToast(true));
             };
         }
         else {
@@ -101,7 +101,7 @@ const WorkspaceModal = () => {
                 title: 'Warning',
                 message: 'Please enter URL!'
             }));
-            dispatch(showToast());
+            dispatch(triggerShowToast(true));
         };
     };
     return (

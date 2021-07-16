@@ -109,14 +109,10 @@ export const disableChange = () => {
         type: 'disableChange'
     };
 };
-export const showToast = () => {
+export const triggerShowToast = (x = false) => {
     return {
-        type: 'showToast'
-    };
-};
-export const hideToast = () => {
-    return {
-        type: 'hideToast'
+        type: 'triggerShowToast',
+        payload: x
     };
 };
 export const setMessage = (x) => {

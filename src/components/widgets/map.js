@@ -11,7 +11,7 @@ import {
     resetPendingLayer,
     setLayers,
     disableChange,
-    showToast,
+    triggerShowToast,
     setMessage,
     setToastColor,
     resetMapExtent
@@ -76,7 +76,7 @@ const MyMap = () => {
                 title: 'Success',
                 message: 'Layer has been added!'
             }));
-            dispatch(showToast());
+            dispatch(triggerShowToast(true));
         };
         // eslint-disable-next-line
     }, [workspaceInfo.pendingLayer]);

@@ -13,7 +13,7 @@ import {
     removeBookmark,
     setMapZoom,
     setMapCenter,
-    showToast,
+    triggerShowToast,
     setMessage,
     setToastColor
 } from "../../actions";
@@ -40,7 +40,7 @@ const Bookmarks = () => {
                 title: 'Success',
                 message: 'Bookmark saved!'
             }));
-            dispatch(showToast());
+            dispatch(triggerShowToast(true));
         }
         else {
             dispatch(setToastColor('warning'));
@@ -48,7 +48,7 @@ const Bookmarks = () => {
                 title: 'Warning',
                 message: 'Please enter bookmark title!'
             }));
-            dispatch(showToast());
+            dispatch(triggerShowToast(true));
         };
     };
     const handleRemoveAll = () => {
@@ -58,7 +58,7 @@ const Bookmarks = () => {
             title: 'Notice',
             message: 'All bookmarks are deleted!'
         }));
-        dispatch(showToast());
+        dispatch(triggerShowToast(true));
     };
     const handleRemove = () => {
         let item = document.getElementById('formBasicDropdown').value;
@@ -69,7 +69,7 @@ const Bookmarks = () => {
                 title: 'Notice',
                 message: 'Bookmark is deleted!'
             }));
-            dispatch(showToast());
+            dispatch(triggerShowToast(true));
         }
         else {
             dispatch(setToastColor('warning'));
@@ -77,7 +77,7 @@ const Bookmarks = () => {
                 title: 'Warning',
                 message: 'Please select a bookmark first!'
             }));
-            dispatch(showToast());
+            dispatch(triggerShowToast(true));
         };
     };
     const handleLoad = () => {

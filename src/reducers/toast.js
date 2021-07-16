@@ -9,15 +9,10 @@ export const toastReducer = (
     action
 ) => {
     switch (action.type) {
-        case 'showToast':
+        case 'triggerShowToast':
             return {
                 ...state,
-                visibility: true
-            }
-        case 'hideToast':
-            return {
-                ...state,
-                visibility: false
+                visibility: action.payload
             };
         case 'setMessage':
             return {
