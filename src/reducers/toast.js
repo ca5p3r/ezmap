@@ -1,5 +1,6 @@
 const toastState = {
     visibility: false,
+    title: '',
     message: '',
     color: 'danger'
 };
@@ -21,7 +22,8 @@ export const toastReducer = (
         case 'setMessage':
             return {
                 ...state,
-                message: action.payload
+                message: action.payload.message,
+                title: action.payload.title
             };
         case 'setToastColor':
             return {

@@ -47,7 +47,10 @@ const WorkspaceModal = () => {
                 })
                 .catch((err) => {
                     dispatch(setToastColor('danger'));
-                    dispatch(setMessage(err.toString()));
+                    dispatch(setMessage({
+                        title: 'Fetch error',
+                        message: err.toString()
+                    }));
                     dispatch(showToast());
                     dispatch(resetLayers());
                     setAvailability(false);
@@ -55,7 +58,10 @@ const WorkspaceModal = () => {
         }
         else {
             dispatch(setToastColor('warning'));
-            dispatch(setMessage('Please enter URL'));
+            dispatch(setMessage({
+                title: 'Warning',
+                message: 'Please enter URL!'
+            }));
             dispatch(showToast());
         };
 
@@ -71,13 +77,19 @@ const WorkspaceModal = () => {
             }
             else {
                 dispatch(setToastColor('warning'));
-                dispatch(setMessage('Please select a layer'));
+                dispatch(setMessage({
+                    title: 'Warning',
+                    message: 'Please select a layer!'
+                }));
                 dispatch(showToast());
             };
         }
         else {
             dispatch(setToastColor('warning'));
-            dispatch(setMessage('Please enter URL'));
+            dispatch(setMessage({
+                title: 'Warning',
+                message: 'Please enter URL!'
+            }));
             dispatch(showToast());
         };
     };

@@ -6,9 +6,9 @@ const MyToast = () => {
     const dispatch = useDispatch();
     return (
         <div className="toast-message">
-            <Toast className={`bg-${state.color}`} onClose={() => dispatch(hideToast())} show={state.visibility} delay={3000} autohide>
+            <Toast className={`bg-${state.color}`} onClose={() => dispatch(hideToast())} show={state.visibility} delay={5000} autohide>
                 <Toast.Header>
-                    <strong className="me-auto">Alert</strong>
+                    <strong className="me-auto">{state.title}</strong>
                 </Toast.Header>
                 <Toast.Body>{state.message}</Toast.Body>
             </Toast>

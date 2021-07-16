@@ -71,7 +71,10 @@ const MyMap = () => {
             dispatch(resetPendingLayer());
             dispatch(setLayers(olmap.getLayers().array_));
             dispatch(setToastColor('success'));
-            dispatch(setMessage('Layer has been added!'));
+            dispatch(setMessage({
+                title: 'Success',
+                message: 'Layer has been added!'
+            }));
             dispatch(showToast());
         };
         // eslint-disable-next-line

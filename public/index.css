@@ -23,6 +23,7 @@ html, body, #root #application {
     bottom: 55px;
     right: 0px;
     width: 20%;
+    z-index: 1051;
 }
 
 .toast-message button {

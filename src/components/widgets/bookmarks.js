@@ -36,19 +36,28 @@ const Bookmarks = () => {
             dispatch(addBookmark(myObj));
             setTitle('');
             dispatch(setToastColor('success'));
-            dispatch(setMessage('Bookmark saved'));
+            dispatch(setMessage({
+                title: 'Success',
+                message: 'Bookmark saved!'
+            }));
             dispatch(showToast());
         }
         else {
             dispatch(setToastColor('warning'));
-            dispatch(setMessage('Please enter bookmark title!'));
+            dispatch(setMessage({
+                title: 'Warning',
+                message: 'Please enter bookmark title!'
+            }));
             dispatch(showToast());
         };
     };
     const handleRemoveAll = () => {
         dispatch(removeAllBookmarks());
         dispatch(setToastColor('info'));
-        dispatch(setMessage('All bookmarks are deleted!'));
+        dispatch(setMessage({
+            title: 'Notice',
+            message: 'All bookmarks are deleted!'
+        }));
         dispatch(showToast());
     };
     const handleRemove = () => {
@@ -56,12 +65,18 @@ const Bookmarks = () => {
         if (item && item !== 'Selector') {
             dispatch(removeBookmark(item));
             dispatch(setToastColor('info'));
-            dispatch(setMessage('Bookmark is deleted!'));
+            dispatch(setMessage({
+                title: 'Notice',
+                message: 'Bookmark is deleted!'
+            }));
             dispatch(showToast());
         }
         else {
             dispatch(setToastColor('warning'));
-            dispatch(setMessage('Please select a bookmark first!'));
+            dispatch(setMessage({
+                title: 'Warning',
+                message: 'Please select a bookmark first!'
+            }));
             dispatch(showToast());
         };
     };
