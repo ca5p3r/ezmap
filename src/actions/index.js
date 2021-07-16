@@ -57,14 +57,10 @@ export const triggerBookmarks = (x = false) => {
         payload: x
     };
 };
-export const showWorkspace = () => {
+export const triggerShowWorkspace = (x = false) => {
     return {
-        type: 'showWorkspace'
-    };
-};
-export const hideWorkspace = () => {
-    return {
-        type: 'hideWorkspace'
+        type: 'triggerShowWorkspace',
+        payload: x
     };
 };
 export const updateLayers = (x) => {
@@ -73,9 +69,9 @@ export const updateLayers = (x) => {
         payload: x
     };
 };
-export const resetActiveLayers = () => {
+export const resetLayers = () => {
     return {
-        type: 'resetActiveLayers'
+        type: 'resetLayers'
     };
 };
 export const addPendingLayer = (x) => {

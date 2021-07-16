@@ -1,5 +1,5 @@
 const myState = {
-    showWorkspaceModal: false,
+    visibility: false,
     layers: [],
     pendingLayer: {}
 };
@@ -9,22 +9,17 @@ export const workspaceReducer = (
     action
 ) => {
     switch (action.type) {
-        case 'showWorkspace':
+        case 'triggerShowWorkspace':
             return {
                 ...state,
-                showWorkspaceModal: true
-            };
-        case 'hideWorkspace':
-            return {
-                ...state,
-                showWorkspaceModal: false
+                visibility: action.payload
             };
         case 'updateLayers':
             return {
                 ...state,
                 layers: action.payload
             };
-        case 'resetActiveLayers':
+        case 'resetLayers':
             return {
                 ...state,
                 layers: []

@@ -1,6 +1,6 @@
 const myState = {
     isLogged: false,
-    showLoginModal: false
+    visibility: false
 };
 export const loginReducer = (
     state = myState,
@@ -15,7 +15,7 @@ export const loginReducer = (
         case 'triggerShowLogin':
             return {
                 ...state,
-                showLoginModal: action.payload
+                visibility: action.payload
             };
         default:
             return state;

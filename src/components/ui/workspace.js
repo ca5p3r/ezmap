@@ -9,14 +9,14 @@ import {
 } from 'react-redux';
 import {
     updateLayers,
-    resetActiveLayers,
+    resetLayers,
     addPendingLayer,
     triggerShowToast,
     setMessage,
     setToastColor,
     insertHistoricalLayer
 } from "../../actions";
-import { hideWorkspace } from "../../actions";
+import { triggerShowWorkspace } from "../../actions";
 import { useState } from "react";
 import WMSCapabilities from 'ol/format/WMSCapabilities';
 import setter from "../../utils/layers/setter";
@@ -28,9 +28,9 @@ const WorkspaceModal = () => {
     const workspaceState = useSelector(state => state.workspace);
     const dispatch = useDispatch();
     const handleHide = () => {
-        dispatch(hideWorkspace());
+        dispatch(triggerShowWorkspace());
         setAvailability(false);
-        dispatch(resetActiveLayers());
+        dispatch(resetLayers());
         setUrl('');
     };
     const handleFetch = () => {
@@ -55,7 +55,7 @@ const WorkspaceModal = () => {
                         message: err.toString()
                     }));
                     dispatch(triggerShowToast(true));
-                    dispatch(resetActiveLayers());
+                    dispatch(resetLayers());
                     setAvailability(false);
                 });
         }
@@ -105,7 +105,7 @@ const WorkspaceModal = () => {
         };
     };
     return (
-        <Modal show={workspaceState.showWorkspaceModal} onHide={handleHide}>
+        <Modal show={workspaceState.visibility} onHide={handleHide}>
             <Modal.Header closeButton>
                 <Modal.Title>Workspace</Modal.Title>
             </Modal.Header>

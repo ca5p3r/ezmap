@@ -12,7 +12,7 @@ import {
     triggerLogin
 } from "../../actions";
 const LoginModal = () => {
-    const showLogin = useSelector(state => state.login.showLoginModal);
+    const showLogin = useSelector(state => state.login.visibility);
     const dispatch = useDispatch();
     const handleHide = () => {
         dispatch(triggerShowLogin(false));

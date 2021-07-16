@@ -12,14 +12,14 @@ import {
     triggerShowLogin,
     triggerLogin,
     triggerBookmarks,
-    showWorkspace,
-    hideWorkspace,
+    triggerShowWorkspace,
     triggerShowTOC
 } from '../../actions';
 const AppNavBar = () => {
     const isLogged = useSelector(state => state.login.isLogged);
     const bookmarkState = useSelector(state => state.bookmarks.visibility);
     const TOCState = useSelector(state => state.toc.visibility);
+    const workspaceState = useSelector(state => state.workspace.visibility);
     const dispatch = useDispatch();
     const handleShowLogin = () => {
         dispatch(triggerShowLogin(true));
@@ -27,23 +27,23 @@ const AppNavBar = () => {
     const handleLogout = () => {
         dispatch(triggerLogin());
         dispatch(triggerBookmarks());
-        dispatch(hideWorkspace());
+        dispatch(triggerShowWorkspace());
         dispatch(triggerShowTOC());
     };
     const hancleBookmarkClick = () => {
         dispatch(triggerBookmarks(!bookmarkState));
-        dispatch(hideWorkspace());
+        dispatch(triggerShowWorkspace());
         dispatch(triggerShowTOC());
     };
     const handleShowWorkspace = () => {
-        dispatch(showWorkspace());
+        dispatch(triggerShowWorkspace(!workspaceState));
         dispatch(triggerBookmarks());
         dispatch(triggerShowTOC());
     };
     const handleShowTOC = () => {
         dispatch(triggerShowTOC(!TOCState));
         dispatch(triggerBookmarks());
-        dispatch(hideWorkspace());
+        dispatch(triggerShowWorkspace());
     };
     return (
         <Navbar bg="info" expand="lg">
