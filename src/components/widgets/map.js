@@ -21,12 +21,17 @@ import {
     useDispatch
 } from "react-redux";
 import { useState } from "react";
+import TOC from './toc';
+import Bookmarks from './bookmarks';
+import MapInfo from './info';
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
     const workspaceInfo = useSelector(state => state.workspace);
     const tocOrder = useSelector(state => state.toc.comonentChanged);
     const activeLayers = useSelector(state => state.toc.activeLayers);
+    const showBookmark = useSelector(state => state.bookmarks.visibility);
+    const showTOC = useSelector(state => state.toc.visibility);
     const [olmap] = useState(new Map({
         controls: defaultControls().extend([
             new ZoomToExtent({
@@ -103,6 +108,9 @@ const MyMap = () => {
     }, [mapInfo.mapExtent.length]);
     return (
         <div id="map">
+            {showBookmark && <Bookmarks />}
+            {showTOC && <TOC />}
+            <MapInfo />
         </div>
     );
 };

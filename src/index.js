@@ -8,8 +8,8 @@ import FontAwesomeLicense from './components/ui/license';
 import MyToast from './components/ui/toast';
 ReactDOM.render(
   <Provider store={store}>
-    <App />,
-    <MyToast />,
+    <App />
+    <MyToast />
     <FontAwesomeLicense />
   </Provider>,
   document.getElementById('root')
