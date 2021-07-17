@@ -6,7 +6,7 @@ import {
     useSelector,
     useDispatch
 } from 'react-redux';
-import LoginModal from "./login";
+import LoginModal from "./widgets/login";
 import WorkspaceModal from "./workspace";
 import {
     triggerShowLogin,
