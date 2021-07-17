@@ -20,6 +20,7 @@ const AppNavBar = () => {
     const bookmarkState = useSelector(state => state.bookmarks.visibility);
     const TOCState = useSelector(state => state.toc.visibility);
     const workspaceState = useSelector(state => state.workspace.visibility);
+    const showLogin = useSelector(state => state.login.visibility);
     const dispatch = useDispatch();
     const handleShowLogin = () => {
         dispatch(triggerShowLogin(true));
@@ -45,6 +46,13 @@ const AppNavBar = () => {
         dispatch(triggerBookmarks());
         dispatch(triggerShowWorkspace());
     };
+    const handleHideLogin = () => {
+        dispatch(triggerShowLogin());
+    };
+    const handleLogin = () => {
+        dispatch(triggerLogin(true));
+        dispatch(triggerShowLogin());
+    };
     return (
         <Navbar bg="info" expand="lg">
             <Navbar.Brand><svg width="30" height="29" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="map-marker-alt" className="svg-inline--fa fa-map-marker-alt fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"></path></svg> EasyMap</Navbar.Brand>
@@ -68,7 +76,7 @@ const AppNavBar = () => {
                     {!isLogged && <Nav.Link onClick={handleShowLogin} title="Login"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-in-alt" className="svg-inline--fa fa-sign-in-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z"></path></svg></Nav.Link>}
                 </Nav>
             </Navbar.Collapse>
-            <LoginModal />
+            <LoginModal showLogin={showLogin} handleLogin={handleLogin} handleHide={handleHideLogin} />
             <WorkspaceModal />
         </Navbar>
     );

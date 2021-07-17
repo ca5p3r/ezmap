@@ -24,6 +24,7 @@ import { useState } from "react";
 import TOC from './toc';
 import Bookmarks from './bookmarks';
 import MapInfo from './info';
+import MyToast from '../ui/toast';
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
@@ -32,6 +33,7 @@ const MyMap = () => {
     const activeLayers = useSelector(state => state.toc.activeLayers);
     const showBookmark = useSelector(state => state.bookmarks.visibility);
     const showTOC = useSelector(state => state.toc.visibility);
+    const toastState = useSelector(state => state.toast);
     const [olmap] = useState(new Map({
         controls: defaultControls().extend([
             new ZoomToExtent({
@@ -50,6 +52,9 @@ const MyMap = () => {
             }),
         ])
     }));
+    const handleToastHide = () => {
+        dispatch(triggerShowToast());
+    };
     useEffect(() => {
         olmap.setTarget("map");
         olmap.on('pointermove', (e) => {
@@ -111,6 +116,7 @@ const MyMap = () => {
             {showBookmark && <Bookmarks />}
             {showTOC && <TOC />}
             <MapInfo />
+            <MyToast triggerShowToast={handleToastHide} color={toastState.color} visibility={toastState.visibility} title={toastState.title} message={toastState.message} />
         </div>
     );
 };

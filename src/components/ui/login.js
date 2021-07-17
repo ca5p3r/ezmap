@@ -3,26 +3,9 @@ import {
     Button,
     Form
 } from "react-bootstrap";
-import {
-    useSelector,
-    useDispatch
-} from 'react-redux';
-import {
-    triggerShowLogin,
-    triggerLogin
-} from "../../actions";
-const LoginModal = () => {
-    const showLogin = useSelector(state => state.login.visibility);
-    const dispatch = useDispatch();
-    const handleHide = () => {
-        dispatch(triggerShowLogin(false));
-    };
-    const handleLogin = () => {
-        dispatch(triggerLogin(true));
-        dispatch(triggerShowLogin(false));
-    };
+const LoginModal = (props) => {
     return (
-        <Modal show={showLogin} onHide={handleHide}>
+        <Modal show={props.showLogin} onHide={props.handleHide}>
             <Modal.Header closeButton>
                 <Modal.Title>Login</Modal.Title>
             </Modal.Header>
@@ -40,8 +23,8 @@ const LoginModal = () => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleHide}>Dismiss</Button>
-                <Button variant="primary" onClick={handleLogin}>Login</Button>
+                <Button variant="secondary" onClick={props.handleHide}>Dismiss</Button>
+                <Button variant="primary" onClick={props.handleLogin}>Login</Button>
             </Modal.Footer>
         </Modal>
     );

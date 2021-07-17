@@ -24,7 +24,7 @@ const Bookmarks = () => {
     const bookmarksList = useSelector(state => state.bookmarks.list);
     const dispatch = useDispatch();
     const handleDismiss = () => {
-        dispatch(triggerBookmarks(false));
+        dispatch(triggerBookmarks());
     };
     const handleSave = () => {
         if (title) {
