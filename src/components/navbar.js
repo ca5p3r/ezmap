@@ -14,7 +14,7 @@ import {
     triggerBookmarks,
     triggerShowWorkspace,
     triggerShowTOC
-} from '../../actions';
+} from '../actions';
 const AppNavBar = () => {
     const isLogged = useSelector(state => state.login.isLogged);
     const bookmarkState = useSelector(state => state.bookmarks.visibility);

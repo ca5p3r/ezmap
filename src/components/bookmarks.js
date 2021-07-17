@@ -16,7 +16,7 @@ import {
     triggerShowToast,
     setMessage,
     setToastColor
-} from "../../actions";
+} from "../actions";
 import { useState } from "react";
 const Bookmarks = () => {
     const [title, setTitle] = useState('');

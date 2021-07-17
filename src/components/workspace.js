@@ -14,12 +14,12 @@ import {
     triggerShowToast,
     setMessage,
     setToastColor,
-    insertHistoricalLayer
-} from "../../actions";
-import { triggerShowWorkspace } from "../../actions";
+    insertHistoricalLayer,
+    triggerShowWorkspace
+} from "../actions";
 import { useState } from "react";
 import WMSCapabilities from 'ol/format/WMSCapabilities';
-import setter from "../../utils/layers/setter";
+import setter from "../utils/layers/setter";
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
 const WorkspaceModal = () => {

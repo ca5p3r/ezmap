@@ -15,7 +15,7 @@ import {
     setMessage,
     setToastColor,
     resetMapExtent
-} from "../../actions";
+} from "../actions";
 import {
     useSelector,
     useDispatch
@@ -24,7 +24,7 @@ import { useState } from "react";
 import TOC from './toc';
 import Bookmarks from './bookmarks';
 import MapInfo from './info';
-import MyToast from '../ui/toast';
+import MyToast from './toast';
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);

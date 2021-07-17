@@ -13,7 +13,7 @@ import {
     triggerShowTOC,
     triggerTOCChange,
     setMapExtent
-} from '../../actions';
+} from '../actions';
 import { useEffect } from "react";
 const TOC = () => {
     const activeLayers = useSelector(state => state.toc.activeLayers);
