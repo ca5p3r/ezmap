@@ -5,8 +5,6 @@ import Navbar from './components/ui/navbar';
 import { useSelector } from 'react-redux';
 import LandingPage from './components/ui/landing';
 import TOC from './components/widgets/toc';
-import MyToast from './components/ui/toast';
-import FontAwesomeLicense from './components/ui/license';
 function App() {
     const login = useSelector(state => state.login.isLogged);
     const showBookmark = useSelector(state => state.bookmarks.visibility);
@@ -18,11 +16,9 @@ function App() {
             {login && <>
                 <MyMap />
                 <MapInfo />
-                <MyToast />
                 {showBookmark && <Bookmarks />}
                 {showTOC && <TOC />}
             </>}
-            <FontAwesomeLicense />
         </div>
     );
 };
