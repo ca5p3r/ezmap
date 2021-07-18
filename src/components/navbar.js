@@ -6,22 +6,112 @@ import {
     useSelector,
     useDispatch
 } from 'react-redux';
+import { useState } from 'react';
 import LoginModal from "./widgets/login";
-import WorkspaceModal from "./workspace";
+import WorkspaceModal from "./widgets/workspace";
 import {
     triggerShowLogin,
     triggerLogin,
     triggerBookmarks,
     triggerShowWorkspace,
-    triggerShowTOC
+    triggerShowTOC,
+    updateLayers,
+    resetLayers,
+    addPendingLayer,
+    triggerShowToast,
+    setMessage,
+    setToastColor,
+    insertHistoricalLayer
 } from '../actions';
+import WMSCapabilities from 'ol/format/WMSCapabilities';
+import setter from "../utils/layers/setter";
+import { transform } from "ol/proj";
+import { v4 as uuidv4 } from 'uuid';
 const AppNavBar = () => {
     const isLogged = useSelector(state => state.login.isLogged);
     const bookmarkState = useSelector(state => state.bookmarks.visibility);
     const TOCState = useSelector(state => state.toc.visibility);
-    const workspaceState = useSelector(state => state.workspace.visibility);
+    const workspaceVisibility = useSelector(state => state.workspace.visibility);
+    const [availability, setAvailability] = useState(false);
     const showLogin = useSelector(state => state.login.visibility);
     const dispatch = useDispatch();
+    const workspaceState = useSelector(state => state.workspace);
+    const handleHide = () => {
+        dispatch(triggerShowWorkspace());
+        setAvailability(false);
+        dispatch(resetLayers());
+    };
+    const handleFetch = (url) => {
+        const parser = new WMSCapabilities();
+        if (url && url !== '') {
+            fetch(`${url}?request=getCapabilities`)
+                .then((response) => {
+                    return response.text();
+                })
+                .then((text) => {
+                    const result = parser.read(text);
+                    return result.Capability.Layer.Layer;
+                })
+                .then((arr) => {
+                    dispatch(updateLayers(arr));
+                    setAvailability(true);
+                })
+                .catch((err) => {
+                    dispatch(setToastColor('danger'));
+                    dispatch(setMessage({
+                        title: 'Fetch error',
+                        message: err.toString()
+                    }));
+                    dispatch(triggerShowToast(true));
+                    dispatch(resetLayers());
+                    setAvailability(false);
+                });
+        }
+        else {
+            dispatch(setToastColor('warning'));
+            dispatch(setMessage({
+                title: 'Warning',
+                message: 'Please enter URL!'
+            }));
+            dispatch(triggerShowToast(true));
+        };
+
+    };
+    const handleAdd = (url) => {
+        if (availability) {
+            let layerName = document.getElementById('formBasicLayer').value;
+            let selectedElement = document.getElementById(`option${layerName}`);
+            let layerTitle = selectedElement.getAttribute('title');
+            let uniqueID = uuidv4();
+            let extentGeographic = selectedElement.getAttribute('extent');
+            let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
+            let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
+            if (layerName && layerName !== 'Selector') {
+                const layerObj = setter(url, layerName, `${layerTitle}&${uniqueID}`);
+                dispatch(addPendingLayer(layerObj));
+                dispatch(insertHistoricalLayer({
+                    id: uniqueID,
+                    extent: [...p1, ...p2]
+                }));
+            }
+            else {
+                dispatch(setToastColor('warning'));
+                dispatch(setMessage({
+                    title: 'Warning',
+                    message: 'Please select a layer!'
+                }));
+                dispatch(triggerShowToast(true));
+            };
+        }
+        else {
+            dispatch(setToastColor('warning'));
+            dispatch(setMessage({
+                title: 'Warning',
+                message: 'Please enter URL!'
+            }));
+            dispatch(triggerShowToast(true));
+        };
+    };
     const handleShowLogin = () => {
         dispatch(triggerShowLogin(true));
     };
@@ -44,7 +134,7 @@ const AppNavBar = () => {
         dispatch(triggerShowTOC());
     };
     const handleWorkspaceClick = () => {
-        dispatch(triggerShowWorkspace(!workspaceState));
+        dispatch(triggerShowWorkspace(!workspaceVisibility));
         dispatch(triggerBookmarks());
         dispatch(triggerShowTOC());
     };
@@ -77,7 +167,7 @@ const AppNavBar = () => {
                 </Nav>
             </Navbar.Collapse>
             <LoginModal showLogin={showLogin} handleLogin={handleLogin} handleHide={handleHideLogin} />
-            <WorkspaceModal />
+            <WorkspaceModal visibility={workspaceVisibility} availability={availability} handleHide={handleHide} handleFetch={handleFetch} handleAdd={handleAdd} layers={workspaceState.layers} />
         </Navbar>
     );
 };
