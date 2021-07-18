@@ -32,7 +32,7 @@ const AppNavBar = () => {
     const [availability, setAvailability] = useState(false);
     const loginInfo = useSelector(state => state.login);
     const bookmarkInfo = useSelector(state => state.bookmarks);
-    const TOCInfo = useSelector(state => state.toc.visibility);
+    const TOCInfo = useSelector(state => state.toc);
     const workspaceInfo = useSelector(state => state.workspace);
     const TOCState = TOCInfo.visibility;
     const bookmarkState = bookmarkInfo.visibility;
