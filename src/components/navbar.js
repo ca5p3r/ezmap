@@ -28,14 +28,15 @@ import setter from "../utils/layers/setter";
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
 const AppNavBar = () => {
-    const isLogged = useSelector(state => state.login.isLogged);
+    const dispatch = useDispatch();
+    const [availability, setAvailability] = useState(false);
+    const loginInfo = useSelector(state => state.login);
     const bookmarkState = useSelector(state => state.bookmarks.visibility);
     const TOCState = useSelector(state => state.toc.visibility);
-    const workspaceVisibility = useSelector(state => state.workspace.visibility);
-    const [availability, setAvailability] = useState(false);
-    const showLogin = useSelector(state => state.login.visibility);
-    const dispatch = useDispatch();
-    const workspaceState = useSelector(state => state.workspace);
+    const workspaceInfo = useSelector(state => state.workspace);
+    const workspaceVisibility = workspaceInfo.visibility;
+    const isLogged = loginInfo.isLogged;
+    const showLogin = loginInfo.visibility;
     const handleHide = () => {
         dispatch(triggerShowWorkspace());
     };
@@ -110,11 +111,8 @@ const AppNavBar = () => {
             dispatch(triggerShowToast(true));
         };
     };
-    const handleShowLogin = () => {
-        dispatch(triggerShowLogin(true));
-    };
-    const handleHideLogin = () => {
-        dispatch(triggerShowLogin());
+    const handleTriggerShowLogin = () => {
+        dispatch(triggerShowLogin(!showLogin));
     };
     const handleLogin = () => {
         dispatch(triggerLogin(true));
@@ -161,11 +159,11 @@ const AppNavBar = () => {
                         <Nav.Link onClick={handleWorkspaceClick} title="Layer manager"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="tools" className="svg-inline--fa fa-tools fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M501.1 395.7L384 278.6c-23.1-23.1-57.6-27.6-85.4-13.9L192 158.1V96L64 0 0 64l96 128h62.1l106.6 106.6c-13.6 27.8-9.2 62.3 13.9 85.4l117.1 117.1c14.6 14.6 38.2 14.6 52.7 0l52.7-52.7c14.5-14.6 14.5-38.2 0-52.7zM331.7 225c28.3 0 54.9 11 74.9 31l19.4 19.4c15.8-6.9 30.8-16.5 43.8-29.5 37.1-37.1 49.7-89.3 37.9-136.7-2.2-9-13.5-12.1-20.1-5.5l-74.4 74.4-67.9-11.3L334 98.9l74.4-74.4c6.6-6.6 3.4-17.9-5.7-20.2-47.4-11.7-99.6.9-136.6 37.9-28.5 28.5-41.9 66.1-41.2 103.6l82.1 82.1c8.1-1.9 16.5-2.9 24.7-2.9zm-103.9 82l-56.7-56.7L18.7 402.8c-25 25-25 65.5 0 90.5s65.5 25 90.5 0l123.6-123.6c-7.6-19.9-9.9-41.6-5-62.7zM64 472c-13.2 0-24-10.8-24-24 0-13.3 10.7-24 24-24s24 10.7 24 24c0 13.2-10.7 24-24 24z"></path></svg></Nav.Link>
                         <Nav.Link onClick={handleTOCClick} title="Table of contents"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="far" data-icon="list-alt" className="svg-inline--fa fa-list-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"></path></svg></Nav.Link>
                         <Nav.Link onClick={handleLogout} title="Logout"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-out-alt" className="svg-inline--fa fa-sign-out-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34zM192 436v-40c0-6.6-5.4-12-12-12H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h84c6.6 0 12-5.4 12-12V76c0-6.6-5.4-12-12-12H96c-53 0-96 43-96 96v192c0 53 43 96 96 96h84c6.6 0 12-5.4 12-12z"></path></svg></Nav.Link></>}
-                    {!isLogged && <Nav.Link onClick={handleShowLogin} title="Login"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-in-alt" className="svg-inline--fa fa-sign-in-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z"></path></svg></Nav.Link>}
+                    {!isLogged && <Nav.Link onClick={handleTriggerShowLogin} title="Login"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-in-alt" className="svg-inline--fa fa-sign-in-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z"></path></svg></Nav.Link>}
                 </Nav>
             </Navbar.Collapse>
-            <LoginModal showLogin={showLogin} handleLogin={handleLogin} handleHide={handleHideLogin} />
-            <WorkspaceModal visibility={workspaceVisibility} availability={availability} handleHide={handleHide} handleFetch={handleFetch} handleAdd={handleAdd} layers={workspaceState.layers} />
+            <LoginModal showLogin={showLogin} handleLogin={handleLogin} handleHide={handleTriggerShowLogin} />
+            <WorkspaceModal visibility={workspaceVisibility} availability={availability} handleHide={handleHide} handleFetch={handleFetch} handleAdd={handleAdd} layers={workspaceInfo.layers} />
         </Navbar>
     );
 };
