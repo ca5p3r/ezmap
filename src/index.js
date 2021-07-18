@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { store } from './store';
 import React from 'react';
 import App from './app';
-import FontAwesomeLicense from './components/widgets/license';
+import FontAwesomeLicense from './license';
 ReactDOM.render(
   <Provider store={store}>
     <App />

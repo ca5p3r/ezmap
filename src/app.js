@@ -1,7 +1,7 @@
 import MyMap from './components/map';
 import Navbar from './components/navbar';
 import { useSelector } from 'react-redux';
-import LandingPage from './components/widgets/landing';
+import LandingPage from './components/landing';
 function App() {
     const login = useSelector(state => state.login.isLogged);
     return (
