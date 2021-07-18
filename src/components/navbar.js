@@ -38,8 +38,6 @@ const AppNavBar = () => {
     const workspaceState = useSelector(state => state.workspace);
     const handleHide = () => {
         dispatch(triggerShowWorkspace());
-        setAvailability(false);
-        dispatch(resetLayers());
     };
     const handleFetch = (url) => {
         const parser = new WMSCapabilities();
