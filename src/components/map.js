@@ -229,7 +229,7 @@ const MyMap = () => {
             {showBookmark && <Bookmarks bookmarksList={bookmarksList} handleDismiss={handleBookmarkDismiss} handleSave={handleBookmarkSave} handleRemoveAll={handleRemoveAllBookmarks} handleRemove={handleRemoveBookmark} handleLoad={handleLoadBookmark} />}
             {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
             <MapInfo cursorCenter={mapInfo.cursorCenter} mapCenter={transformedCenter} mapZoom={mapInfo.mapZoom} />
-            <MyToast triggerShowToast={handleToastTrigger} color={toastInfo.color} visibility={toastInfo.visibility} title={toastInfo.title} message={toastInfo.message} />
+            {toastInfo.visibility && <MyToast triggerShowToast={handleToastTrigger} color={toastInfo.color} visibility={toastInfo.visibility} title={toastInfo.title} message={toastInfo.message} />}
         </div>
     );
 };
