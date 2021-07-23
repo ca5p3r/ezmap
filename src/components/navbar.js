@@ -24,7 +24,7 @@ import {
     insertHistoricalLayer
 } from '../actions';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
-import setter from "../utils/layers/setter";
+import { setter } from "../utils";
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
 const AppNavBar = () => {
@@ -80,6 +80,7 @@ const AppNavBar = () => {
     };
     const handleAdd = (url) => {
         if (availability) {
+            let geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
             let layerName = document.getElementById('formBasicLayer').value;
             let selectedElement = document.getElementById(`option${layerName}`);
             let layerTitle = selectedElement.getAttribute('title');
@@ -88,12 +89,34 @@ const AppNavBar = () => {
             let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
             let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
             if (layerName && layerName !== 'Selector') {
+                fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((text) => {
+                        let obj = JSON.parse(text);
+                        return obj;
+                    })
+                    .then((obj) => {
+                        let fields = obj.featureTypes[0].properties
+                        var geomField = fields.filter(field => geometries.includes(field.localType));
+                        dispatch(insertHistoricalLayer({
+                            id: uniqueID,
+                            extent: [...p1, ...p2],
+                            type: geomField[0].localType,
+                            geometry: geomField[0].name
+                        }));
+                    })
+                    .catch(() => {
+                        dispatch(insertHistoricalLayer({
+                            id: uniqueID,
+                            extent: [...p1, ...p2],
+                            type: null,
+                            geometry: null
+                        }));
+                    });
                 const layerObj = setter(url, layerName, `${layerTitle}&${uniqueID}`);
                 dispatch(addPendingLayer(layerObj));
-                dispatch(insertHistoricalLayer({
-                    id: uniqueID,
-                    extent: [...p1, ...p2]
-                }));
             }
             else {
                 dispatch(setToastColor('warning'));

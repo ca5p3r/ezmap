@@ -16,7 +16,7 @@ const WorkspaceModal = (props) => {
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicUrl">
                         <Form.Label>URL</Form.Label>
-                        <Form.Control type="text" placeholder="Enter server url" value={url} onChange={e => setUrl(e.target.value)} />
+                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wms" value={url} onChange={e => setUrl(e.target.value)} />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicUrl">
                         <Button variant="primary" onClick={() => props.handleFetch(url)}>Fetch layers</Button>
