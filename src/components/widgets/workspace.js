@@ -27,7 +27,7 @@ const WorkspaceModal = (props) => {
                             <option id="optionSelector" value="Selector">Select</option>
                             {props.layers.map(
                                 (layer, key) => {
-                                    return <option id={`option${layer.Name}`} key={key} value={layer.Name} title={layer.Title} extent={layer.EX_GeographicBoundingBox}>{layer.Title}</option>;
+                                    return <option id={`option${layer.Name}`} key={key} crs={layer.CRS[0]} value={layer.Name} title={layer.Title} extent={layer.EX_GeographicBoundingBox}>{layer.Title}</option>;
                                 }
                             )}
                         </Form.Control>

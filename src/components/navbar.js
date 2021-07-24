@@ -24,7 +24,8 @@ import {
     insertHistoricalLayer
 } from '../actions';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
-import { setter } from "../utils";
+import ImageWMS from 'ol/source/ImageWMS';
+import Image from 'ol/layer/Image';
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
 const AppNavBar = () => {
@@ -84,6 +85,7 @@ const AppNavBar = () => {
             let layerName = document.getElementById('formBasicLayer').value;
             let selectedElement = document.getElementById(`option${layerName}`);
             let layerTitle = selectedElement.getAttribute('title');
+            let crs = selectedElement.getAttribute('crs');
             let uniqueID = uuidv4();
             let extentGeographic = selectedElement.getAttribute('extent');
             let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
@@ -104,7 +106,8 @@ const AppNavBar = () => {
                             id: uniqueID,
                             extent: [...p1, ...p2],
                             type: geomField[0].localType,
-                            geometry: geomField[0].name
+                            geometry: geomField[0].name,
+                            crs
                         }));
                     })
                     .catch(() => {
@@ -112,11 +115,25 @@ const AppNavBar = () => {
                             id: uniqueID,
                             extent: [...p1, ...p2],
                             type: null,
-                            geometry: null
+                            geometry: null,
+                            crs
                         }));
                     });
-                const layerObj = setter(url, layerName, `${layerTitle}&${uniqueID}`);
-                dispatch(addPendingLayer(layerObj));
+                const obj = new Image(
+                    {
+                        title: `${layerTitle}&${uniqueID}`,
+                        source: new ImageWMS(
+                            {
+                                url: url,
+                                params: {
+                                    LAYERS: [layerName],
+                                    VERSION: '1.1.1'
+                                }
+                            }
+                        )
+                    }
+                );
+                dispatch(addPendingLayer(obj));
             }
             else {
                 dispatch(setToastColor('warning'));
