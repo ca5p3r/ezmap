@@ -132,3 +132,9 @@ export const resetMapExtent = () => {
         type: 'resetMapExtent'
     };
 };
+export const triggerIdentify = (x = false) => {
+    return {
+        type: 'triggerIdentify',
+        payload: x
+    };
+};

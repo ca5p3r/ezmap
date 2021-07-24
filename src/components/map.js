@@ -3,8 +3,8 @@ import {
     useState
 } from "react";
 import { Map } from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import { Tile as TileLayer } from 'ol/layer';
+import { OSM } from 'ol/source';
 import {
     ZoomToExtent,
     FullScreen,
@@ -14,6 +14,7 @@ import {
 } from 'ol/control';
 import { transform } from "ol/proj";
 import 'ol/ol.css';
+import { Draw } from 'ol/interaction';
 import {
     setCursor,
     setMapCenter,
@@ -47,6 +48,7 @@ const MyMap = () => {
     const workspaceInfo = useSelector(state => state.workspace);
     const tocInfo = useSelector(state => state.toc);
     const toastInfo = useSelector(state => state.toast);
+    const identifyInfo = useSelector(state => state.identify);
     const activeLayers = tocInfo.activeLayers;
     const showBookmark = bookmarksInfo.visibility;
     const showTOC = tocInfo.visibility;
@@ -54,6 +56,9 @@ const MyMap = () => {
     const trigger = tocInfo.comonentChanged;
     const data = tocInfo.historicalData;
     const bookmarksList = bookmarksInfo.list;
+    let draw = new Draw({
+        type: 'Point'
+    });
     const [olmap] = useState(new Map({
         controls: defaultControls().extend([
             new ZoomToExtent({
@@ -86,6 +91,7 @@ const MyMap = () => {
             source: new OSM()
         }));
         dispatch(setActiveLayers(olmap.getLayers().array_));
+        olmap.getTargetElement().style.cursor = 'circle';
         // eslint-disable-next-line
     }, []);
     useEffect(() => {
@@ -128,6 +134,19 @@ const MyMap = () => {
         }
         // eslint-disable-next-line
     }, [mapInfo.mapExtent.length]);
+    useEffect(() => {
+        if (identifyInfo.enabled) {
+            olmap.addInteraction(draw);
+        }
+        else {
+            olmap.getInteractions().forEach((interaction) => {
+                if (interaction instanceof Draw) {
+                    olmap.removeInteraction(interaction);
+                };
+            });
+        }
+        // eslint-disable-next-line
+    }, [identifyInfo.enabled])
     const handleBookmarkDismiss = () => {
         dispatch(triggerBookmarks());
     };

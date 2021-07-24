@@ -1,4 +1,4 @@
-const mapInfoState = {
+const myState = {
     cursorCenter: [0, 0],
     mapCenter: [3379498.795126273, 3114399.982142698],
     mapZoom: 6.8282764481106195,
@@ -6,7 +6,7 @@ const mapInfoState = {
     mapExtent: []
 };
 export const mapInfoReducer = (
-    state = mapInfoState,
+    state = myState,
     action
 ) => {
     switch (action.type) {
