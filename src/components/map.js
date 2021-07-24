@@ -136,6 +136,12 @@ const MyMap = () => {
     }, [mapInfo.mapExtent.length]);
     useEffect(() => {
         if (identifyInfo.enabled) {
+            dispatch(setToastColor('info'));
+            dispatch(setMessage({
+                title: 'Notice',
+                message: 'Select a feature on the map!'
+            }));
+            dispatch(triggerShowToast(true));
             olmap.addInteraction(draw);
         }
         else {

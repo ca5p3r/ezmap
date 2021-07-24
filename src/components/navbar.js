@@ -22,7 +22,8 @@ import {
     setMessage,
     setToastColor,
     insertHistoricalLayer,
-    triggerIdentify
+    triggerIdentify,
+    triggerIsLoading
 } from '../actions';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
 import ImageWMS from 'ol/source/ImageWMS';
@@ -49,6 +50,7 @@ const AppNavBar = () => {
     const handleFetch = (url) => {
         const parser = new WMSCapabilities();
         if (url && url !== '') {
+            dispatch(triggerIsLoading(true));
             fetch(`${url}?request=getCapabilities`)
                 .then((response) => {
                     return response.text();
@@ -60,6 +62,7 @@ const AppNavBar = () => {
                 .then((arr) => {
                     dispatch(updateLayers(arr));
                     setAvailability(true);
+                    dispatch(triggerIsLoading(false));
                 })
                 .catch((err) => {
                     dispatch(setToastColor('danger'));
@@ -70,6 +73,7 @@ const AppNavBar = () => {
                     dispatch(triggerShowToast(true));
                     dispatch(resetLayers());
                     setAvailability(false);
+                    dispatch(triggerIsLoading(false));
                 });
         }
         else {

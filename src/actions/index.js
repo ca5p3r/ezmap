@@ -138,3 +138,9 @@ export const triggerIdentify = (x = false) => {
         payload: x
     };
 };
+export const triggerIsLoading = (x = false) => {
+    return {
+        type: 'triggerIsLoading',
+        payload: x
+    };
+};
