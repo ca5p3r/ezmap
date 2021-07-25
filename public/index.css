@@ -83,10 +83,6 @@ html, body, #root #application {
     padding: 0.5rem;
 }
 
-.bookmarks h2 {
-    text-align: center;
-}
-
 .landing {
     height: 94%;
     width: 100%;
@@ -112,7 +108,7 @@ html, body, #root #application {
     z-index: 1051;
 }
 
-.toc h2 {
+.toc h2, .bookmarks h2, .identify h2 {
     text-align: center;
     border: solid .5px black;
 }
@@ -193,4 +189,29 @@ html, body, #root #application {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.identify {
+    position: absolute;
+    top: 4rem;
+    right: 1rem;
+    background: #43a3b8;
+    width: 20%;
+    height: 80%;
+    text-align: center;
+    z-index: 1051;
+}
+
+#identify-buttons {
+    height: 5%;
+    width: 100%;
+    border: solid .5px black;
+}
+
+#identify-body {
+    height: 95%;
+    width: 100%;
+    padding: 5px;
+    overflow-y: scroll;
+    border: solid .5px black;
 }

@@ -34,7 +34,8 @@ import {
     removeBookmark,
     setClickedPoint,
     clearResult,
-    setResult
+    setResult,
+    triggerIdentifyVisibility
 } from "../actions";
 import {
     useSelector,
@@ -45,6 +46,7 @@ import TOC from './widgets/toc';
 import Bookmarks from './widgets/bookmarks';
 import MapInfo from './widgets/info';
 import MyToast from './widgets/toast';
+import Identify from "./widgets/identify";
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
@@ -56,6 +58,7 @@ const MyMap = () => {
     const activeLayers = tocInfo.activeLayers;
     const showBookmark = bookmarksInfo.visibility;
     const showTOC = tocInfo.visibility;
+    const showIdentify = identifyInfo.visibility;
     const transformedCenter = transform(mapInfo.mapCenter, 'EPSG:3857', 'EPSG:4326');
     const trigger = tocInfo.comonentChanged;
     const data = tocInfo.historicalData;
@@ -179,11 +182,18 @@ const MyMap = () => {
                     fetch(layer.url + 'wfs', requestOptions)
                         .then(res => {
                             if (!res.ok) {
-                                throw Error('Could not fetch data from server!');
+                                dispatch(setToastColor('danger'));
+                                dispatch(setMessage({
+                                    title: 'Fetch error',
+                                    message: 'Could not fetch data!'
+                                }));
                             };
                             return res.json();
                         })
-                        .then(obj => dispatch(setResult(obj.features[0])))
+                        .then(obj => {
+                            dispatch(setResult(obj.features[0]));
+                            dispatch(triggerIdentifyVisibility(true));
+                        })
                         .catch(error => {
                             if (error.name !== 'AbortError') {
                                 dispatch(setToastColor('danger'));
@@ -285,6 +295,9 @@ const MyMap = () => {
         dispatch(setActiveLayers(activeLayers));
         dispatch(triggerTOCChange(true));
     };
+    const handleIdentifyDismiss = () => {
+        dispatch(triggerIdentifyVisibility());
+    }
     const handleLayerRemove = (title) => {
         let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
         dispatch(setActiveLayers(remainingLayers));
@@ -301,6 +314,7 @@ const MyMap = () => {
         <div id="map">
             {showBookmark && <Bookmarks bookmarksList={bookmarksList} handleDismiss={handleBookmarkDismiss} handleSave={handleBookmarkSave} handleRemoveAll={handleRemoveAllBookmarks} handleRemove={handleRemoveBookmark} handleLoad={handleLoadBookmark} />}
             {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
+            {showIdentify && <Identify handleDismiss={handleIdentifyDismiss} results={identifyInfo.result} />}
             <MapInfo cursorCenter={mapInfo.cursorCenter} mapCenter={transformedCenter} mapZoom={mapInfo.mapZoom} />
             {toastInfo.visibility && <MyToast triggerShowToast={handleToastTrigger} color={toastInfo.color} visibility={toastInfo.visibility} title={toastInfo.title} message={toastInfo.message} />}
         </div>

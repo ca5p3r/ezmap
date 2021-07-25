@@ -161,3 +161,9 @@ export const clearResult = () => {
         type: 'clearResult'
     };
 };
+export const triggerIdentifyVisibility = (x = false) => {
+    return {
+        type: 'triggerIdentifyVisibility',
+        payload: x
+    };
+};

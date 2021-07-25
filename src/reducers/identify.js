@@ -14,6 +14,11 @@ export const identifyReducer = (
                 ...state,
                 enabled: action.payload
             };
+        case 'triggerIdentifyVisibility':
+            return {
+                ...state,
+                visibility: action.payload
+            };
         case 'setResult':
             result.push(action.payload);
             return {
