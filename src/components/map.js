@@ -191,8 +191,18 @@ const MyMap = () => {
                             return res.json();
                         })
                         .then(obj => {
-                            dispatch(setResult(obj.features[0]));
-                            dispatch(triggerIdentifyVisibility(true));
+                            if (obj.features[0]) {
+                                dispatch(setResult(obj.features[0]));
+                                dispatch(triggerIdentifyVisibility(true));
+                            }
+                            else {
+                                dispatch(setToastColor('warning'));
+                                dispatch(setMessage({
+                                    title: 'Warning',
+                                    message: 'No results found!'
+                                }));
+                                dispatch(triggerShowToast(true));
+                            }
                         })
                         .catch(error => {
                             if (error.name !== 'AbortError') {
@@ -201,6 +211,7 @@ const MyMap = () => {
                                     title: 'Fetch error',
                                     message: error.toString()
                                 }));
+                                dispatch(triggerShowToast(true));
                             };
                         });
                 })
