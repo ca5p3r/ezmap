@@ -150,3 +150,14 @@ export const setClickedPoint = (x) => {
         payload: x
     };
 };
+export const setResult = (x) => {
+    return {
+        type: 'setResult',
+        payload: x
+    };
+};
+export const clearResult = () => {
+    return {
+        type: 'clearResult'
+    };
+};

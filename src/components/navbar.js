@@ -23,7 +23,9 @@ import {
     setToastColor,
     insertHistoricalLayer,
     triggerIdentify,
-    triggerIsLoading
+    triggerIsLoading,
+    setClickedPoint,
+    clearResult
 } from '../actions';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
 import { transform } from "ol/proj";
@@ -182,6 +184,8 @@ const AppNavBar = () => {
     };
     const handleIdentifyClick = () => {
         dispatch(triggerIdentify(!identifyState));
+        dispatch(setClickedPoint([]));
+        dispatch(clearResult());
     }
     return (
         <Navbar bg="info" expand="lg">

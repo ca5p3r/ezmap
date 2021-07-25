@@ -32,7 +32,9 @@ import {
     addBookmark,
     removeAllBookmarks,
     removeBookmark,
-    setClickedPoint
+    setClickedPoint,
+    clearResult,
+    setResult
 } from "../actions";
 import {
     useSelector,
@@ -161,6 +163,7 @@ const MyMap = () => {
     useEffect(() => {
         if (identifyInfo.enabled) {
             if (mapInfo.clickedPoint.length > 0) {
+                dispatch(clearResult());
                 const controller = new AbortController();
                 const buffer = makeBuffer(mapInfo.clickedPoint);
                 const queriableLayers = data.filter(item => item.geometry !== null);
@@ -180,10 +183,14 @@ const MyMap = () => {
                             };
                             return res.json();
                         })
-                        .then(obj => console.log(obj))
+                        .then(obj => dispatch(setResult(obj.features[0])))
                         .catch(error => {
                             if (error.name !== 'AbortError') {
-                                console.log(error);
+                                dispatch(setToastColor('danger'));
+                                dispatch(setMessage({
+                                    title: 'Fetch error',
+                                    message: error.toString()
+                                }));
                             };
                         });
                 })
