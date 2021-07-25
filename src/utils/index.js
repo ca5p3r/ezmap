@@ -31,3 +31,13 @@ export const getFeatureByIdentify = (url, layerName, geomField, coords, srs) => 
         });
     return { data, isLoading, error };
 };
+const makeBuffer = (point) => {
+    let x = point[0];
+    let y = point[1];
+    let p1 = [x - 5, y + 5];
+    let p2 = [x + 5, y + 5];
+    let p3 = [x + 5, y - 5];
+    let p4 = [x - 5, y - 5];
+    let p5 = p1;
+    return { p1, p2, p3, p4, p5 }
+};

@@ -56,7 +56,7 @@ const MyMap = () => {
     const trigger = tocInfo.comonentChanged;
     const data = tocInfo.historicalData;
     const bookmarksList = bookmarksInfo.list;
-    let draw = new Draw({
+    const draw = new Draw({
         type: 'Point'
     });
     const [olmap] = useState(new Map({

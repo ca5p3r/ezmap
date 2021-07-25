@@ -1,7 +1,6 @@
 const myState = {
     enabled: false,
-    visibility: false,
-    clickedPoint: []
+    visibility: false
 };
 export const identifyReducer = (
     state = myState,

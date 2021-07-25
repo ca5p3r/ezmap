@@ -6,7 +6,6 @@ import Loading from './components/widgets/loader';
 function App() {
     const login = useSelector(state => state.login.isLogged);
     const isLoading = useSelector(state => state.mapInfo.isLoading);
-    console.log(isLoading);
     return (
         <div className="App">
             <Navbar />
