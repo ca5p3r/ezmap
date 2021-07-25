@@ -5,17 +5,17 @@ const Identify = (props) => {
             <div id="identify-body">
                 <h2>Identify result</h2>
                 {props.results && props.results.map(
-                    result => {
+                    (result, key) => {
                         return (
-                            <div>
+                            <div key={key}>
                                 <h6>{result.id}</h6>
                                 <Table striped bordered hover size="sm">
                                     <tbody>
-                                        {Object.keys(result.properties).map(key => {
+                                        {Object.keys(result.properties).map((item, key) => {
                                             return (
-                                                <tr>
-                                                    <td>{key}</td>
-                                                    <td>{result.properties[key]}</td>
+                                                <tr key={key}>
+                                                    <td>{item}</td>
+                                                    <td>{result.properties[item]}</td>
                                                 </tr>
                                             )
                                         })}
