@@ -1,11 +1,11 @@
-const toastState = {
+const myState = {
     visibility: false,
     title: '',
     message: '',
     color: 'danger'
 };
 export const toastReducer = (
-    state = toastState,
+    state = myState,
     action
 ) => {
     switch (action.type) {

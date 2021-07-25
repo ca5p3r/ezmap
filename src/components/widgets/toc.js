@@ -10,6 +10,7 @@ const TOC = (props) => {
     return (
         <div className="toc">
             <div id="toc-body">
+                <h2>Table of contents</h2>
                 <DragDropContext onDragEnd={props.handleOnDragEnd}>
                     <Droppable droppableId="toc-list">
                         {(provided) => (

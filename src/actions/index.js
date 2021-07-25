@@ -132,3 +132,38 @@ export const resetMapExtent = () => {
         type: 'resetMapExtent'
     };
 };
+export const triggerIdentify = (x = false) => {
+    return {
+        type: 'triggerIdentify',
+        payload: x
+    };
+};
+export const triggerIsLoading = (x = false) => {
+    return {
+        type: 'triggerIsLoading',
+        payload: x
+    };
+};
+export const setClickedPoint = (x) => {
+    return {
+        type: 'setClickedPoint',
+        payload: x
+    };
+};
+export const setResult = (x) => {
+    return {
+        type: 'setResult',
+        payload: x
+    };
+};
+export const clearResult = () => {
+    return {
+        type: 'clearResult'
+    };
+};
+export const triggerIdentifyVisibility = (x = false) => {
+    return {
+        type: 'triggerIdentifyVisibility',
+        payload: x
+    };
+};

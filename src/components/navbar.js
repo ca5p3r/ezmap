@@ -21,12 +21,17 @@ import {
     triggerShowToast,
     setMessage,
     setToastColor,
-    insertHistoricalLayer
+    insertHistoricalLayer,
+    triggerIdentify,
+    triggerIsLoading,
+    setClickedPoint,
+    clearResult,
+    triggerIdentifyVisibility
 } from '../actions';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
-import setter from "../utils/layers/setter";
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
+import { setter } from '../utils';
 const AppNavBar = () => {
     const dispatch = useDispatch();
     const [availability, setAvailability] = useState(false);
@@ -34,17 +39,20 @@ const AppNavBar = () => {
     const bookmarkInfo = useSelector(state => state.bookmarks);
     const TOCInfo = useSelector(state => state.toc);
     const workspaceInfo = useSelector(state => state.workspace);
+    const identifyInfo = useSelector(state => state.identify);
     const TOCState = TOCInfo.visibility;
     const bookmarkState = bookmarkInfo.visibility;
     const workspaceVisibility = workspaceInfo.visibility;
     const isLogged = loginInfo.isLogged;
     const showLogin = loginInfo.visibility;
+    const identifyState = identifyInfo.enabled;
     const handleHide = () => {
         dispatch(triggerShowWorkspace());
     };
     const handleFetch = (url) => {
         const parser = new WMSCapabilities();
         if (url && url !== '') {
+            dispatch(triggerIsLoading(true));
             fetch(`${url}?request=getCapabilities`)
                 .then((response) => {
                     return response.text();
@@ -56,6 +64,7 @@ const AppNavBar = () => {
                 .then((arr) => {
                     dispatch(updateLayers(arr));
                     setAvailability(true);
+                    dispatch(triggerIsLoading(false));
                 })
                 .catch((err) => {
                     dispatch(setToastColor('danger'));
@@ -66,6 +75,7 @@ const AppNavBar = () => {
                     dispatch(triggerShowToast(true));
                     dispatch(resetLayers());
                     setAvailability(false);
+                    dispatch(triggerIsLoading(false));
                 });
         }
         else {
@@ -80,20 +90,52 @@ const AppNavBar = () => {
     };
     const handleAdd = (url) => {
         if (availability) {
+            let geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
             let layerName = document.getElementById('formBasicLayer').value;
             let selectedElement = document.getElementById(`option${layerName}`);
             let layerTitle = selectedElement.getAttribute('title');
+            let crs = selectedElement.getAttribute('crs');
             let uniqueID = uuidv4();
             let extentGeographic = selectedElement.getAttribute('extent');
-            let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
-            let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
             if (layerName && layerName !== 'Selector') {
-                const layerObj = setter(url, layerName, `${layerTitle}&${uniqueID}`);
-                dispatch(addPendingLayer(layerObj));
-                dispatch(insertHistoricalLayer({
-                    id: uniqueID,
-                    extent: [...p1, ...p2]
-                }));
+                let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
+                let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
+                fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
+                    .then((response) => {
+                        return response.text();
+                    })
+                    .then((text) => {
+                        let obj = JSON.parse(text);
+                        return obj;
+                    })
+                    .then((obj) => {
+                        let fields = obj.featureTypes[0].properties
+                        var geomField = fields.filter(field => geometries.includes(field.localType));
+                        dispatch(insertHistoricalLayer({
+                            id: uniqueID,
+                            name: layerName,
+                            title: layerTitle,
+                            url: url.slice(0, -3),
+                            extent: [...p1, ...p2],
+                            type: geomField[0].localType,
+                            geometry: geomField[0].name,
+                            crs
+                        }));
+                    })
+                    .catch(() => {
+                        dispatch(insertHistoricalLayer({
+                            id: uniqueID,
+                            name: layerName,
+                            title: layerTitle,
+                            url: url.slice(0, -3),
+                            extent: [...p1, ...p2],
+                            type: null,
+                            geometry: null,
+                            crs
+                        }));
+                    });
+                const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);
+                dispatch(addPendingLayer(obj));
             }
             else {
                 dispatch(setToastColor('warning'));
@@ -130,16 +172,24 @@ const AppNavBar = () => {
         dispatch(triggerBookmarks(!bookmarkState));
         dispatch(triggerShowWorkspace());
         dispatch(triggerShowTOC());
+        dispatch(triggerIdentifyVisibility());
     };
     const handleWorkspaceClick = () => {
         dispatch(triggerShowWorkspace(!workspaceVisibility));
         dispatch(triggerBookmarks());
         dispatch(triggerShowTOC());
+        dispatch(triggerIdentifyVisibility());
     };
     const handleTOCClick = () => {
         dispatch(triggerShowTOC(!TOCState));
         dispatch(triggerBookmarks());
         dispatch(triggerShowWorkspace());
+        dispatch(triggerIdentifyVisibility());
+    };
+    const handleIdentifyClick = () => {
+        dispatch(triggerIdentify(!identifyState));
+        dispatch(setClickedPoint([]));
+        dispatch(clearResult());
     };
     return (
         <Navbar bg="info" expand="lg">
@@ -156,7 +206,7 @@ const AppNavBar = () => {
                         <Nav.Link title="Spatial search"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="map-marked" className="svg-inline--fa fa-map-marked fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M288 0c-69.59 0-126 56.41-126 126 0 56.26 82.35 158.8 113.9 196.02 6.39 7.54 17.82 7.54 24.2 0C331.65 284.8 414 182.26 414 126 414 56.41 357.59 0 288 0zM20.12 215.95A32.006 32.006 0 0 0 0 245.66v250.32c0 11.32 11.43 19.06 21.94 14.86L160 448V214.92c-8.84-15.98-16.07-31.54-21.25-46.42L20.12 215.95zM288 359.67c-14.07 0-27.38-6.18-36.51-16.96-19.66-23.2-40.57-49.62-59.49-76.72v182l192 64V266c-18.92 27.09-39.82 53.52-59.49 76.72-9.13 10.77-22.44 16.95-36.51 16.95zm266.06-198.51L416 224v288l139.88-55.95A31.996 31.996 0 0 0 576 426.34V176.02c0-11.32-11.43-19.06-21.94-14.86z"></path></svg></Nav.Link>
                         <Nav.Link title="Tabular search"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="table" className="svg-inline--fa fa-table fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zM224 416H64v-96h160v96zm0-160H64v-96h160v96zm224 160H288v-96h160v96zm0-160H288v-96h160v96z"></path></svg></Nav.Link>
                         <Nav.Link title="Simple search"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" className="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg></Nav.Link>
-                        <Nav.Link title="Identify"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info-circle" className="svg-inline--fa fa-info-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"></path></svg></Nav.Link>
+                        <Nav.Link onClick={handleIdentifyClick} title="Identify"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info-circle" className="svg-inline--fa fa-info-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"></path></svg></Nav.Link>
                         <Nav.Link onClick={handleBookmarkClick} title="Bookmarks"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="bookmark" className="svg-inline--fa fa-bookmark fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M0 512V48C0 21.49 21.49 0 48 0h288c26.51 0 48 21.49 48 48v464L192 400 0 512z"></path></svg></Nav.Link>
                         <Nav.Link onClick={handleWorkspaceClick} title="Layer manager"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="tools" className="svg-inline--fa fa-tools fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M501.1 395.7L384 278.6c-23.1-23.1-57.6-27.6-85.4-13.9L192 158.1V96L64 0 0 64l96 128h62.1l106.6 106.6c-13.6 27.8-9.2 62.3 13.9 85.4l117.1 117.1c14.6 14.6 38.2 14.6 52.7 0l52.7-52.7c14.5-14.6 14.5-38.2 0-52.7zM331.7 225c28.3 0 54.9 11 74.9 31l19.4 19.4c15.8-6.9 30.8-16.5 43.8-29.5 37.1-37.1 49.7-89.3 37.9-136.7-2.2-9-13.5-12.1-20.1-5.5l-74.4 74.4-67.9-11.3L334 98.9l74.4-74.4c6.6-6.6 3.4-17.9-5.7-20.2-47.4-11.7-99.6.9-136.6 37.9-28.5 28.5-41.9 66.1-41.2 103.6l82.1 82.1c8.1-1.9 16.5-2.9 24.7-2.9zm-103.9 82l-56.7-56.7L18.7 402.8c-25 25-25 65.5 0 90.5s65.5 25 90.5 0l123.6-123.6c-7.6-19.9-9.9-41.6-5-62.7zM64 472c-13.2 0-24-10.8-24-24 0-13.3 10.7-24 24-24s24 10.7 24 24c0 13.2-10.7 24-24 24z"></path></svg></Nav.Link>
                         <Nav.Link onClick={handleTOCClick} title="Table of contents"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="far" data-icon="list-alt" className="svg-inline--fa fa-list-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"></path></svg></Nav.Link>

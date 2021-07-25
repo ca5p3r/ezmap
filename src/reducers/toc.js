@@ -1,11 +1,11 @@
-const tocState = {
+const myState = {
     visibility: false,
     activeLayers: null,
     comonentChanged: false,
     historicalData: []
 };
 export const tocReducer = (
-    state = tocState,
+    state = myState,
     action
 ) => {
     switch (action.type) {

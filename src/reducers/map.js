@@ -1,12 +1,14 @@
-const mapInfoState = {
+const myState = {
     cursorCenter: [0, 0],
-    mapCenter: [3379498.795126273, 3114399.982142698],
-    mapZoom: 6.8282764481106195,
-    defaultExtent: [2099724.358397806, 2504130.7943378426, 4659273.23185474, 3724669.1699475534],
-    mapExtent: []
+    mapCenter: [3379498.79, 3114399.98],
+    mapZoom: 6.83,
+    defaultExtent: [2099724.35, 2504130.79, 4659273.23, 3724669.16],
+    mapExtent: [],
+    clickedPoint: [],
+    isLoading: false
 };
 export const mapInfoReducer = (
-    state = mapInfoState,
+    state = myState,
     action
 ) => {
     switch (action.type) {
@@ -34,6 +36,16 @@ export const mapInfoReducer = (
             return {
                 ...state,
                 mapExtent: []
+            };
+        case 'triggerIsLoading':
+            return {
+                ...state,
+                isLoading: action.payload
+            };
+        case 'setClickedPoint':
+            return {
+                ...state,
+                clickedPoint: action.payload
             };
         default:
             return state;
