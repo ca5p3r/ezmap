@@ -26,10 +26,9 @@ import {
     triggerIsLoading
 } from '../actions';
 import WMSCapabilities from 'ol/format/WMSCapabilities';
-import ImageWMS from 'ol/source/ImageWMS';
-import Image from 'ol/layer/Image';
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
+import { setter } from '../utils';
 const AppNavBar = () => {
     const dispatch = useDispatch();
     const [availability, setAvailability] = useState(false);
@@ -95,9 +94,9 @@ const AppNavBar = () => {
             let crs = selectedElement.getAttribute('crs');
             let uniqueID = uuidv4();
             let extentGeographic = selectedElement.getAttribute('extent');
-            let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
-            let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
             if (layerName && layerName !== 'Selector') {
+                let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
+                let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
                 fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
                     .then((response) => {
                         return response.text();
@@ -111,6 +110,9 @@ const AppNavBar = () => {
                         var geomField = fields.filter(field => geometries.includes(field.localType));
                         dispatch(insertHistoricalLayer({
                             id: uniqueID,
+                            name: layerName,
+                            title: layerTitle,
+                            url: url.slice(0, -3),
                             extent: [...p1, ...p2],
                             type: geomField[0].localType,
                             geometry: geomField[0].name,
@@ -120,26 +122,16 @@ const AppNavBar = () => {
                     .catch(() => {
                         dispatch(insertHistoricalLayer({
                             id: uniqueID,
+                            name: layerName,
+                            title: layerTitle,
+                            url: url.slice(0, -3),
                             extent: [...p1, ...p2],
                             type: null,
                             geometry: null,
                             crs
                         }));
                     });
-                const obj = new Image(
-                    {
-                        title: `${layerTitle}&${uniqueID}`,
-                        source: new ImageWMS(
-                            {
-                                url: url,
-                                params: {
-                                    LAYERS: [layerName],
-                                    VERSION: '1.1.1'
-                                }
-                            }
-                        )
-                    }
-                );
+                const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);
                 dispatch(addPendingLayer(obj));
             }
             else {

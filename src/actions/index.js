@@ -144,3 +144,9 @@ export const triggerIsLoading = (x = false) => {
         payload: x
     };
 };
+export const setClickedPoint = (x) => {
+    return {
+        type: 'setClickedPoint',
+        payload: x
+    };
+};

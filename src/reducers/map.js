@@ -4,6 +4,7 @@ const myState = {
     mapZoom: 6.83,
     defaultExtent: [2099724.35, 2504130.79, 4659273.23, 3724669.16],
     mapExtent: [],
+    clickedPoint: [],
     isLoading: false
 };
 export const mapInfoReducer = (
@@ -40,6 +41,11 @@ export const mapInfoReducer = (
             return {
                 ...state,
                 isLoading: action.payload
+            };
+        case 'setClickedPoint':
+            return {
+                ...state,
+                clickedPoint: action.payload
             };
         default:
             return state;
