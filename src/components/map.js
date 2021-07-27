@@ -35,7 +35,8 @@ import {
     setClickedPoint,
     clearResult,
     setResult,
-    triggerIdentifyVisibility
+    triggerIdentifyVisibility,
+    setHistoricalLayer
 } from "../actions";
 import {
     useSelector,
@@ -311,7 +312,9 @@ const MyMap = () => {
     }
     const handleLayerRemove = (title) => {
         let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
+        let tocRemainingLayers = data.filter(item => item.id !== title.split('&')[1]);
         dispatch(setActiveLayers(remainingLayers));
+        dispatch(setHistoricalLayer(tocRemainingLayers));
     };
     const handleGoToLayer = (title) => {
         let uniqueID = title.split('&')[1];
