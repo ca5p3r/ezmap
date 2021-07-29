@@ -170,46 +170,65 @@ const AppNavBar = () => {
         dispatch(triggerShowLogin());
     };
     const handleRegister = (username, password) => {
-        const data = { username, password };
-        fetch("http://localhost:9000/auth/create", {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => {
-                return response.json();
-            })
-            .then(obj => {
-                if (!obj.error) {
-                    dispatch(triggerShowRegister());
-                    dispatch(setToastColor('success'));
-                    dispatch(setMessage({
-                        title: 'Success',
-                        message: 'User has been created!'
-                    }));
-                    dispatch(triggerShowToast(true));
-                }
-                else {
-                    dispatch(setToastColor('warning'));
-                    dispatch(setMessage({
-                        title: 'Warning',
-                        message: obj.error
-                    }));
-                    dispatch(triggerShowToast(true));
-                }
-
-            })
-            .catch(err => {
-                dispatch(setToastColor('danger'));
+        if (username.length > 4 && username.length < 16) {
+            if (password !== '' & password.length < 8) {
+                const data = { username, password };
+                fetch("http://localhost:9000/auth/create", {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(obj => {
+                        if (!obj.error) {
+                            dispatch(triggerShowRegister());
+                            dispatch(setToastColor('success'));
+                            dispatch(setMessage({
+                                title: 'Success',
+                                message: 'User has been created!'
+                            }));
+                            dispatch(triggerShowToast(true));
+                        }
+                        else {
+                            dispatch(setToastColor('warning'));
+                            dispatch(setMessage({
+                                title: 'Warning',
+                                message: obj.error
+                            }));
+                            dispatch(triggerShowToast(true));
+                        };
+                    })
+                    .catch(err => {
+                        dispatch(setToastColor('danger'));
+                        dispatch(setMessage({
+                            title: 'Error',
+                            message: err
+                        }));
+                        dispatch(triggerShowToast(true));
+                    });
+            }
+            else {
+                dispatch(setToastColor('warning'));
                 dispatch(setMessage({
-                    title: 'Error',
-                    message: err
+                    title: 'Warning',
+                    message: 'Password length should be greater than 8'
                 }));
                 dispatch(triggerShowToast(true));
-            });
+            }
+        }
+        else {
+            dispatch(setToastColor('warning'));
+            dispatch(setMessage({
+                title: 'Warning',
+                message: 'Username should be of length 4-16'
+            }));
+            dispatch(triggerShowToast(true));
+        }
     };
     const handleLogout = () => {
         dispatch(triggerLogin());
