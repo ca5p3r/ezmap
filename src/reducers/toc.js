@@ -31,6 +31,11 @@ export const tocReducer = (
                 ...state,
                 historicalData: data
             };
+        case 'setHistoricalLayer':
+            return {
+                ...state,
+                historicalData: action.payload
+            };
         default:
             return state;
     };

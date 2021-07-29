@@ -121,6 +121,12 @@ export const insertHistoricalLayer = (x) => {
         payload: x
     };
 };
+export const setHistoricalLayer = (x) => {
+    return {
+        type: 'setHistoricalLayer',
+        payload: x
+    };
+};
 export const setMapExtent = (x) => {
     return {
         type: 'setMapExtent',
