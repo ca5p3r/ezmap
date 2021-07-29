@@ -46,7 +46,6 @@ import { makeBuffer } from '../utils';
 import TOC from './widgets/toc';
 import Bookmarks from './widgets/bookmarks';
 import MapInfo from './widgets/info';
-import MyToast from './widgets/toast';
 import Identify from "./widgets/identify";
 const MyMap = () => {
     const dispatch = useDispatch();
@@ -54,7 +53,6 @@ const MyMap = () => {
     const bookmarksInfo = useSelector(state => state.bookmarks);
     const workspaceInfo = useSelector(state => state.workspace);
     const tocInfo = useSelector(state => state.toc);
-    const toastInfo = useSelector(state => state.toast);
     const identifyInfo = useSelector(state => state.identify);
     const activeLayers = tocInfo.activeLayers;
     const showBookmark = bookmarksInfo.visibility;
@@ -331,16 +329,12 @@ const MyMap = () => {
         let newExtent = (data.filter(item => item.id === uniqueID))[0].extent;
         dispatch(setMapExtent(newExtent));
     };
-    const handleToastTrigger = () => {
-        dispatch(triggerShowToast());
-    };
     return (
         <div id="map">
             {showBookmark && <Bookmarks bookmarksList={bookmarksList} handleDismiss={handleBookmarkDismiss} handleSave={handleBookmarkSave} handleRemoveAll={handleRemoveAllBookmarks} handleRemove={handleRemoveBookmark} handleLoad={handleLoadBookmark} />}
             {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
             {showIdentify && <Identify handleDismiss={handleIdentifyDismiss} results={identifyInfo.result} />}
             <MapInfo cursorCenter={mapInfo.cursorCenter} mapCenter={transformedCenter} mapZoom={mapInfo.mapZoom} />
-            {toastInfo.visibility && <MyToast triggerShowToast={handleToastTrigger} color={toastInfo.color} visibility={toastInfo.visibility} title={toastInfo.title} message={toastInfo.message} />}
         </div>
     );
 };
