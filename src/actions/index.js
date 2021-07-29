@@ -10,6 +10,12 @@ export const triggerShowLogin = (x = false) => {
         payload: x
     };
 };
+export const triggerShowRegister = (x = false) => {
+    return {
+        type: 'triggerShowRegister',
+        payload: x
+    };
+};
 export const setMapCenter = (x) => {
     return {
         type: 'setMapCenter',

@@ -1,0 +1,3 @@
+{
+    "initDB": "CREATE DATABASE ezmap;"
+}

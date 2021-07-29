@@ -6,6 +6,7 @@ import { workspaceReducer } from './workspace';
 import { tocReducer } from './toc';
 import { toastReducer } from "./toast";
 import { identifyReducer } from "./identify";
+import { registerReducer } from './register';
 export const reducers = combineReducers({
     login: loginReducer,
     mapInfo: mapInfoReducer,
@@ -13,5 +14,6 @@ export const reducers = combineReducers({
     workspace: workspaceReducer,
     toc: tocReducer,
     toast: toastReducer,
-    identify: identifyReducer
+    identify: identifyReducer,
+    register: registerReducer
 });
