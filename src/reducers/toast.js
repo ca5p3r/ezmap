@@ -2,28 +2,20 @@ const myState = {
     visibility: false,
     title: '',
     message: '',
-    color: 'danger'
+    color: ''
 };
 export const toastReducer = (
     state = myState,
     action
 ) => {
     switch (action.type) {
-        case 'triggerShowToast':
+        case 'triggerToast':
             return {
                 ...state,
-                visibility: action.payload
-            };
-        case 'setMessage':
-            return {
-                ...state,
-                message: action.payload.message,
-                title: action.payload.title
-            };
-        case 'setToastColor':
-            return {
-                ...state,
-                color: action.payload
+                message: (action.payload.message && action.payload.message) || '',
+                title: (action.payload.title && action.payload.title) || '',
+                visibility: (action.payload.visible && action.payload.visible) || false,
+                color: (action.payload.title && action.payload.title.toLowerCase()) || ''
             };
         default:
             return state;

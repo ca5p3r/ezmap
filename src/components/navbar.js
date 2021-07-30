@@ -20,9 +20,7 @@ import {
     updateLayers,
     resetLayers,
     addPendingLayer,
-    triggerShowToast,
-    setMessage,
-    setToastColor,
+    triggerToast,
     insertHistoricalLayer,
     triggerIdentify,
     triggerIsLoading,
@@ -71,24 +69,22 @@ const AppNavBar = () => {
                     dispatch(triggerIsLoading(false));
                 })
                 .catch((err) => {
-                    dispatch(setToastColor('danger'));
-                    dispatch(setMessage({
-                        title: 'Fetch error',
-                        message: err.toString()
+                    dispatch(triggerToast({
+                        title: 'Danger',
+                        message: err.toString(),
+                        visible: true
                     }));
-                    dispatch(triggerShowToast(true));
                     dispatch(resetLayers());
                     setAvailability(false);
                     dispatch(triggerIsLoading(false));
                 });
         }
         else {
-            dispatch(setToastColor('warning'));
-            dispatch(setMessage({
+            dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Please enter URL!'
+                message: 'Please enter URL!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         };
 
     };
@@ -142,21 +138,19 @@ const AppNavBar = () => {
                 dispatch(addPendingLayer(obj));
             }
             else {
-                dispatch(setToastColor('warning'));
-                dispatch(setMessage({
+                dispatch(triggerToast({
                     title: 'Warning',
-                    message: 'Please select a layer!'
+                    message: 'Please select a layer!',
+                    visible: true
                 }));
-                dispatch(triggerShowToast(true));
             };
         }
         else {
-            dispatch(setToastColor('warning'));
-            dispatch(setMessage({
+            dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Please enter URL!'
+                message: 'Please enter URL!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         };
     };
     const handleTriggerShowLogin = () => {
@@ -171,7 +165,7 @@ const AppNavBar = () => {
     };
     const handleRegister = (username, password) => {
         if (username.length > 4 && username.length < 16) {
-            if (password !== '' & password.length < 8) {
+            if (password !== '' && password.length > 8) {
                 const data = { username, password };
                 fetch("http://localhost:9000/auth/create", {
                     method: 'POST',
@@ -187,47 +181,42 @@ const AppNavBar = () => {
                     .then(obj => {
                         if (!obj.error) {
                             dispatch(triggerShowRegister());
-                            dispatch(setToastColor('success'));
-                            dispatch(setMessage({
+                            dispatch(triggerToast({
                                 title: 'Success',
-                                message: 'User has been created!'
+                                message: 'User has been created!',
+                                visible: true
                             }));
-                            dispatch(triggerShowToast(true));
                         }
                         else {
-                            dispatch(setToastColor('warning'));
-                            dispatch(setMessage({
+                            dispatch(triggerToast({
                                 title: 'Warning',
-                                message: obj.error
+                                message: obj.error,
+                                visible: true
                             }));
-                            dispatch(triggerShowToast(true));
                         };
                     })
                     .catch(err => {
-                        dispatch(setToastColor('danger'));
-                        dispatch(setMessage({
-                            title: 'Error',
-                            message: err
+                        dispatch(triggerToast({
+                            title: 'Danger',
+                            message: err,
+                            visible: true
                         }));
-                        dispatch(triggerShowToast(true));
                     });
             }
             else {
-                dispatch(setToastColor('warning'));
-                dispatch(setMessage({
+                dispatch(triggerToast({
                     title: 'Warning',
-                    message: 'Password length should be greater than 8'
+                    message: 'Password length should be greater than 8',
+                    visible: true
                 }));
-                dispatch(triggerShowToast(true));
             }
         }
         else {
-            dispatch(setToastColor('warning'));
-            dispatch(setMessage({
+            dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Username should be of length 4-16'
+                message: 'Username should be of length 4-16',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         }
     };
     const handleLogout = () => {

@@ -103,21 +103,9 @@ export const triggerTOCChange = (x = false) => {
         payload: x
     };
 };
-export const triggerShowToast = (x = false) => {
+export const triggerToast = (x = {}) => {
     return {
-        type: 'triggerShowToast',
-        payload: x
-    };
-};
-export const setMessage = (x) => {
-    return {
-        type: 'setMessage',
-        payload: x
-    };
-};
-export const setToastColor = (x) => {
-    return {
-        type: 'setToastColor',
+        type: 'triggerToast',
         payload: x
     };
 };

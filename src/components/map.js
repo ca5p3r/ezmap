@@ -22,9 +22,7 @@ import {
     resetPendingLayer,
     setActiveLayers,
     triggerTOCChange,
-    triggerShowToast,
-    setMessage,
-    setToastColor,
+    triggerToast,
     triggerShowTOC,
     resetMapExtent,
     setMapExtent,
@@ -113,12 +111,11 @@ const MyMap = () => {
             olmap.addLayer(workspaceInfo.pendingLayer);
             dispatch(resetPendingLayer());
             dispatch(setActiveLayers(olmap.getLayers().array_));
-            dispatch(setToastColor('success'));
-            dispatch(setMessage({
+            dispatch(triggerToast({
                 title: 'Success',
-                message: 'Layer has been added!'
+                message: 'Layer has been added!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         };
         // eslint-disable-next-line
     }, [workspaceInfo.pendingLayer]);
@@ -145,12 +142,11 @@ const MyMap = () => {
     }, [mapInfo.mapExtent.length]);
     useEffect(() => {
         if (identifyInfo.enabled) {
-            dispatch(setToastColor('info'));
-            dispatch(setMessage({
-                title: 'Notice',
-                message: 'Select a feature on the map!'
+            dispatch(triggerToast({
+                title: 'Info',
+                message: 'Select a feature on the map!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
             olmap.addInteraction(draw);
         }
         else {
@@ -182,10 +178,10 @@ const MyMap = () => {
                         fetch(layer.url + 'wfs', requestOptions)
                             .then(res => {
                                 if (!res.ok) {
-                                    dispatch(setToastColor('danger'));
-                                    dispatch(setMessage({
-                                        title: 'Fetch error',
-                                        message: 'Could not fetch data!'
+                                    dispatch(triggerToast({
+                                        title: 'Danger',
+                                        message: 'Could not fetch data!',
+                                        visible: true
                                     }));
                                 };
                                 return res.json();
@@ -196,33 +192,30 @@ const MyMap = () => {
                                     dispatch(triggerIdentifyVisibility(true));
                                 }
                                 else {
-                                    dispatch(setToastColor('warning'));
-                                    dispatch(setMessage({
+                                    dispatch(triggerToast({
                                         title: 'Warning',
-                                        message: 'No results found!'
+                                        message: 'No results found!',
+                                        visible: true
                                     }));
-                                    dispatch(triggerShowToast(true));
                                 }
                             })
                             .catch(error => {
                                 if (error.name !== 'AbortError') {
-                                    dispatch(setToastColor('danger'));
-                                    dispatch(setMessage({
-                                        title: 'Fetch error',
-                                        message: error.toString()
+                                    dispatch(triggerToast({
+                                        title: 'Danger',
+                                        message: error.toString(),
+                                        visible: true
                                     }));
-                                    dispatch(triggerShowToast(true));
                                 };
                             });
                     })
                 }
                 else {
-                    dispatch(setToastColor('warning'));
-                    dispatch(setMessage({
+                    dispatch(triggerToast({
                         title: 'Warning',
-                        message: 'No queriable layers found!'
+                        message: 'No queriable layers found!',
+                        visible: true
                     }));
-                    dispatch(triggerShowToast(true));
                 }
                 return () => {
                     controller.abort()
@@ -242,49 +235,44 @@ const MyMap = () => {
                 title
             };
             dispatch(addBookmark(myObj));
-            dispatch(setToastColor('success'));
-            dispatch(setMessage({
+            dispatch(triggerToast({
                 title: 'Success',
-                message: 'Bookmark saved!'
+                message: 'Bookmark saved!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         }
         else {
-            dispatch(setToastColor('warning'));
-            dispatch(setMessage({
+            dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Please enter bookmark title!'
+                message: 'Please enter bookmark title!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         };
     };
     const handleRemoveAllBookmarks = () => {
         dispatch(removeAllBookmarks());
-        dispatch(setToastColor('info'));
-        dispatch(setMessage({
-            title: 'Notice',
-            message: 'All bookmarks are deleted!'
+        dispatch(triggerToast({
+            title: 'Info',
+            message: 'All bookmarks are deleted!',
+            visible: true
         }));
-        dispatch(triggerShowToast(true));
     };
     const handleRemoveBookmark = () => {
         let item = document.getElementById('formBasicDropdown').value;
         if (item && item !== 'Selector') {
             dispatch(removeBookmark(item));
-            dispatch(setToastColor('info'));
-            dispatch(setMessage({
-                title: 'Notice',
-                message: 'Bookmark is deleted!'
+            dispatch(triggerToast({
+                title: 'Info',
+                message: 'Bookmark is deleted!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         }
         else {
-            dispatch(setToastColor('warning'));
-            dispatch(setMessage({
+            dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Please select a bookmark first!'
+                message: 'Please select a bookmark first!',
+                visible: true
             }));
-            dispatch(triggerShowToast(true));
         };
     };
     const handleLoadBookmark = () => {
