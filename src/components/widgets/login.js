@@ -12,16 +12,20 @@ const LoginModal = (props) => {
             <Modal.Body>
                 <p>Please provider username & password</p>
                 <Form>
-                    <Form.Group className="mb-3" controlId="formBasicUsername">
+                    <Form.Group className="mb-3" controlId="loginUsername">
                         <Form.Label>Username</Form.Label>
                         <Form.Control type="text" placeholder="Enter username" />
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Group className="mb-3" controlId="loginPassword">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicSubmit">
-                        <Button variant="primary" onClick={props.handleLogin}>Login</Button>
+                        <Button variant="primary" onClick={() => {
+                            const username = document.getElementById('loginUsername').value;
+                            const password = document.getElementById('loginPassword').value;
+                            props.handleLogin(username, password);
+                        }}>Login</Button>
                     </Form.Group>
                 </Form>
             </Modal.Body>
