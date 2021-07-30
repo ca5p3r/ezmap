@@ -14,7 +14,12 @@ const create_user = (req, res) => {
     client.query(query, (err) => {
       done();
       if (err) {
-        return res.send({ error: err.detail, success: false });
+        if (err.code === '23505') {
+          return res.send({ error: 'User already exists', success: false });
+        }
+        else {
+          return res.send({ error: err.detail, success: false });
+        }
       }
       else {
         return res.send({ error: null, success: true });
@@ -24,9 +29,32 @@ const create_user = (req, res) => {
 };
 
 const verify_login = (req, res) => {
-  console.log(req);
-  res.send('User logged in!');
-
+  const query = `SELECT id, password FROM users WHERE username = '${req.body.username}';`;
+  pool.connect((err, client, done) => {
+    if (err) {
+      return res.send({ error: err.detail, success: false });
+    };
+    client.query(query, (err, result) => {
+      done();
+      if (err) {
+        return res.send({ error: err.detail, success: false });
+      }
+      else {
+        if (result.rows.length > 0) {
+          const hashed = saltedMd5(req.body.password, salt);
+          if (hashed === result.rows[0].password) {
+            return res.send({ error: null, success: true });
+          }
+          else {
+            return res.send({ error: 'Wrong credentials!', success: false });
+          };
+        }
+        else {
+          return res.send({ error: 'User not found!', success: false });
+        }
+      };
+    });
+  });
 };
 
 module.exports = {

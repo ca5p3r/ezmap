@@ -7,14 +7,14 @@ import {
 import LandingPage from './components/landing';
 import Loading from './components/widgets/loader';
 import MyToast from './components/widgets/toast';
-import { triggerShowToast } from "./actions";
+import { triggerToast } from "./actions";
 function App() {
     const dispatch = useDispatch();
     const login = useSelector(state => state.login.isLogged);
     const isLoading = useSelector(state => state.mapInfo.isLoading);
     const toastInfo = useSelector(state => state.toast);
     const handleToastTrigger = () => {
-        dispatch(triggerShowToast());
+        dispatch(triggerToast());
     };
     return (
         <div className="App">
