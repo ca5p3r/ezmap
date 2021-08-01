@@ -7,14 +7,13 @@ var bodyParser = require('body-parser');
 const authRouters = require('./routes/auth');
 const { pgConnector, initQuerier } = require('./helpers/database');
 
-const queries = require('./settings/queries.json');
 const schema = fs.readFileSync(path.resolve(__dirname, "./assets/schema.sql")).toString();
 
 
 const app = express();
 
 let dbInitConnection = pgConnector.getConnection();
-let dbError = initQuerier(dbInitConnection, queries.initDB);
+let dbError = initQuerier(dbInitConnection, 'CREATE DATABASE ezmap;');
 if (!dbError) {
     dbInitConnection.end();
     let schemaInitConnection = pgConnector.getConnection('ezmap');
