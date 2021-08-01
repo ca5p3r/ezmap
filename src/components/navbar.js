@@ -50,6 +50,8 @@ const AppNavBar = () => {
     const identifyState = identifyInfo.enabled;
     const handleHide = () => {
         dispatch(triggerShowWorkspace());
+        setAvailability(false);
+        dispatch(resetLayers());
     };
     const handleFetch = (url) => {
         const parser = new WMSCapabilities();

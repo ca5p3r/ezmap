@@ -194,7 +194,7 @@ const MyMap = () => {
                                 else {
                                     dispatch(triggerToast({
                                         title: 'Warning',
-                                        message: 'No results found!',
+                                        message: `No results found for layer ${layer.title}!`,
                                         visible: true
                                     }));
                                 }
