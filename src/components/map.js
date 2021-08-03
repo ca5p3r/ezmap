@@ -23,18 +23,12 @@ import {
     setActiveLayers,
     triggerTOCChange,
     triggerToast,
-    triggerShowTOC,
     resetMapExtent,
-    setMapExtent,
-    triggerBookmarks,
-    addBookmark,
-    removeAllBookmarks,
-    removeBookmark,
     setClickedPoint,
     clearResult,
     setResult,
     triggerIdentifyVisibility,
-    setHistoricalLayer
+    triggerIsLoading
 } from "../actions";
 import {
     useSelector,
@@ -48,18 +42,11 @@ import Identify from "./widgets/identify";
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
-    const bookmarksInfo = useSelector(state => state.bookmarks);
-    const workspaceInfo = useSelector(state => state.workspace);
+    const showBookmark = useSelector(state => state.bookmarks.visibility);
+    const pendingLayer = useSelector(state => state.workspace.pendingLayer);
     const tocInfo = useSelector(state => state.toc);
-    const identifyInfo = useSelector(state => state.identify);
-    const activeLayers = tocInfo.activeLayers;
-    const showBookmark = bookmarksInfo.visibility;
-    const showTOC = tocInfo.visibility;
-    const showIdentify = identifyInfo.visibility;
-    const transformedCenter = transform(mapInfo.mapCenter, 'EPSG:3857', 'EPSG:4326');
-    const trigger = tocInfo.comonentChanged;
-    const data = tocInfo.historicalData;
-    const bookmarksList = bookmarksInfo.list;
+    const showIdentify = useSelector(state => state.identify.visibility);
+    const identifyState = useSelector(state => state.identify.enabled);
     const draw = new Draw({
         type: 'Point'
     });
@@ -107,8 +94,8 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, [mapInfo.mapZoom, mapInfo.mapCenter]);
     useEffect(() => {
-        if (Object.keys(workspaceInfo.pendingLayer).length > 0) {
-            olmap.addLayer(workspaceInfo.pendingLayer);
+        if (Object.keys(pendingLayer).length > 0) {
+            olmap.addLayer(pendingLayer);
             dispatch(resetPendingLayer());
             dispatch(setActiveLayers(olmap.getLayers().array_));
             dispatch(triggerToast({
@@ -118,7 +105,7 @@ const MyMap = () => {
             }));
         };
         // eslint-disable-next-line
-    }, [workspaceInfo.pendingLayer]);
+    }, [pendingLayer]);
     useEffect(() => {
         if (tocInfo.comonentChanged) {
             olmap.render();
@@ -127,12 +114,12 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, [tocInfo.comonentChanged]);
     useEffect(() => {
-        if (activeLayers) {
-            olmap.getLayers().array_ = activeLayers;
+        if (tocInfo.activeLayers) {
+            olmap.getLayers().array_ = tocInfo.activeLayers;
             olmap.render();
         }
         // eslint-disable-next-line
-    }, [activeLayers]);
+    }, [tocInfo.activeLayers]);
     useEffect(() => {
         if (mapInfo.mapExtent.length > 0) {
             olmap.getView().fit(mapInfo.mapExtent);
@@ -141,7 +128,7 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, [mapInfo.mapExtent.length]);
     useEffect(() => {
-        if (identifyInfo.enabled) {
+        if (identifyState) {
             dispatch(triggerToast({
                 title: 'Info',
                 message: 'Select a feature on the map!',
@@ -157,14 +144,15 @@ const MyMap = () => {
             });
         }
         // eslint-disable-next-line
-    }, [identifyInfo.enabled]);
+    }, [identifyState]);
     useEffect(() => {
-        if (identifyInfo.enabled) {
+        if (identifyState) {
             if (mapInfo.clickedPoint.length > 0) {
+                dispatch(triggerIsLoading(true));
                 dispatch(clearResult());
                 const controller = new AbortController();
                 const buffer = makeBuffer(mapInfo.clickedPoint);
-                const queriableLayers = data.filter(item => item.geometry !== null);
+                const queriableLayers = tocInfo.historicalData.filter(item => item.geometry !== null);
                 if (queriableLayers.length > 0) {
                     queriableLayers.forEach(layer => {
                         const coords = [transform(buffer.p1, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p2, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p3, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p4, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p5, 'EPSG:3857', layer.crs).join(' ')];
@@ -194,10 +182,11 @@ const MyMap = () => {
                                 else {
                                     dispatch(triggerToast({
                                         title: 'Warning',
-                                        message: 'No results found!',
+                                        message: `No results found for layer ${layer.title}!`,
                                         visible: true
                                     }));
-                                }
+                                };
+                                dispatch(triggerIsLoading(false));
                             })
                             .catch(error => {
                                 if (error.name !== 'AbortError') {
@@ -207,6 +196,7 @@ const MyMap = () => {
                                         visible: true
                                     }));
                                 };
+                                dispatch(triggerIsLoading(false));
                             });
                     })
                 }
@@ -223,106 +213,13 @@ const MyMap = () => {
             };
         }
         // eslint-disable-next-line
-    }, [mapInfo.clickedPoint, identifyInfo.enabled]);
-    const handleBookmarkDismiss = () => {
-        dispatch(triggerBookmarks());
-    };
-    const handleBookmarkSave = (title) => {
-        if (title) {
-            const myObj = {
-                center: mapInfo.mapCenter,
-                zoom: mapInfo.mapZoom,
-                title
-            };
-            dispatch(addBookmark(myObj));
-            dispatch(triggerToast({
-                title: 'Success',
-                message: 'Bookmark saved!',
-                visible: true
-            }));
-        }
-        else {
-            dispatch(triggerToast({
-                title: 'Warning',
-                message: 'Please enter bookmark title!',
-                visible: true
-            }));
-        };
-    };
-    const handleRemoveAllBookmarks = () => {
-        dispatch(removeAllBookmarks());
-        dispatch(triggerToast({
-            title: 'Info',
-            message: 'All bookmarks are deleted!',
-            visible: true
-        }));
-    };
-    const handleRemoveBookmark = () => {
-        let item = document.getElementById('formBasicDropdown').value;
-        if (item && item !== 'Selector') {
-            dispatch(removeBookmark(item));
-            dispatch(triggerToast({
-                title: 'Info',
-                message: 'Bookmark is deleted!',
-                visible: true
-            }));
-        }
-        else {
-            dispatch(triggerToast({
-                title: 'Warning',
-                message: 'Please select a bookmark first!',
-                visible: true
-            }));
-        };
-    };
-    const handleLoadBookmark = () => {
-        let selectedBookmark = document.getElementById('formBasicDropdown').value;
-        let selectedElement = document.getElementById(`option${selectedBookmark}`);
-        let centerx = Number(selectedElement.getAttribute('center').split(',')[0]);
-        let centery = Number(selectedElement.getAttribute('center').split(',')[1]);
-        let zoom = Number(selectedElement.getAttribute('zoom'));
-        dispatch(setMapZoom(zoom));
-        dispatch(setMapCenter([centerx, centery]));
-    };
-    const handleOnDragEnd = (result) => {
-        if (!result.destination) return;
-        const [reorderedItem] = activeLayers.splice(result.source.index, 1);
-        activeLayers.splice(result.destination.index, 0, reorderedItem);
-        dispatch(setActiveLayers(activeLayers));
-        dispatch(triggerTOCChange(true));
-    };
-    const handleTOCDismiss = () => {
-        dispatch(triggerShowTOC());
-    };
-    const handleLayerVisibility = (title) => {
-        activeLayers.forEach(layer => {
-            if (layer.values_.title === title) {
-                layer.values_.visible = !layer.values_.visible
-            }
-        });
-        dispatch(setActiveLayers(activeLayers));
-        dispatch(triggerTOCChange(true));
-    };
-    const handleIdentifyDismiss = () => {
-        dispatch(triggerIdentifyVisibility());
-    }
-    const handleLayerRemove = (title) => {
-        let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
-        let tocRemainingLayers = data.filter(item => item.id !== title.split('&')[1]);
-        dispatch(setActiveLayers(remainingLayers));
-        dispatch(setHistoricalLayer(tocRemainingLayers));
-    };
-    const handleGoToLayer = (title) => {
-        let uniqueID = title.split('&')[1];
-        let newExtent = (data.filter(item => item.id === uniqueID))[0].extent;
-        dispatch(setMapExtent(newExtent));
-    };
+    }, [mapInfo.clickedPoint, identifyState]);
     return (
         <div id="map">
-            {showBookmark && <Bookmarks bookmarksList={bookmarksList} handleDismiss={handleBookmarkDismiss} handleSave={handleBookmarkSave} handleRemoveAll={handleRemoveAllBookmarks} handleRemove={handleRemoveBookmark} handleLoad={handleLoadBookmark} />}
-            {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
-            {showIdentify && <Identify handleDismiss={handleIdentifyDismiss} results={identifyInfo.result} />}
-            <MapInfo cursorCenter={mapInfo.cursorCenter} mapCenter={transformedCenter} mapZoom={mapInfo.mapZoom} />
+            {showBookmark && <Bookmarks />}
+            {tocInfo.visibility && <TOC />}
+            {showIdentify && <Identify />}
+            <MapInfo />
         </div>
     );
 };

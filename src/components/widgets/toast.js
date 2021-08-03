@@ -1,12 +1,19 @@
 import { Toast } from "react-bootstrap";
-const MyToast = (props) => {
+import {
+    useSelector,
+    useDispatch
+} from 'react-redux';
+import { triggerToast } from "../../actions";
+const MyToast = () => {
+    const dispatch = useDispatch();
+    const toastInfo = useSelector(state => state.toast);
     return (
         <div className="toast-message">
-            <Toast className={`bg-${props.color}`} onClose={props.triggerShowToast} show={props.visibility} delay={3000} autohide>
+            <Toast className={`bg-${toastInfo.color}`} onClose={() => dispatch(triggerToast())} show={toastInfo.visibility} delay={3000} autohide>
                 <Toast.Header>
-                    <strong className="me-auto">{props.title}</strong>
+                    <strong className="me-auto">{toastInfo.title}</strong>
                 </Toast.Header>
-                <Toast.Body>{props.message}</Toast.Body>
+                <Toast.Body>{toastInfo.message}</Toast.Body>
             </Toast>
         </div>
     );
