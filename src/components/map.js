@@ -52,7 +52,6 @@ const MyMap = () => {
     const identifyState = useSelector(state => state.identify.enabled);
     const activeLayers = tocInfo.activeLayers;
     const showTOC = tocInfo.visibility;
-    const transformedCenter = transform(mapInfo.mapCenter, 'EPSG:3857', 'EPSG:4326');
     const trigger = tocInfo.comonentChanged;
     const data = tocInfo.historicalData;
     const draw = new Draw({
@@ -257,7 +256,7 @@ const MyMap = () => {
             {showBookmark && <Bookmarks />}
             {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
             {showIdentify && <Identify />}
-            <MapInfo cursorCenter={mapInfo.cursorCenter} mapCenter={transformedCenter} mapZoom={mapInfo.mapZoom} />
+            <MapInfo />
         </div>
     );
 };
