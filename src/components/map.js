@@ -151,10 +151,10 @@ const MyMap = () => {
                 dispatch(triggerIsLoading(true));
                 dispatch(clearResult());
                 const controller = new AbortController();
-                const buffer = makeBuffer(mapInfo.clickedPoint);
                 const queriableLayers = tocInfo.historicalData.filter(item => item.geometry !== null);
                 if (queriableLayers.length > 0) {
                     queriableLayers.forEach(layer => {
+                        const buffer = makeBuffer(layer.type, mapInfo.clickedPoint);
                         const coords = [transform(buffer.p1, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p2, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p3, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p4, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p5, 'EPSG:3857', layer.crs).join(' ')];
                         const queryParam = coords.join(' ');
                         let raw = `<wfs:GetFeature service="WFS" outputFormat="application/json" version="1.1.0" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
@@ -175,8 +175,8 @@ const MyMap = () => {
                                 return res.json();
                             })
                             .then(obj => {
-                                if (obj.features[0]) {
-                                    dispatch(setResult(obj.features[0]));
+                                if (obj.features.length > 0) {
+                                    obj.features.forEach(feature => dispatch(setResult(feature)));
                                     dispatch(triggerIdentifyVisibility(true));
                                 }
                                 else {
@@ -206,6 +206,7 @@ const MyMap = () => {
                         message: 'No queriable layers found!',
                         visible: true
                     }));
+                    dispatch(triggerIsLoading(false));
                 }
                 return () => {
                     controller.abort()
