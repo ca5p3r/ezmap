@@ -122,20 +122,6 @@ html, body, #root #application {
     border: ridge white 0.5px;
 }
 
-#toc-body {
-    height: 95%;
-    width: 100%;
-    padding: 5px;
-    overflow-y: scroll;
-    border: solid .5px black;
-}
-
-#toc-buttons {
-    height: 5%;
-    width: 100%;
-    border: solid .5px black;
-}
-
 .container {
     display: flex;
     flex-direction: column;
@@ -202,14 +188,14 @@ html, body, #root #application {
     z-index: 1051;
 }
 
-#identify-buttons {
-    height: 5%;
+#identify-buttons, #toc-buttons {
+    height: 6%;
     width: 100%;
     border: solid .5px black;
 }
 
-#identify-body {
-    height: 95%;
+#identify-body, #toc-body {
+    height: 94%;
     width: 100%;
     padding: 5px;
     overflow-y: scroll;

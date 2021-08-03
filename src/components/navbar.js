@@ -55,6 +55,9 @@ const AppNavBar = () => {
     };
     const handleIdentifyClick = () => {
         dispatch(triggerIdentify(!identifyState));
+        dispatch(triggerBookmarks());
+        dispatch(triggerShowTOC());
+        dispatch(triggerIdentifyVisibility());
         dispatch(setClickedPoint([]));
         dispatch(clearResult());
     };
