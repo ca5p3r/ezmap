@@ -1,10 +1,22 @@
 import { Button, Table } from "react-bootstrap";
-const Identify = (props) => {
+import {
+    triggerIdentifyVisibility
+} from "../../actions";
+import {
+    useSelector,
+    useDispatch
+} from "react-redux";
+const Identify = () => {
+    const dispatch = useDispatch();
+    const results = useSelector(state => state.identify.result);
+    const handleDismiss = () => {
+        dispatch(triggerIdentifyVisibility());
+    };
     return (
         <div className="identify">
             <div id="identify-body">
                 <h2>Identify result</h2>
-                {props.results && props.results.map(
+                {results && results.map(
                     (result, key) => {
                         return (
                             <div key={key}>
@@ -27,7 +39,7 @@ const Identify = (props) => {
                 )}
             </div>
             <div className="col text-center" id="identify-buttons">
-                <Button variant="warning" onClick={props.handleDismiss}>
+                <Button variant="warning" onClick={handleDismiss}>
                     Dismiss
                 </Button>
             </div>

@@ -47,10 +47,10 @@ const MyMap = () => {
     const showBookmark = useSelector(state => state.bookmarks.visibility);
     const workspaceInfo = useSelector(state => state.workspace);
     const tocInfo = useSelector(state => state.toc);
-    const identifyInfo = useSelector(state => state.identify);
+    const showIdentify = useSelector(state => state.identify.visibility);
+    const identifyState = useSelector(state => state.identify.enabled);
     const activeLayers = tocInfo.activeLayers;
     const showTOC = tocInfo.visibility;
-    const showIdentify = identifyInfo.visibility;
     const transformedCenter = transform(mapInfo.mapCenter, 'EPSG:3857', 'EPSG:4326');
     const trigger = tocInfo.comonentChanged;
     const data = tocInfo.historicalData;
@@ -135,7 +135,7 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, [mapInfo.mapExtent.length]);
     useEffect(() => {
-        if (identifyInfo.enabled) {
+        if (identifyState) {
             dispatch(triggerToast({
                 title: 'Info',
                 message: 'Select a feature on the map!',
@@ -151,9 +151,9 @@ const MyMap = () => {
             });
         }
         // eslint-disable-next-line
-    }, [identifyInfo.enabled]);
+    }, [identifyState]);
     useEffect(() => {
-        if (identifyInfo.enabled) {
+        if (identifyState) {
             if (mapInfo.clickedPoint.length > 0) {
                 dispatch(clearResult());
                 const controller = new AbortController();
@@ -217,7 +217,7 @@ const MyMap = () => {
             };
         }
         // eslint-disable-next-line
-    }, [mapInfo.clickedPoint, identifyInfo.enabled]);
+    }, [mapInfo.clickedPoint, identifyState]);
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
         const [reorderedItem] = activeLayers.splice(result.source.index, 1);
@@ -237,9 +237,6 @@ const MyMap = () => {
         dispatch(setActiveLayers(activeLayers));
         dispatch(triggerTOCChange(true));
     };
-    const handleIdentifyDismiss = () => {
-        dispatch(triggerIdentifyVisibility());
-    }
     const handleLayerRemove = (title) => {
         let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
         let tocRemainingLayers = data.filter(item => item.id !== title.split('&')[1]);
@@ -255,7 +252,7 @@ const MyMap = () => {
         <div id="map">
             {showBookmark && <Bookmarks />}
             {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
-            {showIdentify && <Identify handleDismiss={handleIdentifyDismiss} results={identifyInfo.result} />}
+            {showIdentify && <Identify />}
             <MapInfo cursorCenter={mapInfo.cursorCenter} mapCenter={transformedCenter} mapZoom={mapInfo.mapZoom} />
         </div>
     );
