@@ -20,8 +20,9 @@ const Bookmarks = () => {
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const bookmarks = useSelector(state => state.bookmarks.list);
-    const mapCenter = useSelector(state => state.mapInfo.mapCenter);
-    const mapZoom = useSelector(state => state.mapInfo.mapZoom);
+    const mapInfo = useSelector(state => state.mapInfo);
+    const mapCenter = mapInfo.mapCenter;
+    const mapZoom = mapInfo.mapZoom;
     const handleDismiss = () => {
         dispatch(triggerBookmarks());
     };

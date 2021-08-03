@@ -4,9 +4,10 @@ import {
 } from "react-redux";
 import { transform } from "ol/proj";
 const MapInfo = () => {
-    const mapCenter = useSelector(state => state.mapInfo.mapCenter);
-    const cursorCenter = useSelector(state => state.mapInfo.cursorCenter);
-    const mapZoom = useSelector(state => state.mapInfo.mapZoom);
+    const mapInfo = useSelector(state => state.mapInfo);
+    const mapCenter = mapInfo.mapCenter;
+    const mapZoom = mapInfo.mapZoom;
+    const cursorCenter = mapInfo.cursorCenter;
     const transformedCenter = transform(mapCenter, 'EPSG:3857', 'EPSG:4326');
     return (
         <div id="map-info">

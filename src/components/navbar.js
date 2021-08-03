@@ -155,63 +155,8 @@ const AppNavBar = () => {
             }));
         };
     };
-    const handleTriggerShowLogin = () => {
-        dispatch(triggerShowLogin(!showLogin));
-    };
     const handleTriggerShowRegister = () => {
         dispatch(triggerShowRegister(!showRegister));
-    };
-    const handleLogin = (username, password) => {
-        if (username.length >= 4 && username.length <= 16) {
-            if (password.length >= 8 && password.length <= 16) {
-                const data = { username, password };
-                fetch("http://localhost:9000/auth/login", {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                    .then(response => {
-                        return response.json();
-                    })
-                    .then(obj => {
-                        if (!obj.error) {
-                            dispatch(triggerLogin(true));
-                            dispatch(triggerShowLogin());
-                        }
-                        else {
-                            dispatch(triggerToast({
-                                title: 'Warning',
-                                message: obj.error,
-                                visible: true
-                            }));
-                        };
-                    })
-                    .catch(err => {
-                        dispatch(triggerToast({
-                            title: 'Danger',
-                            message: err.toString(),
-                            visible: true
-                        }));
-                    });
-            }
-            else {
-                dispatch(triggerToast({
-                    title: 'Warning',
-                    message: 'Password should be of length 8-20',
-                    visible: true
-                }));
-            }
-        }
-        else {
-            dispatch(triggerToast({
-                title: 'Warning',
-                message: 'Username should be of length 4-16',
-                visible: true
-            }));
-        };
     };
     const handleRegister = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
@@ -319,10 +264,10 @@ const AppNavBar = () => {
                         <Nav.Link onClick={handleTOCClick} title="Table of contents"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="far" data-icon="list-alt" className="svg-inline--fa fa-list-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V80c0-26.51-21.49-48-48-48zm-6 400H54a6 6 0 0 1-6-6V86a6 6 0 0 1 6-6h404a6 6 0 0 1 6 6v340a6 6 0 0 1-6 6zm-42-92v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm0-96v24c0 6.627-5.373 12-12 12H204c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h200c6.627 0 12 5.373 12 12zm-252 12c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36zm0 96c0 19.882-16.118 36-36 36s-36-16.118-36-36 16.118-36 36-36 36 16.118 36 36z"></path></svg></Nav.Link>
                         <Nav.Link onClick={handleLogout} title="Logout"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-out-alt" className="svg-inline--fa fa-sign-out-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M497 273L329 441c-15 15-41 4.5-41-17v-96H152c-13.3 0-24-10.7-24-24v-96c0-13.3 10.7-24 24-24h136V88c0-21.4 25.9-32 41-17l168 168c9.3 9.4 9.3 24.6 0 34zM192 436v-40c0-6.6-5.4-12-12-12H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h84c6.6 0 12-5.4 12-12V76c0-6.6-5.4-12-12-12H96c-53 0-96 43-96 96v192c0 53 43 96 96 96h84c6.6 0 12-5.4 12-12z"></path></svg></Nav.Link></>}
                     {!isLogged && <Nav.Link onClick={handleTriggerShowRegister} title="Register"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-plus" className="svg-inline--fa fa-user-plus fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M624 208h-64v-64c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v64h-64c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h64v64c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-64h64c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm-400 48c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path></svg></Nav.Link>}
-                    {!isLogged && <Nav.Link onClick={handleTriggerShowLogin} title="Login"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-in-alt" className="svg-inline--fa fa-sign-in-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z"></path></svg></Nav.Link>}
+                    {!isLogged && <Nav.Link onClick={() => dispatch(triggerShowLogin(!showLogin))} title="Login"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sign-in-alt" className="svg-inline--fa fa-sign-in-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 448h-84c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h84c17.7 0 32-14.3 32-32V160c0-17.7-14.3-32-32-32h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zm-47-201L201 79c-15-15-41-4.5-41 17v96H24c-13.3 0-24 10.7-24 24v96c0 13.3 10.7 24 24 24h136v96c0 21.5 26 32 41 17l168-168c9.3-9.4 9.3-24.6 0-34z"></path></svg></Nav.Link>}
                 </Nav>
             </Navbar.Collapse>
-            {showLogin && <LoginModal showLogin={showLogin} handleLogin={handleLogin} handleHide={handleTriggerShowLogin} />}
+            <LoginModal />
             {showRegister && <RegisterModal showRegister={showRegister} handleRegister={handleRegister} handleHide={handleTriggerShowRegister} />}
             {workspaceVisibility && <WorkspaceModal visibility={workspaceVisibility} availability={availability} handleHide={handleHide} handleFetch={handleFetch} handleAdd={handleAdd} layers={workspaceInfo.layers} />}
         </Navbar>
