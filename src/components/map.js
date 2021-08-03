@@ -30,7 +30,8 @@ import {
     clearResult,
     setResult,
     triggerIdentifyVisibility,
-    setHistoricalLayer
+    setHistoricalLayer,
+    triggerIsLoading
 } from "../actions";
 import {
     useSelector,
@@ -155,6 +156,7 @@ const MyMap = () => {
     useEffect(() => {
         if (identifyState) {
             if (mapInfo.clickedPoint.length > 0) {
+                dispatch(triggerIsLoading(true));
                 dispatch(clearResult());
                 const controller = new AbortController();
                 const buffer = makeBuffer(mapInfo.clickedPoint);
@@ -191,7 +193,8 @@ const MyMap = () => {
                                         message: `No results found for layer ${layer.title}!`,
                                         visible: true
                                     }));
-                                }
+                                };
+                                dispatch(triggerIsLoading(false));
                             })
                             .catch(error => {
                                 if (error.name !== 'AbortError') {
@@ -201,6 +204,7 @@ const MyMap = () => {
                                         visible: true
                                     }));
                                 };
+                                dispatch(triggerIsLoading(false));
                             });
                     })
                 }
