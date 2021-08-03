@@ -6,7 +6,6 @@ import {
     useSelector,
     useDispatch
 } from 'react-redux';
-import { useState } from 'react';
 import LoginModal from "./widgets/login";
 import RegisterModal from "./widgets/register";
 import WorkspaceModal from "./widgets/workspace";
@@ -17,24 +16,13 @@ import {
     triggerBookmarks,
     triggerShowWorkspace,
     triggerShowTOC,
-    updateLayers,
-    resetLayers,
-    addPendingLayer,
-    triggerToast,
-    insertHistoricalLayer,
     triggerIdentify,
-    triggerIsLoading,
     setClickedPoint,
     clearResult,
     triggerIdentifyVisibility
 } from '../actions';
-import WMSCapabilities from 'ol/format/WMSCapabilities';
-import { transform } from "ol/proj";
-import { v4 as uuidv4 } from 'uuid';
-import { setter } from '../utils';
 const AppNavBar = () => {
     const dispatch = useDispatch();
-    const [availability, setAvailability] = useState(false);
     const loginInfo = useSelector(state => state.login);
     const registerInfo = useSelector(state => state.register);
     const bookmarkInfo = useSelector(state => state.bookmarks);
@@ -48,113 +36,6 @@ const AppNavBar = () => {
     const showLogin = loginInfo.visibility;
     const showRegister = registerInfo.visibility;
     const identifyState = identifyInfo.enabled;
-    const handleHide = () => {
-        dispatch(triggerShowWorkspace());
-        setAvailability(false);
-        dispatch(resetLayers());
-    };
-    const handleFetch = (url) => {
-        const parser = new WMSCapabilities();
-        if (url && url !== '') {
-            dispatch(triggerIsLoading(true));
-            fetch(`${url}?request=getCapabilities`)
-                .then((response) => {
-                    return response.text();
-                })
-                .then((text) => {
-                    const result = parser.read(text);
-                    return result.Capability.Layer.Layer;
-                })
-                .then((arr) => {
-                    dispatch(updateLayers(arr));
-                    setAvailability(true);
-                    dispatch(triggerIsLoading(false));
-                })
-                .catch((err) => {
-                    dispatch(triggerToast({
-                        title: 'Danger',
-                        message: err.toString(),
-                        visible: true
-                    }));
-                    dispatch(resetLayers());
-                    setAvailability(false);
-                    dispatch(triggerIsLoading(false));
-                });
-        }
-        else {
-            dispatch(triggerToast({
-                title: 'Warning',
-                message: 'Please enter URL!',
-                visible: true
-            }));
-        };
-
-    };
-    const handleAdd = (url) => {
-        if (availability) {
-            let geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
-            let layerName = document.getElementById('formBasicLayer').value;
-            let selectedElement = document.getElementById(`option${layerName}`);
-            let layerTitle = selectedElement.getAttribute('title');
-            let crs = selectedElement.getAttribute('crs');
-            let uniqueID = uuidv4();
-            let extentGeographic = selectedElement.getAttribute('extent');
-            if (layerName && layerName !== 'Selector') {
-                let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
-                let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
-                fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
-                    .then((response) => {
-                        return response.text();
-                    })
-                    .then((text) => {
-                        let obj = JSON.parse(text);
-                        return obj;
-                    })
-                    .then((obj) => {
-                        let fields = obj.featureTypes[0].properties
-                        var geomField = fields.filter(field => geometries.includes(field.localType));
-                        dispatch(insertHistoricalLayer({
-                            id: uniqueID,
-                            name: layerName,
-                            title: layerTitle,
-                            url: url.slice(0, -3),
-                            extent: [...p1, ...p2],
-                            type: geomField[0].localType,
-                            geometry: geomField[0].name,
-                            crs
-                        }));
-                    })
-                    .catch(() => {
-                        dispatch(insertHistoricalLayer({
-                            id: uniqueID,
-                            name: layerName,
-                            title: layerTitle,
-                            url: url.slice(0, -3),
-                            extent: [...p1, ...p2],
-                            type: null,
-                            geometry: null,
-                            crs
-                        }));
-                    });
-                const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);
-                dispatch(addPendingLayer(obj));
-            }
-            else {
-                dispatch(triggerToast({
-                    title: 'Warning',
-                    message: 'Please select a layer!',
-                    visible: true
-                }));
-            };
-        }
-        else {
-            dispatch(triggerToast({
-                title: 'Warning',
-                message: 'Please enter URL!',
-                visible: true
-            }));
-        };
-    };
     const handleLogout = () => {
         dispatch(triggerLogin());
         dispatch(triggerBookmarks());
@@ -210,7 +91,7 @@ const AppNavBar = () => {
             </Navbar.Collapse>
             <LoginModal />
             <RegisterModal />
-            {workspaceVisibility && <WorkspaceModal visibility={workspaceVisibility} availability={availability} handleHide={handleHide} handleFetch={handleFetch} handleAdd={handleAdd} layers={workspaceInfo.layers} />}
+            <WorkspaceModal />
         </Navbar>
     );
 };
