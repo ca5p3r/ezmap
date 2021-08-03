@@ -23,14 +23,11 @@ import {
     setActiveLayers,
     triggerTOCChange,
     triggerToast,
-    triggerShowTOC,
     resetMapExtent,
-    setMapExtent,
     setClickedPoint,
     clearResult,
     setResult,
     triggerIdentifyVisibility,
-    setHistoricalLayer,
     triggerIsLoading
 } from "../actions";
 import {
@@ -52,7 +49,6 @@ const MyMap = () => {
     const identifyState = useSelector(state => state.identify.enabled);
     const activeLayers = tocInfo.activeLayers;
     const showTOC = tocInfo.visibility;
-    const trigger = tocInfo.comonentChanged;
     const data = tocInfo.historicalData;
     const draw = new Draw({
         type: 'Point'
@@ -221,40 +217,10 @@ const MyMap = () => {
         }
         // eslint-disable-next-line
     }, [mapInfo.clickedPoint, identifyState]);
-    const handleOnDragEnd = (result) => {
-        if (!result.destination) return;
-        const [reorderedItem] = activeLayers.splice(result.source.index, 1);
-        activeLayers.splice(result.destination.index, 0, reorderedItem);
-        dispatch(setActiveLayers(activeLayers));
-        dispatch(triggerTOCChange(true));
-    };
-    const handleTOCDismiss = () => {
-        dispatch(triggerShowTOC());
-    };
-    const handleLayerVisibility = (title) => {
-        activeLayers.forEach(layer => {
-            if (layer.values_.title === title) {
-                layer.values_.visible = !layer.values_.visible
-            }
-        });
-        dispatch(setActiveLayers(activeLayers));
-        dispatch(triggerTOCChange(true));
-    };
-    const handleLayerRemove = (title) => {
-        let remainingLayers = activeLayers.filter(layer => layer.values_.title !== title);
-        let tocRemainingLayers = data.filter(item => item.id !== title.split('&')[1]);
-        dispatch(setActiveLayers(remainingLayers));
-        dispatch(setHistoricalLayer(tocRemainingLayers));
-    };
-    const handleGoToLayer = (title) => {
-        let uniqueID = title.split('&')[1];
-        let newExtent = (data.filter(item => item.id === uniqueID))[0].extent;
-        dispatch(setMapExtent(newExtent));
-    };
     return (
         <div id="map">
             {showBookmark && <Bookmarks />}
-            {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
+            {showTOC && <TOC />}
             {showIdentify && <Identify />}
             <MapInfo />
         </div>

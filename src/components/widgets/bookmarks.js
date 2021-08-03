@@ -21,16 +21,11 @@ const Bookmarks = () => {
     const [title, setTitle] = useState('');
     const bookmarks = useSelector(state => state.bookmarks.list);
     const mapInfo = useSelector(state => state.mapInfo);
-    const mapCenter = mapInfo.mapCenter;
-    const mapZoom = mapInfo.mapZoom;
-    const handleDismiss = () => {
-        dispatch(triggerBookmarks());
-    };
     const handleSave = (title) => {
         if (title) {
             const myObj = {
-                center: mapCenter,
-                zoom: mapZoom,
+                center: mapInfo.mapCenter,
+                zoom: mapInfo.mapZoom,
                 title
             };
             dispatch(addBookmark(myObj));
@@ -103,7 +98,7 @@ const Bookmarks = () => {
                     </Form.Control>
                 </Form.Group>
                 <div className="col text-center">
-                    <Button variant="warning" onClick={handleDismiss}>
+                    <Button variant="warning" onClick={() => dispatch(triggerBookmarks())}>
                         Dismiss
                     </Button>
                     <Button variant="danger" onClick={handleRemoveAll}>

@@ -9,9 +9,6 @@ import {
 const Identify = () => {
     const dispatch = useDispatch();
     const results = useSelector(state => state.identify.result);
-    const handleDismiss = () => {
-        dispatch(triggerIdentifyVisibility());
-    };
     return (
         <div className="identify">
             <div id="identify-body">
@@ -39,7 +36,7 @@ const Identify = () => {
                 )}
             </div>
             <div className="col text-center" id="identify-buttons">
-                <Button variant="warning" onClick={handleDismiss}>
+                <Button variant="warning" onClick={() => dispatch(triggerIdentifyVisibility())}>
                     Dismiss
                 </Button>
             </div>
