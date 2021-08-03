@@ -43,13 +43,10 @@ const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
     const showBookmark = useSelector(state => state.bookmarks.visibility);
-    const workspaceInfo = useSelector(state => state.workspace);
+    const pendingLayer = useSelector(state => state.workspace.pendingLayer);
     const tocInfo = useSelector(state => state.toc);
     const showIdentify = useSelector(state => state.identify.visibility);
     const identifyState = useSelector(state => state.identify.enabled);
-    const activeLayers = tocInfo.activeLayers;
-    const showTOC = tocInfo.visibility;
-    const data = tocInfo.historicalData;
     const draw = new Draw({
         type: 'Point'
     });
@@ -97,8 +94,8 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, [mapInfo.mapZoom, mapInfo.mapCenter]);
     useEffect(() => {
-        if (Object.keys(workspaceInfo.pendingLayer).length > 0) {
-            olmap.addLayer(workspaceInfo.pendingLayer);
+        if (Object.keys(pendingLayer).length > 0) {
+            olmap.addLayer(pendingLayer);
             dispatch(resetPendingLayer());
             dispatch(setActiveLayers(olmap.getLayers().array_));
             dispatch(triggerToast({
@@ -108,7 +105,7 @@ const MyMap = () => {
             }));
         };
         // eslint-disable-next-line
-    }, [workspaceInfo.pendingLayer]);
+    }, [pendingLayer]);
     useEffect(() => {
         if (tocInfo.comonentChanged) {
             olmap.render();
@@ -117,12 +114,12 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, [tocInfo.comonentChanged]);
     useEffect(() => {
-        if (activeLayers) {
-            olmap.getLayers().array_ = activeLayers;
+        if (tocInfo.activeLayers) {
+            olmap.getLayers().array_ = tocInfo.activeLayers;
             olmap.render();
         }
         // eslint-disable-next-line
-    }, [activeLayers]);
+    }, [tocInfo.activeLayers]);
     useEffect(() => {
         if (mapInfo.mapExtent.length > 0) {
             olmap.getView().fit(mapInfo.mapExtent);
@@ -155,7 +152,7 @@ const MyMap = () => {
                 dispatch(clearResult());
                 const controller = new AbortController();
                 const buffer = makeBuffer(mapInfo.clickedPoint);
-                const queriableLayers = data.filter(item => item.geometry !== null);
+                const queriableLayers = tocInfo.historicalData.filter(item => item.geometry !== null);
                 if (queriableLayers.length > 0) {
                     queriableLayers.forEach(layer => {
                         const coords = [transform(buffer.p1, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p2, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p3, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p4, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p5, 'EPSG:3857', layer.crs).join(' ')];
@@ -220,7 +217,7 @@ const MyMap = () => {
     return (
         <div id="map">
             {showBookmark && <Bookmarks />}
-            {showTOC && <TOC />}
+            {tocInfo.visibility && <TOC />}
             {showIdentify && <Identify />}
             <MapInfo />
         </div>
