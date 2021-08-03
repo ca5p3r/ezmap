@@ -26,10 +26,6 @@ import {
     triggerShowTOC,
     resetMapExtent,
     setMapExtent,
-    triggerBookmarks,
-    addBookmark,
-    removeAllBookmarks,
-    removeBookmark,
     setClickedPoint,
     clearResult,
     setResult,
@@ -48,18 +44,16 @@ import Identify from "./widgets/identify";
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
-    const bookmarksInfo = useSelector(state => state.bookmarks);
+    const showBookmark = useSelector(state => state.bookmarks.visibility);
     const workspaceInfo = useSelector(state => state.workspace);
     const tocInfo = useSelector(state => state.toc);
     const identifyInfo = useSelector(state => state.identify);
     const activeLayers = tocInfo.activeLayers;
-    const showBookmark = bookmarksInfo.visibility;
     const showTOC = tocInfo.visibility;
     const showIdentify = identifyInfo.visibility;
     const transformedCenter = transform(mapInfo.mapCenter, 'EPSG:3857', 'EPSG:4326');
     const trigger = tocInfo.comonentChanged;
     const data = tocInfo.historicalData;
-    const bookmarksList = bookmarksInfo.list;
     const draw = new Draw({
         type: 'Point'
     });
@@ -224,66 +218,6 @@ const MyMap = () => {
         }
         // eslint-disable-next-line
     }, [mapInfo.clickedPoint, identifyInfo.enabled]);
-    const handleBookmarkDismiss = () => {
-        dispatch(triggerBookmarks());
-    };
-    const handleBookmarkSave = (title) => {
-        if (title) {
-            const myObj = {
-                center: mapInfo.mapCenter,
-                zoom: mapInfo.mapZoom,
-                title
-            };
-            dispatch(addBookmark(myObj));
-            dispatch(triggerToast({
-                title: 'Success',
-                message: 'Bookmark saved!',
-                visible: true
-            }));
-        }
-        else {
-            dispatch(triggerToast({
-                title: 'Warning',
-                message: 'Please enter bookmark title!',
-                visible: true
-            }));
-        };
-    };
-    const handleRemoveAllBookmarks = () => {
-        dispatch(removeAllBookmarks());
-        dispatch(triggerToast({
-            title: 'Info',
-            message: 'All bookmarks are deleted!',
-            visible: true
-        }));
-    };
-    const handleRemoveBookmark = () => {
-        let item = document.getElementById('formBasicDropdown').value;
-        if (item && item !== 'Selector') {
-            dispatch(removeBookmark(item));
-            dispatch(triggerToast({
-                title: 'Info',
-                message: 'Bookmark is deleted!',
-                visible: true
-            }));
-        }
-        else {
-            dispatch(triggerToast({
-                title: 'Warning',
-                message: 'Please select a bookmark first!',
-                visible: true
-            }));
-        };
-    };
-    const handleLoadBookmark = () => {
-        let selectedBookmark = document.getElementById('formBasicDropdown').value;
-        let selectedElement = document.getElementById(`option${selectedBookmark}`);
-        let centerx = Number(selectedElement.getAttribute('center').split(',')[0]);
-        let centery = Number(selectedElement.getAttribute('center').split(',')[1]);
-        let zoom = Number(selectedElement.getAttribute('zoom'));
-        dispatch(setMapZoom(zoom));
-        dispatch(setMapCenter([centerx, centery]));
-    };
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
         const [reorderedItem] = activeLayers.splice(result.source.index, 1);
@@ -319,7 +253,7 @@ const MyMap = () => {
     };
     return (
         <div id="map">
-            {showBookmark && <Bookmarks bookmarksList={bookmarksList} handleDismiss={handleBookmarkDismiss} handleSave={handleBookmarkSave} handleRemoveAll={handleRemoveAllBookmarks} handleRemove={handleRemoveBookmark} handleLoad={handleLoadBookmark} />}
+            {showBookmark && <Bookmarks />}
             {showTOC && <TOC trigger={trigger} activeLayers={activeLayers} handleOnDragEnd={handleOnDragEnd} handleDismiss={handleTOCDismiss} handleVisibility={handleLayerVisibility} handleRemove={handleLayerRemove} handleGoTo={handleGoToLayer} />}
             {showIdentify && <Identify handleDismiss={handleIdentifyDismiss} results={identifyInfo.result} />}
             <MapInfo cursorCenter={mapInfo.cursorCenter} mapCenter={transformedCenter} mapZoom={mapInfo.mapZoom} />
