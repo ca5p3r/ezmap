@@ -19,7 +19,8 @@ import {
     triggerIdentify,
     setClickedPoint,
     clearResult,
-    triggerIdentifyVisibility
+    triggerIdentifyVisibility,
+    setHistoricalLayers
 } from '../actions';
 const AppNavBar = () => {
     const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const AppNavBar = () => {
     const workspaceVisibility = useSelector(state => state.workspace.visibility);
     const identifyState = useSelector(state => state.identify.enabled);
     const handleLogout = () => {
+        dispatch(setHistoricalLayers());
         dispatch(triggerLogin());
         dispatch(triggerBookmarks());
         dispatch(triggerShowWorkspace());

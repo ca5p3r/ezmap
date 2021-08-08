@@ -12,7 +12,7 @@ import {
     setActiveLayers,
     triggerShowTOC,
     setMapExtent,
-    setHistoricalLayer,
+    setHistoricalLayers,
     triggerTOCChange
 } from "../../actions";
 const TOC = () => {
@@ -38,7 +38,7 @@ const TOC = () => {
         let remainingLayers = tocInfo.activeLayers.filter(layer => layer.values_.title !== title);
         let tocRemainingLayers = tocInfo.historicalData.filter(item => item.id !== title.split('&')[1]);
         dispatch(setActiveLayers(remainingLayers));
-        dispatch(setHistoricalLayer(tocRemainingLayers));
+        dispatch(setHistoricalLayers(tocRemainingLayers));
     };
     const handleGoTo = (title) => {
         let uniqueID = title.split('&')[1];

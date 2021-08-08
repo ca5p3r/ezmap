@@ -7,7 +7,7 @@ const LandingPage = () => {
                         <div className="row mt-6">
                             <div className="col-md-8 mx-auto text-center">
                                 <h1>A simple map for everyone</h1>
-                                <p className="lead mb-5">EasyMap is a lightweight, extensible map toolbox, built with modern web standards in mind. It can be used by many GIS developers, analysts, researchers and engineers.</p>
+                                <p className="lead mb-5">EasyMap is a lightweight, extensible map toolbox, built with modern web standards in mind. It can be used by GIS developers, analysts, researchers and engineers.</p>
                             </div>
                         </div>
                     </div>
@@ -24,7 +24,7 @@ const LandingPage = () => {
                             </div>
                             <div className="row my-2">
                                 <div className="col-md-4 mx-auto text-muted text-center small-xl">
-                                    &copy; 2021 EasyMap - All Rights Reserved
+                                    Copyright 2021 &copy; EasyMap - All Rights Reserved<br></br>ca5p3r
                                 </div>
                             </div>
                         </div>

@@ -121,9 +121,9 @@ export const insertHistoricalLayer = (x) => {
         payload: x
     };
 };
-export const setHistoricalLayer = (x) => {
+export const setHistoricalLayers = (x = []) => {
     return {
-        type: 'setHistoricalLayer',
+        type: 'setHistoricalLayers',
         payload: x
     };
 };

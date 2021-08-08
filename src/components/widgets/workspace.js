@@ -30,6 +30,7 @@ const WorkspaceModal = () => {
         dispatch(triggerShowWorkspace());
         setAvailability(false);
         dispatch(resetLayers());
+        setUrl('');
     };
     const handleFetch = (url) => {
         const parser = new WMSCapabilities();
