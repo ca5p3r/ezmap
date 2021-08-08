@@ -5,30 +5,24 @@ const morgan = require('morgan');
 const express = require('express');
 var bodyParser = require('body-parser');
 const authRouters = require('./routes/auth');
-const { pgConnector, initQuerier } = require('./helpers/database');
+const settingsRouters = require('./routes/settings');
+const { pool } = require('./helpers/database');
 
 const schema = fs.readFileSync(path.resolve(__dirname, "./assets/schema.sql")).toString();
 
 
 const app = express();
 
-let dbInitConnection = pgConnector.getConnection();
-let dbError = initQuerier(dbInitConnection, 'CREATE DATABASE ezmap;');
-if (!dbError) {
-    dbInitConnection.end();
-    let schemaInitConnection = pgConnector.getConnection('ezmap');
-    let schemaError = initQuerier(schemaInitConnection, schema);
-    if (!schemaError) {
-        schemaInitConnection.end();
-        app.listen(9000);
-    }
-    else {
-        console.log(schemaError);
-    }
-}
-else {
-    console.log(dbError);
-}
+pool.connect((err, client, done) => {
+    if (err) return done(err);
+    client.query(schema, (err) => {
+        done();
+        if (err) console.log(err);
+        else {
+            app.listen(9000);
+        };
+    });
+});
 
 app.use(bodyParser.json());
 app.use(morgan('dev'));
@@ -39,6 +33,7 @@ app.get('/', (_, res) => {
 });
 
 app.use('/auth', authRouters);
+app.use('/config', settingsRouters);
 
 app.use((_, res) => {
     res.status(404).send('<div><h3>Not Found</h3><p>You have reached an undefined endpoint!</p></div>');

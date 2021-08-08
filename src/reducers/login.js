@@ -1,5 +1,6 @@
 const myState = {
     isLogged: false,
+    user: null,
     visibility: false
 };
 export const loginReducer = (
@@ -11,6 +12,11 @@ export const loginReducer = (
             return {
                 ...state,
                 isLogged: action.payload
+            };
+        case 'setUser':
+            return {
+                ...state,
+                user: action.payload
             };
         case 'triggerShowLogin':
             return {

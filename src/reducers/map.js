@@ -1,8 +1,8 @@
 const myState = {
     cursorCenter: [0, 0],
-    mapCenter: [3379498.79, 3114399.98],
-    mapZoom: 6.83,
-    defaultExtent: [2099724.35, 2504130.79, 4659273.23, 3724669.16],
+    mapCenter: [0, 0],
+    mapZoom: 0,
+    defaultExtent: [],
     mapExtent: [],
     clickedPoint: [],
     isLoading: false
@@ -26,6 +26,11 @@ export const mapInfoReducer = (
             return {
                 ...state,
                 mapZoom: action.payload
+            };
+        case 'setDefaultExtent':
+            return {
+                ...state,
+                defaultExtent: action.payload
             };
         case 'setMapExtent':
             return {

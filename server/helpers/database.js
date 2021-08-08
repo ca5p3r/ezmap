@@ -2,45 +2,16 @@ const { Pool } = require('pg');
 
 const dbSettings = require('../settings/database.json');
 
-const pgConnector = {
-    host: dbSettings.host,
-    port: dbSettings.port,
-    user: dbSettings.username,
-    password: dbSettings.password,
-    database: dbSettings.database,
-    getConnection: function (database) {
-        const pool = new Pool({
-            host: this.host,
-            port: this.port,
-            user: this.user,
-            password: this.password,
-            database: database,
-            query_timeout: 5000,
-            connectionTimeoutMillis: 10000,
-            idleTimeoutMillis: 10000
-        });
-        return pool;
-    }
+const config = {
+    host: dbSettings.host || 'localhost',
+    port: dbSettings.port || '5432',
+    user: dbSettings.username || 'postgres',
+    password: dbSettings.password || 'postgres',
+    database: dbSettings.database || 'postgres'
 };
 
-const initQuerier = (pool, query) => {
-    pool.connect((err, client, done) => {
-        if (err) {
-            return err;
-        };
-        client.query(query, (err) => {
-            done();
-            if (err && err.code !== '42P04') {
-                return err;
-            }
-            else {
-                return null;
-            }
-        });
-    });
-};
+const pool = new Pool(config);
 
 module.exports = {
-    pgConnector,
-    initQuerier
+    pool
 };

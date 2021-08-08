@@ -12,10 +12,9 @@ import {
     setActiveLayers,
     triggerShowTOC,
     setMapExtent,
-    setHistoricalLayer,
+    setHistoricalLayers,
     triggerTOCChange
 } from "../../actions";
-// import { useEffect } from "react";
 const TOC = () => {
     const dispatch = useDispatch();
     const tocInfo = useSelector(state => state.toc);
@@ -39,14 +38,13 @@ const TOC = () => {
         let remainingLayers = tocInfo.activeLayers.filter(layer => layer.values_.title !== title);
         let tocRemainingLayers = tocInfo.historicalData.filter(item => item.id !== title.split('&')[1]);
         dispatch(setActiveLayers(remainingLayers));
-        dispatch(setHistoricalLayer(tocRemainingLayers));
+        dispatch(setHistoricalLayers(tocRemainingLayers));
     };
     const handleGoTo = (title) => {
         let uniqueID = title.split('&')[1];
         let newExtent = (tocInfo.historicalData.filter(item => item.id === uniqueID))[0].extent;
         dispatch(setMapExtent(newExtent));
     };
-    // useEffect(() => { }, [trigger]);
     return (
         <div className="toc">
             <div id="toc-body">

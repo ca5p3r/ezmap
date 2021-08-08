@@ -1,19 +1,26 @@
 CREATE TABLE IF NOT EXISTS users (
-    id serial primary key not null,
-    username character varying (15),
-    password text,
-    last_login timestamp,
-    active boolean default true,
-    logged_in boolean,
-    unique(username)
+    id SERIAL PRIMARY KEY NOT NULL,
+    username CHARACTER VARYING(15),
+    password TEXT,
+    last_login TIMESTAMP,
+    active BOOLEAN DEFAULT TRUE,
+    logged_in BOOLEAN,
+    UNIQUE(username)
 );
 CREATE TABLE IF NOT EXISTS users_activities(
-	id serial not null primary key,
-	user_id integer,
-	login_from timestamp,
-	login_to timestamp,
-	total_activity interval,
-	session_info text,
-	constraint user_activity foreign key (user_id) references users(id) on update cascade on delete cascade,
-	unique(session_info)
+	id SERIAL PRIMARY KEY NOT NULL,
+	user_id INTEGER,
+	login_from TIMESTAMP,
+	login_to TIMESTAMP,
+	total_activity INTERVAL,
+	session_info TEXT,
+	CONSTRAINT user_activity FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	UNIQUE(session_info)
+);
+CREATE TABLE IF NOT EXISTS config(
+	id SERIAL PRIMARY KEY NOT NULL,
+	settings JSONB,
+	user_id INTEGER,
+	CONSTRAINT user_settings FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	UNIQUE(user_id)
 );

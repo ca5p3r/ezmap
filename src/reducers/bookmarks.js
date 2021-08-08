@@ -30,6 +30,11 @@ export const bookmarksReducer = (
                 ...state,
                 visibility: action.payload
             };
+        case 'setBookmarks':
+            return {
+                ...state,
+                list: action.payload
+            };
         default:
             return state;
     };

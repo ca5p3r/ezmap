@@ -31,7 +31,7 @@ export const tocReducer = (
                 ...state,
                 historicalData: data
             };
-        case 'setHistoricalLayer':
+        case 'setHistoricalLayers':
             return {
                 ...state,
                 historicalData: action.payload

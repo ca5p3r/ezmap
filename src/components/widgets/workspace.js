@@ -30,25 +30,24 @@ const WorkspaceModal = () => {
         dispatch(triggerShowWorkspace());
         setAvailability(false);
         dispatch(resetLayers());
+        setUrl('');
     };
     const handleFetch = (url) => {
         const parser = new WMSCapabilities();
         if (url && url !== '') {
             dispatch(triggerIsLoading(true));
             fetch(`${url}?request=getCapabilities`)
-                .then((response) => {
-                    return response.text();
-                })
-                .then((text) => {
+                .then(response => response.text())
+                .then(text => {
                     const result = parser.read(text);
                     return result.Capability.Layer.Layer;
                 })
-                .then((arr) => {
+                .then(arr => {
                     dispatch(updateLayers(arr));
                     setAvailability(true);
-                    dispatch(triggerIsLoading(false));
+                    dispatch(triggerIsLoading());
                 })
-                .catch((err) => {
+                .catch(err => {
                     dispatch(triggerToast({
                         title: 'Danger',
                         message: err.toString(),
@@ -56,7 +55,7 @@ const WorkspaceModal = () => {
                     }));
                     dispatch(resetLayers());
                     setAvailability(false);
-                    dispatch(triggerIsLoading(false));
+                    dispatch(triggerIsLoading());
                 });
         }
         else {
@@ -81,14 +80,12 @@ const WorkspaceModal = () => {
                 let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
                 let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
                 fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
-                    .then((response) => {
-                        return response.text();
-                    })
-                    .then((text) => {
+                    .then(response => response.text())
+                    .then(text => {
                         let obj = JSON.parse(text);
                         return obj;
                     })
-                    .then((obj) => {
+                    .then(obj => {
                         let fields = obj.featureTypes[0].properties
                         var geomField = fields.filter(field => geometries.includes(field.localType));
                         dispatch(insertHistoricalLayer({

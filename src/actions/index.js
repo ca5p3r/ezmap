@@ -4,6 +4,12 @@ export const triggerLogin = (x = false) => {
         payload: x
     };
 };
+export const setUser = (x = null) => {
+    return {
+        type: 'setUser',
+        payload: x
+    };
+};
 export const triggerShowLogin = (x = false) => {
     return {
         type: 'triggerShowLogin',
@@ -37,6 +43,12 @@ export const setActiveLayers = (x) => {
 export const setCursor = (x) => {
     return {
         type: 'setCursor',
+        payload: x
+    };
+};
+export const setBookmarks = (x) => {
+    return {
+        type: 'setBookmarks',
         payload: x
     };
 };
@@ -115,9 +127,15 @@ export const insertHistoricalLayer = (x) => {
         payload: x
     };
 };
-export const setHistoricalLayer = (x) => {
+export const setHistoricalLayers = (x = []) => {
     return {
-        type: 'setHistoricalLayer',
+        type: 'setHistoricalLayers',
+        payload: x
+    };
+};
+export const setDefaultExtent = (x) => {
+    return {
+        type: 'setDefaultExtent',
         payload: x
     };
 };
