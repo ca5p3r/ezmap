@@ -88,7 +88,7 @@ const MyMap = () => {
         tocInfo.historicalData.forEach(item => {
             const obj = setter(item.url + 'wms', `${item.title}&${item.id}`, item.name);
             olmap.addLayer(obj);
-        })
+        });
         dispatch(setActiveLayers(olmap.getLayers().array_));
         olmap.getTargetElement().style.cursor = 'circle';
         // eslint-disable-next-line
