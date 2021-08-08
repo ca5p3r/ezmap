@@ -4,6 +4,12 @@ export const triggerLogin = (x = false) => {
         payload: x
     };
 };
+export const setUser = (x = null) => {
+    return {
+        type: 'setUser',
+        payload: x
+    };
+};
 export const triggerShowLogin = (x = false) => {
     return {
         type: 'triggerShowLogin',

@@ -20,13 +20,17 @@ import {
     setClickedPoint,
     clearResult,
     triggerIdentifyVisibility,
-    setHistoricalLayers
+    setHistoricalLayers,
+    triggerIsLoading,
+    triggerToast
 } from '../actions';
 const AppNavBar = () => {
     const dispatch = useDispatch();
     const loginInfo = useSelector(state => state.login);
     const showRegister = useSelector(state => state.register.visibility);
-    const bookmarkState = useSelector(state => state.bookmarks.visibility);
+    const bookmarks = useSelector(state => state.bookmarks);
+    const mapInfo = useSelector(state => state.mapInfo);
+    const data = useSelector(state => state.toc);
     const TOCState = useSelector(state => state.toc.visibility);
     const workspaceVisibility = useSelector(state => state.workspace.visibility);
     const identifyState = useSelector(state => state.identify.enabled);
@@ -38,7 +42,7 @@ const AppNavBar = () => {
         dispatch(triggerShowTOC());
     };
     const handleBookmarkClick = () => {
-        dispatch(triggerBookmarks(!bookmarkState));
+        dispatch(triggerBookmarks(!bookmarks.visibility));
         dispatch(triggerShowWorkspace());
         dispatch(triggerShowTOC());
         dispatch(triggerIdentifyVisibility());
@@ -63,6 +67,53 @@ const AppNavBar = () => {
         dispatch(setClickedPoint([]));
         dispatch(clearResult());
     };
+    const handleSave = () => {
+        dispatch(triggerIsLoading(true));
+        const obj = {
+            bookmarks: bookmarks.list,
+            map: {
+                center: mapInfo.mapCenter,
+                zoom: mapInfo.mapZoom,
+                extent: [
+                    2099724.35,
+                    2504130.79,
+                    4659273.23,
+                    3724669.16
+                ],
+                layers: data.historicalData
+            }
+        };
+        const body = {
+            username: loginInfo.user,
+            obj
+        };
+        fetch("http://localhost:9000/config/saveSettings", {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+            .then(response => response.json())
+            .then(obj => {
+                console.log(obj);
+                dispatch(triggerIsLoading());
+                dispatch(triggerToast({
+                    title: 'Success',
+                    message: 'Settings have been saved!',
+                    visible: true
+                }));
+            })
+            .catch(err => {
+                dispatch(triggerIsLoading());
+                dispatch(triggerToast({
+                    title: 'Danger',
+                    message: err.toString(),
+                    visible: true
+                }));
+            });
+    };
     return (
         <Navbar bg="info" expand="lg">
             <Navbar.Brand><svg width="30" height="29" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="map-marker-alt" className="svg-inline--fa fa-map-marker-alt fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"></path></svg> EasyMap</Navbar.Brand>
@@ -70,7 +121,7 @@ const AppNavBar = () => {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="menavbar-nav ml-auto">
                     {loginInfo.isLogged && <>
-                        <Nav.Link title="Save"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="save" className="svg-inline--fa fa-save fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM224 416c-35.346 0-64-28.654-64-64 0-35.346 28.654-64 64-64s64 28.654 64 64c0 35.346-28.654 64-64 64zm96-304.52V212c0 6.627-5.373 12-12 12H76c-6.627 0-12-5.373-12-12V108c0-6.627 5.373-12 12-12h228.52c3.183 0 6.235 1.264 8.485 3.515l3.48 3.48A11.996 11.996 0 0 1 320 111.48z"></path></svg></Nav.Link>
+                        <Nav.Link onClick={handleSave} title="Save"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="save" className="svg-inline--fa fa-save fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM224 416c-35.346 0-64-28.654-64-64 0-35.346 28.654-64 64-64s64 28.654 64 64c0 35.346-28.654 64-64 64zm96-304.52V212c0 6.627-5.373 12-12 12H76c-6.627 0-12-5.373-12-12V108c0-6.627 5.373-12 12-12h228.52c3.183 0 6.235 1.264 8.485 3.515l3.48 3.48A11.996 11.996 0 0 1 320 111.48z"></path></svg></Nav.Link>
                         <Nav.Link title="Routing"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="route" className="svg-inline--fa fa-route fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 320h-96c-17.6 0-32-14.4-32-32s14.4-32 32-32h96s96-107 96-160-43-96-96-96-96 43-96 96c0 25.5 22.2 63.4 45.3 96H320c-52.9 0-96 43.1-96 96s43.1 96 96 96h96c17.6 0 32 14.4 32 32s-14.4 32-32 32H185.5c-16 24.8-33.8 47.7-47.3 64H416c52.9 0 96-43.1 96-96s-43.1-96-96-96zm0-256c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zM96 256c-53 0-96 43-96 96s96 160 96 160 96-107 96-160-43-96-96-96zm0 128c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"></path></svg></Nav.Link>
                         <Nav.Link title="Export file"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-import" className="svg-inline--fa fa-file-import fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M16 288c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h112v-64zm489-183L407.1 7c-4.5-4.5-10.6-7-17-7H384v128h128v-6.1c0-6.3-2.5-12.4-7-16.9zm-153 31V0H152c-13.3 0-24 10.7-24 24v264h128v-65.2c0-14.3 17.3-21.4 27.4-11.3L379 308c6.6 6.7 6.6 17.4 0 24l-95.7 96.4c-10.1 10.1-27.4 3-27.4-11.3V352H128v136c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H376c-13.2 0-24-10.8-24-24z"></path></svg></Nav.Link>
                         <Nav.Link title="Import file"><svg width="25" height="25" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-export" className="svg-inline--fa fa-file-export fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M384 121.9c0-6.3-2.5-12.4-7-16.9L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128zM571 308l-95.7-96.4c-10.1-10.1-27.4-3-27.4 11.3V288h-64v64h64v65.2c0 14.3 17.3 21.4 27.4 11.3L571 332c6.6-6.6 6.6-17.4 0-24zm-379 28v-32c0-8.8 7.2-16 16-16h176V160H248c-13.2 0-24-10.8-24-24V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V352H208c-8.8 0-16-7.2-16-16z"></path></svg></Nav.Link>

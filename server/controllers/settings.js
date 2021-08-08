@@ -32,6 +32,35 @@ const load_settings = (req, res) => {
         });
 };
 
+const save_settings = (req, res) => {
+    const getIDQuery = `SELECT id FROM users WHERE username='${req.body.username}';`;
+    (async () => {
+        const client = await pool.connect();
+        try {
+            const userResult = await client.query(getIDQuery);
+            if (userResult.rows.length > 0) {
+                const userID = userResult.rows[0].id;
+                const query = `UPDATE config SET settings = '${JSON.stringify(req.body.obj)}' WHERE user_id = '${userID}';`;
+                await client.query(query);
+                return res.send({ error: null, success: true });
+            }
+            else {
+                return res.send({ error: 'User not found!', success: false });
+            }
+        } finally {
+            client.release()
+        }
+    })
+        ().catch(err => {
+            console.log(err);
+            switch (err.code) {
+                default:
+                    return res.send({ error: err.detail, success: false });
+            }
+        });
+};
+
 module.exports = {
-    load_settings
+    load_settings,
+    save_settings
 };

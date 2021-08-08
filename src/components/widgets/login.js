@@ -15,7 +15,9 @@ import {
     setBookmarks,
     setMapZoom,
     setMapCenter,
-    setDefaultExtent
+    setDefaultExtent,
+    setUser,
+    setHistoricalLayers
 } from '../../actions';
 const LoginModal = () => {
     const dispatch = useDispatch();
@@ -25,6 +27,7 @@ const LoginModal = () => {
         dispatch(setMapZoom(obj.config.map.zoom));
         dispatch(setMapCenter(obj.config.map.center));
         dispatch(setDefaultExtent(obj.config.map.extent));
+        dispatch(setHistoricalLayers(obj.config.map.layers));
     };
     const handleLogin = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
@@ -57,6 +60,7 @@ const LoginModal = () => {
                                     dispatch(triggerIsLoading());
                                     dispatch(triggerLogin(true));
                                     dispatch(triggerShowLogin());
+                                    dispatch(setUser(username));
                                 })
                                 .catch(err => {
                                     dispatch(triggerIsLoading());

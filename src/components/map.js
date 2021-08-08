@@ -39,6 +39,7 @@ import TOC from './widgets/toc';
 import Bookmarks from './widgets/bookmarks';
 import MapInfo from './widgets/info';
 import Identify from "./widgets/identify";
+import { setter } from "../utils";
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
@@ -84,6 +85,10 @@ const MyMap = () => {
             title: 'OpenStreetMap',
             source: new OSM()
         }));
+        tocInfo.historicalData.forEach(item => {
+            const obj = setter(item.url + 'wms', `${item.title}&${item.id}`, item.name);
+            olmap.addLayer(obj);
+        })
         dispatch(setActiveLayers(olmap.getLayers().array_));
         olmap.getTargetElement().style.cursor = 'circle';
         // eslint-disable-next-line
