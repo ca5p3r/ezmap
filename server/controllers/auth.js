@@ -7,14 +7,12 @@ const salt = 'f387d4f7781b57ac232c227fcef831d0';
 
 const create_user = (req, res) => {
   const hashed = saltedMd5(req.body.password, salt);
-  const userQuery = `INSERT INTO users (username, password) VALUES ('${req.body.username}', '${hashed}');`;
-  const getIDQuery = `SELECT id FROM users WHERE username='${req.body.username}';`;
+  const userQuery = `INSERT INTO users (username, password) VALUES ('${req.body.username}', '${hashed}') RETURNING id;`;
   (async () => {
     const client = await pool.connect();
     try {
-      await client.query(userQuery);
-      const result = await client.query(getIDQuery);
-      const userID = result.rows[0].id;
+      const userResult = await client.query(userQuery);
+      const userID = userResult.rows[0].id;
       const settingsQuery = `INSERT INTO config (settings, user_id) VALUES ('${JSON.stringify(config)}', ${userID});`;
       await client.query(settingsQuery);
       return res.send({ error: null, success: true });
