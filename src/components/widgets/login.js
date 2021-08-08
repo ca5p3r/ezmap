@@ -10,14 +10,26 @@ import {
 import {
     triggerShowLogin,
     triggerLogin,
-    triggerToast
+    triggerToast,
+    triggerIsLoading,
+    setBookmarks,
+    setMapZoom,
+    setMapCenter,
+    setDefaultExtent
 } from '../../actions';
 const LoginModal = () => {
     const dispatch = useDispatch();
     const showLogin = useSelector(state => state.login.visibility);
+    const load_settings = (obj) => {
+        dispatch(setBookmarks(obj.config.bookmarks));
+        dispatch(setMapZoom(obj.config.map.zoom));
+        dispatch(setMapCenter(obj.config.map.center));
+        dispatch(setDefaultExtent(obj.config.map.extent));
+    };
     const handleLogin = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
             if (password.length >= 8 && password.length <= 16) {
+                dispatch(triggerIsLoading(true));
                 const data = { username, password };
                 fetch("http://localhost:9000/auth/login", {
                     method: 'POST',
@@ -27,15 +39,36 @@ const LoginModal = () => {
                     },
                     body: JSON.stringify(data)
                 })
-                    .then(response => {
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(obj => {
                         if (!obj.error) {
-                            dispatch(triggerLogin(true));
-                            dispatch(triggerShowLogin());
+                            const user = { username };
+                            fetch("http://localhost:9000/config/getSettings", {
+                                method: 'POST',
+                                mode: 'cors',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(user)
+                            })
+                                .then(response => response.json())
+                                .then(obj => {
+                                    load_settings(obj);
+                                    dispatch(triggerIsLoading());
+                                    dispatch(triggerLogin(true));
+                                    dispatch(triggerShowLogin());
+                                })
+                                .catch(err => {
+                                    dispatch(triggerIsLoading());
+                                    dispatch(triggerToast({
+                                        title: 'Danger',
+                                        message: err.toString(),
+                                        visible: true
+                                    }));
+                                });
                         }
                         else {
+                            dispatch(triggerIsLoading());
                             dispatch(triggerToast({
                                 title: 'Warning',
                                 message: obj.error,
@@ -44,6 +77,7 @@ const LoginModal = () => {
                         };
                     })
                     .catch(err => {
+                        dispatch(triggerIsLoading());
                         dispatch(triggerToast({
                             title: 'Danger',
                             message: err.toString(),

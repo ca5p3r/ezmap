@@ -186,7 +186,7 @@ const MyMap = () => {
                                         visible: true
                                     }));
                                 };
-                                dispatch(triggerIsLoading(false));
+                                dispatch(triggerIsLoading());
                             })
                             .catch(error => {
                                 if (error.name !== 'AbortError') {
@@ -196,7 +196,7 @@ const MyMap = () => {
                                         visible: true
                                     }));
                                 };
-                                dispatch(triggerIsLoading(false));
+                                dispatch(triggerIsLoading());
                             });
                     })
                 }
@@ -206,7 +206,7 @@ const MyMap = () => {
                         message: 'No queriable layers found!',
                         visible: true
                     }));
-                    dispatch(triggerIsLoading(false));
+                    dispatch(triggerIsLoading());
                 }
                 return () => {
                     controller.abort()

@@ -26,9 +26,7 @@ const RegisterModal = () => {
                     },
                     body: JSON.stringify(data)
                 })
-                    .then(response => {
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(obj => {
                         if (!obj.error) {
                             dispatch(triggerShowRegister());

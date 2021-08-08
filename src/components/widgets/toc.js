@@ -15,7 +15,6 @@ import {
     setHistoricalLayer,
     triggerTOCChange
 } from "../../actions";
-// import { useEffect } from "react";
 const TOC = () => {
     const dispatch = useDispatch();
     const tocInfo = useSelector(state => state.toc);
@@ -46,7 +45,6 @@ const TOC = () => {
         let newExtent = (tocInfo.historicalData.filter(item => item.id === uniqueID))[0].extent;
         dispatch(setMapExtent(newExtent));
     };
-    // useEffect(() => { }, [trigger]);
     return (
         <div className="toc">
             <div id="toc-body">

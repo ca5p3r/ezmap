@@ -40,6 +40,12 @@ export const setCursor = (x) => {
         payload: x
     };
 };
+export const setBookmarks = (x) => {
+    return {
+        type: 'setBookmarks',
+        payload: x
+    };
+};
 export const removeBookmark = (x) => {
     return {
         type: 'removeBookmark',
@@ -118,6 +124,12 @@ export const insertHistoricalLayer = (x) => {
 export const setHistoricalLayer = (x) => {
     return {
         type: 'setHistoricalLayer',
+        payload: x
+    };
+};
+export const setDefaultExtent = (x) => {
+    return {
+        type: 'setDefaultExtent',
         payload: x
     };
 };

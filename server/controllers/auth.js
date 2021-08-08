@@ -34,31 +34,33 @@ const create_user = (req, res) => {
 
 const verify_login = (req, res) => {
   const query = `SELECT id, password FROM users WHERE username = '${req.body.username}';`;
-  pool.connect((err, client, done) => {
-    if (err) {
-      return res.send({ error: err.detail, success: false });
-    };
-    client.query(query, (err, result) => {
-      done();
-      if (err) {
-        return res.send({ error: err.detail, success: false });
-      }
-      else {
-        if (result.rows.length > 0) {
-          const hashed = saltedMd5(req.body.password, salt);
-          if (hashed === result.rows[0].password) {
-            return res.send({ error: null, success: true });
-          }
-          else {
-            return res.send({ error: 'Wrong credentials!', success: false });
-          };
+  (async () => {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(query);
+      if (result.rows.length > 0) {
+        const password = result.rows[0].password;
+        const hashed = saltedMd5(req.body.password, salt);
+        if (hashed === password) {
+          return res.send({ error: null, success: true });
         }
         else {
-          return res.send({ error: 'User not found!', success: false });
-        }
-      };
+          return res.send({ error: 'Wrong credentials!', success: false });
+        };
+      }
+      else {
+        return res.send({ error: 'User not found!', success: false });
+      }
+    } finally {
+      client.release()
+    }
+  })
+    ().catch(err => {
+      switch (err.code) {
+        default:
+          return res.send({ error: err.detail, success: false });
+      }
     });
-  });
 };
 
 module.exports = {
