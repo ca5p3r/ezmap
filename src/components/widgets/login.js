@@ -121,10 +121,15 @@ const LoginModal = () => {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="loginPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+                        <Form.Control type="password" placeholder="Password" onKeyDown={e => {
+                            if (e.keyCode === 13) {
+                                e.preventDefault();
+                                document.getElementById("loginButton").click();
+                            }
+                        }} />
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicSubmit">
-                        <Button variant="primary" onClick={() => {
+                    <Form.Group className="mb-3">
+                        <Button id="loginButton" variant="primary" onClick={() => {
                             const username = document.getElementById('loginUsername').value;
                             const password = document.getElementById('loginPassword').value;
                             handleLogin(username, password);

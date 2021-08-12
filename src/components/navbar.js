@@ -44,6 +44,8 @@ const AppNavBar = () => {
         dispatch(triggerShowTOC());
         dispatch(setUser());
         dispatch(setUserID());
+        dispatch(triggerIdentifyVisibility());
+        dispatch(triggerIdentify());
     };
     const handleBookmarkClick = () => {
         dispatch(triggerBookmarks(!bookmarks.visibility));
