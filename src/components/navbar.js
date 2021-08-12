@@ -22,7 +22,9 @@ import {
     triggerIdentifyVisibility,
     setHistoricalLayers,
     triggerIsLoading,
-    triggerToast
+    triggerToast,
+    setUser,
+    setUserID
 } from '../actions';
 const AppNavBar = () => {
     const dispatch = useDispatch();
@@ -40,6 +42,8 @@ const AppNavBar = () => {
         dispatch(triggerBookmarks());
         dispatch(triggerShowWorkspace());
         dispatch(triggerShowTOC());
+        dispatch(setUser());
+        dispatch(setUserID());
     };
     const handleBookmarkClick = () => {
         dispatch(triggerBookmarks(!bookmarks.visibility));
@@ -84,7 +88,7 @@ const AppNavBar = () => {
             }
         };
         const body = {
-            username: loginInfo.user,
+            id: loginInfo.userID,
             obj
         };
         fetch("http://localhost:9000/config/saveSettings", {

@@ -40,7 +40,7 @@ const verify_login = (req, res) => {
         const password = result.rows[0].password;
         const hashed = saltedMd5(req.body.password, salt);
         if (hashed === password) {
-          return res.send({ error: null, success: true });
+          return res.send({ error: null, success: true, userID: result.rows[0].id });
         }
         else {
           return res.send({ error: 'Wrong credentials!', success: false });

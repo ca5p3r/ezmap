@@ -17,7 +17,8 @@ import {
     setMapCenter,
     setDefaultExtent,
     setUser,
-    setHistoricalLayers
+    setHistoricalLayers,
+    setUserID
 } from '../../actions';
 const LoginModal = () => {
     const dispatch = useDispatch();
@@ -45,14 +46,16 @@ const LoginModal = () => {
                     .then(response => response.json())
                     .then(obj => {
                         if (!obj.error) {
-                            const user = { username };
+                            dispatch(setUser(username));
+                            dispatch(setUserID(obj.userID));
+                            const userObj = { id: obj.userID };
                             fetch("http://localhost:9000/config/getSettings", {
                                 method: 'POST',
                                 mode: 'cors',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify(user)
+                                body: JSON.stringify(userObj)
                             })
                                 .then(response => response.json())
                                 .then(obj => {
@@ -60,7 +63,6 @@ const LoginModal = () => {
                                     dispatch(triggerIsLoading());
                                     dispatch(triggerLogin(true));
                                     dispatch(triggerShowLogin());
-                                    dispatch(setUser(username));
                                 })
                                 .catch(err => {
                                     dispatch(triggerIsLoading());
