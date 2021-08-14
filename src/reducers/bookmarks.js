@@ -6,7 +6,7 @@ export const bookmarksReducer = (
     state = myState,
     action
 ) => {
-    let list = state.list;
+    const list = state.list;
     switch (action.type) {
         case 'addBookmark':
             list.push(action.payload);
@@ -15,7 +15,7 @@ export const bookmarksReducer = (
                 list
             };
         case 'removeBookmark':
-            let newList = list.filter(bookmark => bookmark.title !== action.payload);
+            const newList = list.filter(bookmark => bookmark.title !== action.payload);
             return {
                 ...state,
                 list: newList

@@ -52,7 +52,7 @@ const Bookmarks = () => {
         }));
     };
     const handleRemove = () => {
-        let item = document.getElementById('bookmarks-dropdown').value;
+        const item = document.getElementById('bookmarks-dropdown').value;
         if (item && item !== 'Selector') {
             dispatch(removeBookmark(item));
             dispatch(triggerToast({
@@ -70,11 +70,11 @@ const Bookmarks = () => {
         };
     };
     const handleLoad = () => {
-        let selectedBookmark = document.getElementById('bookmarks-dropdown').value;
-        let selectedElement = document.getElementById(`option${selectedBookmark}`);
-        let centerx = Number(selectedElement.getAttribute('center').split(',')[0]);
-        let centery = Number(selectedElement.getAttribute('center').split(',')[1]);
-        let zoom = Number(selectedElement.getAttribute('zoom'));
+        const selectedBookmark = document.getElementById('bookmarks-dropdown').value;
+        const selectedElement = document.getElementById(`option${selectedBookmark}`);
+        const centerx = Number(selectedElement.getAttribute('center').split(',')[0]);
+        const centery = Number(selectedElement.getAttribute('center').split(',')[1]);
+        const zoom = Number(selectedElement.getAttribute('zoom'));
         dispatch(setMapZoom(zoom));
         dispatch(setMapCenter([centerx, centery]));
     };
