@@ -17,14 +17,14 @@ const Identify = () => {
                     (result, key) => {
                         return (
                             <div key={key}>
-                                <h6>{result.id}</h6>
+                                <h7>Feature: {result.name}.{result.feature.id.split('.')[1]}</h7>
                                 <Table striped bordered hover size="sm">
                                     <tbody>
-                                        {Object.keys(result.properties).map((item, key) => {
+                                        {Object.keys(result.feature.properties).map((item, key) => {
                                             return (
                                                 <tr key={key}>
                                                     <td>{item}</td>
-                                                    <td>{result.properties[item]}</td>
+                                                    <td>{result.feature.properties[item]}</td>
                                                 </tr>
                                             )
                                         })}

@@ -181,7 +181,7 @@ const MyMap = () => {
                             })
                             .then(obj => {
                                 if (obj.features.length > 0) {
-                                    obj.features.forEach(feature => dispatch(setResult(feature)));
+                                    obj.features.forEach(feature => dispatch(setResult({ name: layer.name, feature })));
                                     dispatch(triggerIdentifyVisibility(true));
                                 }
                                 else {
