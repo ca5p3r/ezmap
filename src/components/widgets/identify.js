@@ -17,7 +17,7 @@ const Identify = () => {
                     (result, key) => {
                         return (
                             <div key={key}>
-                                <h7>Feature: {result.name}.{result.feature.id.split('.')[1]}</h7>
+                                <h6>Feature: {result.name}.{result.feature.id.split('.')[1]}</h6>
                                 <Table striped bordered hover size="sm">
                                     <tbody>
                                         {Object.keys(result.feature.properties).map((item, key) => {

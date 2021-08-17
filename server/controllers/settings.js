@@ -48,7 +48,6 @@ const save_settings = (req, res) => {
         }
     })
         ().catch(err => {
-            console.log(err);
             switch (err.code) {
                 default:
                     return res.send({ error: err.detail, success: false });

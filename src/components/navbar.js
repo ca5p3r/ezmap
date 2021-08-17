@@ -103,7 +103,6 @@ const AppNavBar = () => {
         })
             .then(response => response.json())
             .then(obj => {
-                console.log(obj);
                 dispatch(triggerIsLoading());
                 dispatch(triggerToast({
                     title: 'Success',

@@ -87,6 +87,10 @@ const WorkspaceModal = () => {
                     })
                     .then(obj => {
                         const fields = obj.featureTypes[0].properties
+                        const formattedFields = fields.map(field => {
+                            const obj = { name: field.name, type: field.localType, local: '' }
+                            return obj
+                        });
                         const geomField = fields.filter(field => geometries.includes(field.localType));
                         dispatch(insertHistoricalLayer({
                             id: uniqueID,
@@ -96,7 +100,8 @@ const WorkspaceModal = () => {
                             extent: [...p1, ...p2],
                             type: geomField[0].localType,
                             geometry: geomField[0].name,
-                            crs
+                            crs,
+                            properties: formattedFields
                         }));
                     })
                     .catch(() => {
@@ -108,7 +113,8 @@ const WorkspaceModal = () => {
                             extent: [...p1, ...p2],
                             type: null,
                             geometry: null,
-                            crs
+                            crs,
+                            properties: null
                         }));
                     });
                 const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);
