@@ -9,6 +9,7 @@ import {
 import LoginModal from "./widgets/login";
 import RegisterModal from "./widgets/register";
 import WorkspaceModal from "./widgets/workspace";
+import LocalizationModal from "./widgets/localization";
 import {
     triggerShowLogin,
     triggerLogin,
@@ -22,7 +23,9 @@ import {
     triggerIdentifyVisibility,
     setHistoricalLayers,
     triggerIsLoading,
-    triggerToast
+    triggerToast,
+    setUser,
+    setUserID
 } from '../actions';
 const AppNavBar = () => {
     const dispatch = useDispatch();
@@ -40,6 +43,10 @@ const AppNavBar = () => {
         dispatch(triggerBookmarks());
         dispatch(triggerShowWorkspace());
         dispatch(triggerShowTOC());
+        dispatch(setUser());
+        dispatch(setUserID());
+        dispatch(triggerIdentifyVisibility());
+        dispatch(triggerIdentify());
     };
     const handleBookmarkClick = () => {
         dispatch(triggerBookmarks(!bookmarks.visibility));
@@ -84,7 +91,7 @@ const AppNavBar = () => {
             }
         };
         const body = {
-            username: loginInfo.user,
+            id: loginInfo.userID,
             obj
         };
         fetch("http://localhost:9000/config/saveSettings", {
@@ -97,7 +104,6 @@ const AppNavBar = () => {
         })
             .then(response => response.json())
             .then(obj => {
-                console.log(obj);
                 dispatch(triggerIsLoading());
                 dispatch(triggerToast({
                     title: 'Success',
@@ -142,6 +148,7 @@ const AppNavBar = () => {
             <LoginModal />
             <RegisterModal />
             <WorkspaceModal />
+            <LocalizationModal />
         </Navbar>
     );
 };

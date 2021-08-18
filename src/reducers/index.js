@@ -7,6 +7,7 @@ import { tocReducer } from './toc';
 import { toastReducer } from "./toast";
 import { identifyReducer } from "./identify";
 import { registerReducer } from './register';
+import { localizationReducer } from './localization';
 export const reducers = combineReducers({
     login: loginReducer,
     mapInfo: mapInfoReducer,
@@ -15,5 +16,6 @@ export const reducers = combineReducers({
     toc: tocReducer,
     toast: toastReducer,
     identify: identifyReducer,
-    register: registerReducer
+    register: registerReducer,
+    localization: localizationReducer
 });

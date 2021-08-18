@@ -10,6 +10,12 @@ export const setUser = (x = null) => {
         payload: x
     };
 };
+export const setUserID = (x = null) => {
+    return {
+        type: 'setUserID',
+        payload: x
+    };
+};
 export const triggerShowLogin = (x = false) => {
     return {
         type: 'triggerShowLogin',
@@ -182,6 +188,18 @@ export const clearResult = () => {
 export const triggerIdentifyVisibility = (x = false) => {
     return {
         type: 'triggerIdentifyVisibility',
+        payload: x
+    };
+};
+export const triggerShowLocalization = (x = false) => {
+    return {
+        type: 'triggerShowLocalization',
+        payload: x
+    };
+};
+export const setLocalizedLayer = (x) => {
+    return {
+        type: 'setLocalizedLayer',
         payload: x
     };
 };

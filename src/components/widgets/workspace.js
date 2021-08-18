@@ -69,25 +69,29 @@ const WorkspaceModal = () => {
     };
     const handleAdd = (url) => {
         if (availability) {
-            let geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
-            let layerName = document.getElementById('formBasicLayer').value;
-            let selectedElement = document.getElementById(`option${layerName}`);
-            let layerTitle = selectedElement.getAttribute('title');
-            let crs = selectedElement.getAttribute('crs');
-            let uniqueID = uuidv4();
-            let extentGeographic = selectedElement.getAttribute('extent');
+            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+            const layerName = document.getElementById('formBasicLayer').value;
+            const selectedElement = document.getElementById(`option${layerName}`);
+            const layerTitle = selectedElement.getAttribute('title');
+            const crs = selectedElement.getAttribute('crs');
+            const uniqueID = uuidv4();
+            const extentGeographic = selectedElement.getAttribute('extent');
             if (layerName && layerName !== 'Selector') {
-                let p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
-                let p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
+                const p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
+                const p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
                 fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
                     .then(response => response.text())
                     .then(text => {
-                        let obj = JSON.parse(text);
+                        const obj = JSON.parse(text);
                         return obj;
                     })
                     .then(obj => {
-                        let fields = obj.featureTypes[0].properties
-                        var geomField = fields.filter(field => geometries.includes(field.localType));
+                        const fields = obj.featureTypes[0].properties
+                        const formattedFields = fields.map(field => {
+                            const obj = { name: field.name, type: field.localType, local: '' }
+                            return obj
+                        });
+                        const geomField = fields.filter(field => geometries.includes(field.localType));
                         dispatch(insertHistoricalLayer({
                             id: uniqueID,
                             name: layerName,
@@ -96,7 +100,8 @@ const WorkspaceModal = () => {
                             extent: [...p1, ...p2],
                             type: geomField[0].localType,
                             geometry: geomField[0].name,
-                            crs
+                            crs,
+                            properties: formattedFields
                         }));
                     })
                     .catch(() => {
@@ -108,7 +113,8 @@ const WorkspaceModal = () => {
                             extent: [...p1, ...p2],
                             type: null,
                             geometry: null,
-                            crs
+                            crs,
+                            properties: null
                         }));
                     });
                 const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);

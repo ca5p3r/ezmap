@@ -25,7 +25,7 @@ export const tocReducer = (
                 comonentChanged: action.payload
             };
         case 'insertHistoricalLayer':
-            let data = state.historicalData;
+            const data = state.historicalData;
             data.push(action.payload);
             return {
                 ...state,

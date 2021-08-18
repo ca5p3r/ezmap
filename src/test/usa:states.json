@@ -1,0 +1,9 @@
+{
+    "STATE_ABBR": "Appreviation",
+    "STATE_NAME": "State name",
+    "AREA_LAND": "Land area in KM",
+    "AREA_WATER": "Water area in KM",
+    "PERSONS": "Population",
+    "MALE": "Males count",
+    "FEMALE": "Females count"
+}

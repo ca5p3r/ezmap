@@ -8,14 +8,14 @@ export const makeBuffer = (geom, point) => {
     else {
         buffer = 100
     };
-    let x = point[0];
-    let y = point[1];
-    let p1 = [x - buffer, y + buffer];
-    let p2 = [x + buffer, y + buffer];
-    let p3 = [x + buffer, y - buffer];
-    let p4 = [x - buffer, y - buffer];
-    let p5 = p1;
-    return { p1, p2, p3, p4, p5 }
+    const x = point[0];
+    const y = point[1];
+    const p1 = [x - buffer, y + buffer];
+    const p2 = [x + buffer, y + buffer];
+    const p3 = [x + buffer, y - buffer];
+    const p4 = [x - buffer, y - buffer];
+    const p5 = p1;
+    return [p1, p2, p3, p4, p5]
 };
 export const setter = (url, title, name) => {
     const obj = new Image(

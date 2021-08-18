@@ -1,13 +1,11 @@
 const { pool } = require('../helpers/database');
 
 const load_settings = (req, res) => {
-    const getIDQuery = `SELECT id FROM users WHERE username='${req.body.username}';`;
     (async () => {
         const client = await pool.connect();
         try {
-            const userResult = await client.query(getIDQuery);
-            if (userResult.rows.length > 0) {
-                const userID = userResult.rows[0].id;
+            if (req.body.id) {
+                const userID = req.body.id;
                 const query = `SELECT settings FROM config WHERE user_id = '${userID}';`;
                 const settingsResult = await client.query(query);
                 if (settingsResult.rows.length > 0) {
@@ -33,13 +31,11 @@ const load_settings = (req, res) => {
 };
 
 const save_settings = (req, res) => {
-    const getIDQuery = `SELECT id FROM users WHERE username='${req.body.username}';`;
     (async () => {
         const client = await pool.connect();
         try {
-            const userResult = await client.query(getIDQuery);
-            if (userResult.rows.length > 0) {
-                const userID = userResult.rows[0].id;
+            if (req.body.id) {
+                const userID = req.body.id;
                 const query = `UPDATE config SET settings = '${JSON.stringify(req.body.obj)}' WHERE user_id = '${userID}';`;
                 await client.query(query);
                 return res.send({ error: null, success: true });
@@ -52,7 +48,6 @@ const save_settings = (req, res) => {
         }
     })
         ().catch(err => {
-            console.log(err);
             switch (err.code) {
                 default:
                     return res.send({ error: err.detail, success: false });

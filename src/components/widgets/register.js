@@ -86,8 +86,8 @@ const RegisterModal = () => {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicSubmit">
                         <Button variant="primary" onClick={() => {
-                            let username = document.getElementById('registerUsername').value;
-                            let password = document.getElementById('registerPassword').value;
+                            const username = document.getElementById('registerUsername').value;
+                            const password = document.getElementById('registerPassword').value;
                             handleRegister(username, password);
                         }}>Register</Button>
                     </Form.Group>

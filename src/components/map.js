@@ -71,14 +71,14 @@ const MyMap = () => {
     }));
     useEffect(() => {
         olmap.setTarget("map");
-        olmap.on('pointermove', (e) => {
+        olmap.on('pointermove', e => {
             dispatch(setCursor(e.coordinate));
         });
-        olmap.on('moveend', (e) => {
+        olmap.on('moveend', e => {
             dispatch(setMapZoom(e.map.getView().getZoom()));
             dispatch(setMapCenter(e.map.getView().getCenter()));
         });
-        olmap.on('click', (e) => {
+        olmap.on('click', e => {
             dispatch(setClickedPoint(e.coordinate))
         });
         olmap.addLayer(new TileLayer({
@@ -160,10 +160,10 @@ const MyMap = () => {
                 if (queriableLayers.length > 0) {
                     queriableLayers.forEach(layer => {
                         const buffer = makeBuffer(layer.type, mapInfo.clickedPoint);
-                        const coords = [transform(buffer.p1, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p2, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p3, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p4, 'EPSG:3857', layer.crs).join(' '), transform(buffer.p5, 'EPSG:3857', layer.crs).join(' ')];
+                        const coords = buffer.map(point => transform(point, 'EPSG:3857', layer.crs).join(' '));
                         const queryParam = coords.join(' ');
-                        let raw = `<wfs:GetFeature service="WFS" outputFormat="application/json" version="1.1.0" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
-                        let requestOptions = {
+                        const raw = `<wfs:GetFeature service="WFS" outputFormat="application/json" version="1.1.0" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
+                        const requestOptions = {
                             method: 'POST',
                             body: raw,
                             mode: 'cors',
@@ -181,7 +181,7 @@ const MyMap = () => {
                             })
                             .then(obj => {
                                 if (obj.features.length > 0) {
-                                    obj.features.forEach(feature => dispatch(setResult(feature)));
+                                    obj.features.forEach(feature => dispatch(setResult({ name: layer.name, id: layer.id, feature })));
                                     dispatch(triggerIdentifyVisibility(true));
                                 }
                                 else {

@@ -17,7 +17,8 @@ import {
     setMapCenter,
     setDefaultExtent,
     setUser,
-    setHistoricalLayers
+    setHistoricalLayers,
+    setUserID
 } from '../../actions';
 const LoginModal = () => {
     const dispatch = useDispatch();
@@ -45,14 +46,16 @@ const LoginModal = () => {
                     .then(response => response.json())
                     .then(obj => {
                         if (!obj.error) {
-                            const user = { username };
+                            dispatch(setUser(username));
+                            dispatch(setUserID(obj.userID));
+                            const userObj = { id: obj.userID };
                             fetch("http://localhost:9000/config/getSettings", {
                                 method: 'POST',
                                 mode: 'cors',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify(user)
+                                body: JSON.stringify(userObj)
                             })
                                 .then(response => response.json())
                                 .then(obj => {
@@ -60,7 +63,6 @@ const LoginModal = () => {
                                     dispatch(triggerIsLoading());
                                     dispatch(triggerLogin(true));
                                     dispatch(triggerShowLogin());
-                                    dispatch(setUser(username));
                                 })
                                 .catch(err => {
                                     dispatch(triggerIsLoading());
@@ -119,10 +121,15 @@ const LoginModal = () => {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="loginPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+                        <Form.Control type="password" placeholder="Password" onKeyDown={e => {
+                            if (e.keyCode === 13) {
+                                e.preventDefault();
+                                document.getElementById("loginButton").click();
+                            }
+                        }} />
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicSubmit">
-                        <Button variant="primary" onClick={() => {
+                    <Form.Group className="mb-3">
+                        <Button id="loginButton" variant="primary" onClick={() => {
                             const username = document.getElementById('loginUsername').value;
                             const password = document.getElementById('loginPassword').value;
                             handleLogin(username, password);

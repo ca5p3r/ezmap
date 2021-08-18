@@ -7,7 +7,7 @@ export const identifyReducer = (
     state = myState,
     action
 ) => {
-    let result = state.result;
+    const result = state.result;
     switch (action.type) {
         case 'triggerIdentify':
             return {
