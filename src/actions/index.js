@@ -191,3 +191,15 @@ export const triggerIdentifyVisibility = (x = false) => {
         payload: x
     };
 };
+export const triggerShowLocalization = (x = false) => {
+    return {
+        type: 'triggerShowLocalization',
+        payload: x
+    };
+};
+export const setLocalizedLayer = (x) => {
+    return {
+        type: 'setLocalizedLayer',
+        payload: x
+    };
+};

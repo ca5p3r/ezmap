@@ -9,6 +9,7 @@ import {
 import LoginModal from "./widgets/login";
 import RegisterModal from "./widgets/register";
 import WorkspaceModal from "./widgets/workspace";
+import LocalizationModal from "./widgets/localization";
 import {
     triggerShowLogin,
     triggerLogin,
@@ -147,6 +148,7 @@ const AppNavBar = () => {
             <LoginModal />
             <RegisterModal />
             <WorkspaceModal />
+            <LocalizationModal />
         </Navbar>
     );
 };

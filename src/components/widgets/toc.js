@@ -13,7 +13,9 @@ import {
     triggerShowTOC,
     setMapExtent,
     setHistoricalLayers,
-    triggerTOCChange
+    triggerTOCChange,
+    triggerShowLocalization,
+    setLocalizedLayer
 } from "../../actions";
 const TOC = () => {
     const dispatch = useDispatch();
@@ -46,7 +48,9 @@ const TOC = () => {
         dispatch(setMapExtent(newExtent));
     };
     const handleAddLocal = (title) => {
-        console.log(title);
+        dispatch(triggerShowLocalization(true));
+        dispatch(triggerShowTOC());
+        dispatch(setLocalizedLayer(title.split('&')[1]));
     };
     return (
         <div className="toc">
