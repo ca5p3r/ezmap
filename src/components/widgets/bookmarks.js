@@ -84,7 +84,7 @@ const Bookmarks = () => {
                 <h2>Bookmarks</h2>
                 <Form.Group controlId="bookmarktitle">
                     <Form.Label>Bookmark title</Form.Label>
-                    <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={e => setTitle(e.target.value)} />
                 </Form.Group>
                 <Form.Group controlId="bookmarks-dropdown">
                     <Form.Label>Select a bookmark</Form.Label>

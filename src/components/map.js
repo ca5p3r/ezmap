@@ -71,14 +71,14 @@ const MyMap = () => {
     }));
     useEffect(() => {
         olmap.setTarget("map");
-        olmap.on('pointermove', (e) => {
+        olmap.on('pointermove', e => {
             dispatch(setCursor(e.coordinate));
         });
-        olmap.on('moveend', (e) => {
+        olmap.on('moveend', e => {
             dispatch(setMapZoom(e.map.getView().getZoom()));
             dispatch(setMapCenter(e.map.getView().getCenter()));
         });
-        olmap.on('click', (e) => {
+        olmap.on('click', e => {
             dispatch(setClickedPoint(e.coordinate))
         });
         olmap.addLayer(new TileLayer({
