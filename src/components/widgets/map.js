@@ -29,24 +29,17 @@ import {
     setResult,
     triggerIdentifyVisibility,
     triggerIsLoading
-} from "../actions";
+} from "../../actions";
 import {
     useSelector,
     useDispatch
 } from "react-redux";
-import { makeBuffer } from '../utils';
-import TOC from './widgets/toc';
-import Bookmarks from './widgets/bookmarks';
-import MapInfo from './widgets/info';
-import Identify from "./widgets/identify";
-import { setter } from "../utils";
+import { makeBuffer, setter } from '../../utils';
 const MyMap = () => {
     const dispatch = useDispatch();
     const mapInfo = useSelector(state => state.mapInfo);
-    const showBookmark = useSelector(state => state.bookmarks.visibility);
     const pendingLayer = useSelector(state => state.workspace.pendingLayer);
     const tocInfo = useSelector(state => state.toc);
-    const showIdentify = useSelector(state => state.identify.visibility);
     const identifyState = useSelector(state => state.identify.enabled);
     const draw = new Draw({
         type: 'Point'
@@ -222,10 +215,6 @@ const MyMap = () => {
     }, [mapInfo.clickedPoint, identifyState]);
     return (
         <div id="map">
-            {showBookmark && <Bookmarks />}
-            {tocInfo.visibility && <TOC />}
-            {showIdentify && <Identify />}
-            <MapInfo />
         </div>
     );
 };

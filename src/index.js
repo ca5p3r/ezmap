@@ -3,8 +3,8 @@ import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { store } from './store';
 import React from 'react';
-import App from './app';
-import FontAwesomeLicense from './license';
+import App from './components/app';
+import FontAwesomeLicense from './components/containers/license';
 ReactDOM.render(
   <Provider store={store}>
     <App />

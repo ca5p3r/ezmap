@@ -6,10 +6,10 @@ import {
     useSelector,
     useDispatch
 } from 'react-redux';
-import LoginModal from "./widgets/login";
-import RegisterModal from "./widgets/register";
-import WorkspaceModal from "./widgets/workspace";
-import LocalizationModal from "./widgets/localization";
+import LoginModal from "../modals/login";
+import RegisterModal from "../modals/register";
+import WorkspaceModal from "../modals/workspace";
+import LocalizationModal from "../modals/localization";
 import {
     triggerShowLogin,
     triggerLogin,
@@ -26,7 +26,7 @@ import {
     triggerToast,
     setUser,
     setUserID
-} from '../actions';
+} from '../../actions';
 const AppNavBar = () => {
     const dispatch = useDispatch();
     const loginInfo = useSelector(state => state.login);
