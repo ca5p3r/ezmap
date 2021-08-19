@@ -6,11 +6,15 @@ import {
 import LandingPage from './containers/landing';
 import Loading from './containers/loader';
 import MyToast from './containers/toast';
+import LoginModal from "./modals/login";
+import RegisterModal from "./modals/register";
 function App() {
     const login = useSelector(state => state.login.isLogged);
     const isLoading = useSelector(state => state.mapInfo.isLoading);
     return (
         <div className="App">
+            <LoginModal />
+            <RegisterModal />
             <Navbar />
             {isLoading && <Loading />}
             {login ? <AppContainer /> : <LandingPage />}

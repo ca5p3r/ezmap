@@ -1,9 +1,5 @@
 import { Navbar, Nav } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import LoginModal from "../modals/login";
-import RegisterModal from "../modals/register";
-import WorkspaceModal from "../modals/workspace";
-import LocalizationModal from "../modals/localization";
 import {
   triggerShowLogin,
   triggerLogin,
@@ -172,10 +168,6 @@ const AppNavBar = () => {
           )}
         </Nav>
       </Navbar.Collapse>
-      <LoginModal />
-      <RegisterModal />
-      <WorkspaceModal />
-      <LocalizationModal />
     </Navbar>
   );
 };
