@@ -128,7 +128,6 @@ const TOC = () => {
                                                             defaultValue={layer.values_.opacity * 100}
                                                             step="10"
                                                             onChange={e => {
-                                                                console.log(layer.values_);
                                                                 const element = e.currentTarget;
                                                                 const title = element.getAttribute('objtitle');
                                                                 const value = element.value / 100;
