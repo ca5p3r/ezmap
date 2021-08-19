@@ -23,7 +23,7 @@ import {
 const LoginModal = () => {
     const dispatch = useDispatch();
     const showLogin = useSelector(state => state.login.visibility);
-    const load_settings = (obj) => {
+    const load_settings = obj => {
         dispatch(setBookmarks(obj.config.bookmarks));
         dispatch(setMapZoom(obj.config.map.zoom));
         dispatch(setMapCenter(obj.config.map.center));

@@ -15,6 +15,9 @@ import { ReactComponent as TOC } from "./svg/toc.svg";
 import { ReactComponent as LOGOUT } from "./svg/logout.svg";
 import { ReactComponent as REGISTER } from "./svg/register.svg";
 import { ReactComponent as LOGIN } from "./svg/login.svg";
+import { ReactComponent as REMOVE } from "./svg/remove.svg";
+import { ReactComponent as GOTO } from "./svg/goto.svg";
+import { ReactComponent as LANG } from "./svg/language.svg";
 export const svg = {
   logo: <LOGO />,
   save: <SAVE />,
@@ -33,4 +36,7 @@ export const svg = {
   logout: <LOGOUT />,
   register: <REGISTER />,
   login: <LOGIN />,
+  remove: <REMOVE />,
+  goto: <GOTO />,
+  lang: <LANG />,
 };

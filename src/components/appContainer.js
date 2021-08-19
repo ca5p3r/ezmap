@@ -10,12 +10,12 @@ import {
 const AppContainer = () => {
     const showBookmark = useSelector(state => state.bookmarks.visibility);
     const showIdentify = useSelector(state => state.identify.visibility);
-    const tocInfo = useSelector(state => state.toc);
+    const showTOC = useSelector(state => state.toc.visibility);
     return (
         <div>
             <MyMap />
             {showBookmark && <Bookmarks />}
-            {tocInfo.visibility && <TOC />}
+            {showTOC && <TOC />}
             {showIdentify && <Identify />}
             <MapInfo />
         </div>

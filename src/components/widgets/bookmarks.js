@@ -20,12 +20,13 @@ const Bookmarks = () => {
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const bookmarks = useSelector(state => state.bookmarks.list);
-    const mapInfo = useSelector(state => state.mapInfo);
+    const mapCenter = useSelector(state => state.mapInfo.mapCenter);
+    const mapZoom = useSelector(state => state.mapInfo.mapZoom);
     const handleSave = (title) => {
         if (title) {
             const myObj = {
-                center: mapInfo.mapCenter,
-                zoom: mapInfo.mapZoom,
+                center: mapCenter,
+                zoom: mapZoom,
                 title
             };
             dispatch(addBookmark(myObj));

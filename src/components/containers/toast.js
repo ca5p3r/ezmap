@@ -6,14 +6,17 @@ import {
 import { triggerToast } from "../../actions";
 const MyToast = () => {
     const dispatch = useDispatch();
-    const toastInfo = useSelector(state => state.toast);
+    const color = useSelector(state => state.toast.color);
+    const visibility = useSelector(state => state.toast.visibility);
+    const title = useSelector(state => state.toast.title);
+    const message = useSelector(state => state.toast.message);
     return (
         <div className="toast-message">
-            <Toast className={`bg-${toastInfo.color}`} onClose={() => dispatch(triggerToast())} show={toastInfo.visibility} delay={3000} autohide>
+            <Toast className={`bg-${color}`} onClose={() => dispatch(triggerToast())} show={visibility} delay={3000} autohide>
                 <Toast.Header>
-                    <strong className="me-auto">{toastInfo.title}</strong>
+                    <strong className="me-auto">{title}</strong>
                 </Toast.Header>
-                <Toast.Body>{toastInfo.message}</Toast.Body>
+                <Toast.Body>{message}</Toast.Body>
             </Toast>
         </div>
     );

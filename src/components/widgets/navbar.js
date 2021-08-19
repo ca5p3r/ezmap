@@ -21,20 +21,21 @@ import {
   setUser,
   setUserID,
 } from "../../actions";
-
-import { svg } from "../assets/index";
+import { svg } from "../assets";
 const AppNavBar = () => {
   const dispatch = useDispatch();
-  const loginInfo = useSelector((state) => state.login);
-  const showRegister = useSelector((state) => state.register.visibility);
-  const bookmarks = useSelector((state) => state.bookmarks);
-  const mapInfo = useSelector((state) => state.mapInfo);
-  const data = useSelector((state) => state.toc);
-  const TOCState = useSelector((state) => state.toc.visibility);
-  const workspaceVisibility = useSelector(
-    (state) => state.workspace.visibility
-  );
-  const identifyState = useSelector((state) => state.identify.enabled);
+  const userID = useSelector(state => state.login.userID);
+  const visibility = useSelector(state => state.login.visibility);
+  const isLogged = useSelector(state => state.login.isLogged);
+  const showRegister = useSelector(state => state.register.visibility);
+  const showBookmarks = useSelector(state => state.bookmarks.visibility);
+  const bookmarks = useSelector(state => state.bookmarks.list);
+  const mapCenter = useSelector(state => state.mapInfo.mapCenter);
+  const mapZoom = useSelector(state => state.mapInfo.mapZoom);
+  const data = useSelector(state => state.toc.historicalData);
+  const showTOC = useSelector(state => state.toc.visibility);
+  const workspaceVisibility = useSelector(state => state.workspace.visibility);
+  const identifyState = useSelector(state => state.identify.enabled);
   const handleLogout = () => {
     dispatch(setHistoricalLayers());
     dispatch(triggerLogin());
@@ -47,7 +48,7 @@ const AppNavBar = () => {
     dispatch(triggerIdentify());
   };
   const handleBookmarkClick = () => {
-    dispatch(triggerBookmarks(!bookmarks.visibility));
+    dispatch(triggerBookmarks(!showBookmarks));
     dispatch(triggerShowWorkspace());
     dispatch(triggerShowTOC());
     dispatch(triggerIdentifyVisibility());
@@ -59,7 +60,7 @@ const AppNavBar = () => {
     dispatch(triggerIdentifyVisibility());
   };
   const handleTOCClick = () => {
-    dispatch(triggerShowTOC(!TOCState));
+    dispatch(triggerShowTOC(!showTOC));
     dispatch(triggerBookmarks());
     dispatch(triggerShowWorkspace());
     dispatch(triggerIdentifyVisibility());
@@ -75,16 +76,16 @@ const AppNavBar = () => {
   const handleSave = () => {
     dispatch(triggerIsLoading(true));
     const obj = {
-      bookmarks: bookmarks.list,
+      bookmarks: bookmarks,
       map: {
-        center: mapInfo.mapCenter,
-        zoom: mapInfo.mapZoom,
+        center: mapCenter,
+        zoom: mapZoom,
         extent: [2099724.35, 2504130.79, 4659273.23, 3724669.16],
         layers: data.historicalData,
       },
     };
     const body = {
-      id: loginInfo.userID,
+      id: userID,
       obj,
     };
     fetch("http://localhost:9000/config/saveSettings", {
@@ -123,7 +124,7 @@ const AppNavBar = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="menavbar-nav ml-auto">
-          {loginInfo.isLogged && (
+          {isLogged && (
             <>
               <Nav.Link onClick={handleSave} title="Save">
                 {svg.save}
@@ -153,7 +154,7 @@ const AppNavBar = () => {
               </Nav.Link>
             </>
           )}
-          {!loginInfo.isLogged && (
+          {!isLogged && (
             <Nav.Link
               onClick={() => dispatch(triggerShowRegister(!showRegister))}
               title="Register"
@@ -161,9 +162,9 @@ const AppNavBar = () => {
               {svg.register}
             </Nav.Link>
           )}
-          {!loginInfo.isLogged && (
+          {!isLogged && (
             <Nav.Link
-              onClick={() => dispatch(triggerShowLogin(!loginInfo.visibility))}
+              onClick={() => dispatch(triggerShowLogin(!visibility))}
               title="Login"
             >
               {svg.login}

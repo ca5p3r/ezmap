@@ -37,9 +37,15 @@ import {
 import { makeBuffer, setter } from '../../utils';
 const MyMap = () => {
     const dispatch = useDispatch();
-    const mapInfo = useSelector(state => state.mapInfo);
+    const defaultExtent = useSelector(state => state.mapInfo.defaultExtent);
+    const mapCenter = useSelector(state => state.mapInfo.mapCenter);
+    const mapZoom = useSelector(state => state.mapInfo.mapZoom);
+    const clickedPoint = useSelector(state => state.mapInfo.clickedPoint);
+    const mapExtent = useSelector(state => state.mapInfo.mapExtent);
     const pendingLayer = useSelector(state => state.workspace.pendingLayer);
-    const tocInfo = useSelector(state => state.toc);
+    const historicalData = useSelector(state => state.toc.historicalData);
+    const comonentChanged = useSelector(state => state.toc.comonentChanged);
+    const activeLayers = useSelector(state => state.toc.activeLayers);
     const identifyState = useSelector(state => state.identify.enabled);
     const draw = new Draw({
         type: 'Point'
@@ -47,7 +53,7 @@ const MyMap = () => {
     const [olmap] = useState(new Map({
         controls: defaultControls().extend([
             new ZoomToExtent({
-                extent: mapInfo.defaultExtent,
+                extent: defaultExtent,
             }),
             new FullScreen(),
             new OverviewMap({
@@ -78,7 +84,7 @@ const MyMap = () => {
             title: 'OpenStreetMap',
             source: new OSM()
         }));
-        tocInfo.historicalData.forEach(item => {
+        historicalData.forEach(item => {
             const obj = setter(item.url + 'wms', `${item.title}&${item.id}`, item.name);
             olmap.addLayer(obj);
         });
@@ -87,10 +93,10 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, []);
     useEffect(() => {
-        olmap.getView().setCenter(mapInfo.mapCenter);
-        olmap.getView().setZoom(mapInfo.mapZoom);
+        olmap.getView().setCenter(mapCenter);
+        olmap.getView().setZoom(mapZoom);
         // eslint-disable-next-line
-    }, [mapInfo.mapZoom, mapInfo.mapCenter]);
+    }, [mapZoom, mapCenter]);
     useEffect(() => {
         if (Object.keys(pendingLayer).length > 0) {
             olmap.addLayer(pendingLayer);
@@ -105,26 +111,26 @@ const MyMap = () => {
         // eslint-disable-next-line
     }, [pendingLayer]);
     useEffect(() => {
-        if (tocInfo.comonentChanged) {
+        if (comonentChanged) {
             olmap.render();
             dispatch(triggerTOCChange());
         };
         // eslint-disable-next-line
-    }, [tocInfo.comonentChanged]);
+    }, [comonentChanged]);
     useEffect(() => {
-        if (tocInfo.activeLayers) {
-            olmap.getLayers().array_ = tocInfo.activeLayers;
+        if (activeLayers) {
+            olmap.getLayers().array_ = activeLayers;
             olmap.render();
         }
         // eslint-disable-next-line
-    }, [tocInfo.activeLayers]);
+    }, [activeLayers]);
     useEffect(() => {
-        if (mapInfo.mapExtent.length > 0) {
-            olmap.getView().fit(mapInfo.mapExtent);
+        if (mapExtent.length > 0) {
+            olmap.getView().fit(mapExtent);
             dispatch(resetMapExtent());
         }
         // eslint-disable-next-line
-    }, [mapInfo.mapExtent.length]);
+    }, [mapExtent.length]);
     useEffect(() => {
         if (identifyState) {
             dispatch(triggerToast({
@@ -145,14 +151,14 @@ const MyMap = () => {
     }, [identifyState]);
     useEffect(() => {
         if (identifyState) {
-            if (mapInfo.clickedPoint.length > 0) {
+            if (clickedPoint.length > 0) {
                 dispatch(triggerIsLoading(true));
                 dispatch(clearResult());
                 const controller = new AbortController();
-                const queriableLayers = tocInfo.historicalData.filter(item => item.geometry !== null);
+                const queriableLayers = historicalData.filter(item => item.geometry !== null);
                 if (queriableLayers.length > 0) {
                     queriableLayers.forEach(layer => {
-                        const buffer = makeBuffer(layer.type, mapInfo.clickedPoint);
+                        const buffer = makeBuffer(layer.type, clickedPoint);
                         const coords = buffer.map(point => transform(point, 'EPSG:3857', layer.crs).join(' '));
                         const queryParam = coords.join(' ');
                         const raw = `<wfs:GetFeature service="WFS" outputFormat="application/json" version="1.1.0" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
@@ -212,7 +218,7 @@ const MyMap = () => {
             };
         }
         // eslint-disable-next-line
-    }, [mapInfo.clickedPoint, identifyState]);
+    }, [clickedPoint, identifyState]);
     return (
         <div id="map">
         </div>

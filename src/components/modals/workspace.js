@@ -25,7 +25,8 @@ const WorkspaceModal = () => {
     const dispatch = useDispatch();
     const [url, setUrl] = useState('');
     const [availability, setAvailability] = useState(false);
-    const workspace = useSelector(state => state.workspace);
+    const visibility = useSelector(state => state.workspace.visibility);
+    const layers = useSelector(state => state.workspace.layers);
     const handleHide = () => {
         dispatch(triggerShowWorkspace());
         setAvailability(false);
@@ -137,7 +138,7 @@ const WorkspaceModal = () => {
         };
     };
     return (
-        <Modal show={workspace.visibility} onHide={handleHide}>
+        <Modal show={visibility} onHide={handleHide}>
             <Modal.Header closeButton>
                 <Modal.Title>Workspace</Modal.Title>
             </Modal.Header>
@@ -155,7 +156,7 @@ const WorkspaceModal = () => {
                         <Form.Label>Select a layer</Form.Label>
                         <Form.Control as="select">
                             <option id="optionSelector" value="Selector">Select</option>
-                            {workspace.layers.map(
+                            {layers.map(
                                 (layer, key) => {
                                     return <option id={`option${layer.Name}`} key={key} crs={layer.CRS[0]} value={layer.Name} title={layer.Title} extent={layer.EX_GeographicBoundingBox}>{layer.Title}</option>;
                                 }
