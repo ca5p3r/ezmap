@@ -20,10 +20,11 @@ export const identifyReducer = (
                 visibility: action.payload
             };
         case 'setResult':
-            result.push(action.payload);
+            const newArr = [...result]
+            newArr.push(action.payload);
             return {
                 ...state,
-                result
+                result: newArr
             };
         case 'clearResult':
             return {
