@@ -77,7 +77,7 @@ const AppNavBar = () => {
         center: mapCenter,
         zoom: mapZoom,
         extent: [2099724.35, 2504130.79, 4659273.23, 3724669.16],
-        layers: data.historicalData,
+        layers: data,
       },
     };
     const body = {
@@ -92,18 +92,29 @@ const AppNavBar = () => {
       },
       body: JSON.stringify(body),
     })
-      .then((response) => response.json())
-      .then((obj) => {
+      .then(response => response.json())
+      .then(obj => {
         dispatch(triggerIsLoading());
-        dispatch(
-          triggerToast({
-            title: "Success",
-            message: "Settings have been saved!",
-            visible: true,
-          })
-        );
+        if (obj.success) {
+          dispatch(
+            triggerToast({
+              title: "Success",
+              message: "Settings have been saved!",
+              visible: true,
+            })
+          );
+        }
+        else {
+          dispatch(
+            triggerToast({
+              title: "Danger",
+              message: obj.error,
+              visible: true,
+            })
+          );
+        }
       })
-      .catch((err) => {
+      .catch(err => {
         dispatch(triggerIsLoading());
         dispatch(
           triggerToast({
