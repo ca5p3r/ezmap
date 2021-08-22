@@ -80,7 +80,6 @@ const LocalizationModal = () => {
             </Modal.Body>
             <Modal.Footer>
                 <Button id="uploadButton" variant="primary" onClick={handleAdd}>Upload</Button>
-                <Button variant="secondary" onClick={handleHide}>Dismiss</Button>
             </Modal.Footer>
         </Modal>
     );

@@ -1,4 +1,4 @@
-import { Button, Table } from "react-bootstrap";
+import { Table, Offcanvas } from "react-bootstrap";
 import {
     triggerIdentifyVisibility
 } from "../../actions";
@@ -9,11 +9,14 @@ import {
 const Identify = () => {
     const dispatch = useDispatch();
     const results = useSelector(state => state.identify.result);
+    const show = useSelector(state => state.identify.visibility);
     const layers = useSelector(state => state.toc.historicalData);
     return (
-        <div className="identify">
-            <div id="identify-body">
-                <h2>Identify result</h2>
+        <Offcanvas placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerIdentifyVisibility())}>
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title>Identify result</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
                 {results && results.map(
                     (result, key) => {
                         const resProps = layers.filter(layer => layer.id === result.id)[0].properties;
@@ -41,13 +44,8 @@ const Identify = () => {
                         )
                     }
                 )}
-            </div>
-            <div className="col text-center" id="identify-buttons">
-                <Button variant="warning" onClick={() => dispatch(triggerIdentifyVisibility())}>
-                    Dismiss
-                </Button>
-            </div>
-        </div>
+            </Offcanvas.Body>
+        </Offcanvas>
     );
 };
 export default Identify;

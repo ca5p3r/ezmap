@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Offcanvas } from "react-bootstrap";
 import {
     DragDropContext,
     Droppable,
@@ -21,6 +21,7 @@ import { svg } from "../assets";
 const TOC = () => {
     const dispatch = useDispatch();
     const activeLayers = useSelector(state => state.toc.activeLayers);
+    const show = useSelector(state => state.toc.visibility);
     const historicalData = useSelector(state => state.toc.historicalData);
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
@@ -64,9 +65,11 @@ const TOC = () => {
         dispatch(setLocalizedLayer(title.split('&')[1]));
     };
     return (
-        <div className="toc">
-            <div id="toc-body">
-                <h2>Table of contents</h2>
+        <Offcanvas placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerShowTOC())}>
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title>Table of contents</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="toc-list">
                         {(provided) => (
@@ -148,13 +151,8 @@ const TOC = () => {
                         }
                     </Droppable>
                 </DragDropContext>
-            </div>
-            <div className="col text-center" id="toc-buttons">
-                <Button variant="warning" onClick={() => dispatch(triggerShowTOC())}>
-                    Dismiss
-                </Button>
-            </div>
-        </div>
+            </Offcanvas.Body>
+        </Offcanvas>
     );
 };
 export default TOC;

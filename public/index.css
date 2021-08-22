@@ -5,18 +5,28 @@ html, body, #root #application {
 }
 
 #map {
-    height: 94%;
+    height: 93.9%;
     width: 100%;
     position: absolute;
-    border: black double;
     background-color: #ffffffe0;
 }
 
 #map-info {
     position: absolute;
-    bottom: 0rem;
+    bottom: 3px;
     left: 25rem;
     z-index: 1051;
+}
+
+#map-info label {
+    display: inline-block;
+    padding: 0.5rem;
+    width: 180px;
+    font-size: small;
+    border: solid 0.5px grey;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    background: white;
 }
 
 #license {
@@ -51,38 +61,6 @@ html, body, #root #application {
     right: 35px;
 }
 
-#map-info label {
-    display: inline-block;
-    padding: 0.5rem;
-    width: 180px;
-    font-size: small;
-    font-family: 'Times New Roman', Times, serif;
-    border: #43a3b8 1px solid;
-    text-align: center;
-    background: white;
-}
-
-.bookmarks {
-    position: absolute;
-    top: 4rem;
-    right: 1rem;
-    background: #43a3b8;
-    width: 30%;
-    height: 35%;
-    z-index: 1051;
-}
-
-.bookmarks label {
-    display: inline-block;
-    padding: 0.5rem;
-    text-align: center;
-}
-
-.bookmarks button {
-    margin: 0.5rem;
-    padding: 0.5rem;
-}
-
 .landing {
     height: 93%;
     width: 100%;
@@ -97,27 +75,11 @@ html, body, #root #application {
     height: 77%;
 }
 
-.toc {
-    position: absolute;
-    top: 4rem;
-    right: 1rem;
-    background: #43a3b8;
-    width: 20%;
-    height: 80%;
-    text-align: center;
-    z-index: 1051;
-}
-
-.toc h2, .bookmarks h2, .identify h2 {
-    text-align: center;
-    border: solid .5px black;
-}
-
-.toc ul {
+ul {
     list-style-type: none;
 }
 
-.toc li {
+li {
     font-size: small;
     text-align: center;
     border: ridge white 0.5px;
@@ -128,77 +90,14 @@ html, body, #root #application {
     flex-direction: column;
 }
 
-#toc-body input[type='checkbox'] {
+.container input[type='checkbox'] {
     float: left;
 }
 
-#toc-body button {
+.container button {
     float: right;
-}
-
-.form-group {
-    margin: 10px;
 }
 
 .ol-scale-line {
     left: 180px!important;
-}
-
-.loader {
-    border: 16px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 16px solid blue;
-    border-right: 16px solid green;
-    border-bottom: 16px solid red;
-    border-left: 16px solid pink;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-    position: absolute;
-    bottom: 25rem;
-    left: 54rem;
-    z-index: 2000;
-}
-
-@-webkit-keyframes spin {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.identify {
-    position: absolute;
-    top: 4rem;
-    right: 1rem;
-    background: #43a3b8;
-    width: 20%;
-    height: 80%;
-    text-align: center;
-    z-index: 1051;
-}
-
-#identify-buttons, #toc-buttons {
-    height: 6%;
-    width: 100%;
-    border: solid .5px black;
-}
-
-#identify-body, #toc-body {
-    height: 94%;
-    width: 100%;
-    padding: 5px;
-    overflow-y: scroll;
-    border: solid .5px black;
 }

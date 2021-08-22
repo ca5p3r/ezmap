@@ -1,6 +1,7 @@
 import {
     Form,
-    Button
+    Button,
+    Offcanvas
 } from "react-bootstrap";
 import { useState } from "react";
 import {
@@ -20,6 +21,7 @@ const Bookmarks = () => {
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const bookmarks = useSelector(state => state.bookmarks.list);
+    const show = useSelector(state => state.bookmarks.visibility);
     const mapCenter = useSelector(state => state.mapInfo.mapCenter);
     const mapZoom = useSelector(state => state.mapInfo.mapZoom);
     const handleSave = (title) => {
@@ -80,43 +82,44 @@ const Bookmarks = () => {
         dispatch(setMapCenter([centerx, centery]));
     };
     return (
-        <div className="bookmarks">
-            <Form>
-                <h2>Bookmarks</h2>
-                <Form.Group controlId="bookmarktitle">
-                    <Form.Label>Bookmark title</Form.Label>
-                    <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={e => setTitle(e.target.value)} />
-                </Form.Group>
-                <Form.Group controlId="bookmarks-dropdown">
-                    <Form.Label>Select a bookmark</Form.Label>
-                    <Form.Control as="select">
-                        <option id="optionSelector" value="Selector" center="0,0" zoom="0">Select</option>
-                        {bookmarks.map(
-                            (bookmark, key) => {
-                                return <option id={`option${bookmark.title}`} key={key} value={bookmark.title} center={bookmark.center} zoom={bookmark.zoom}>{bookmark.title}</option>;
-                            }
-                        )}
-                    </Form.Control>
-                </Form.Group>
-                <div className="col text-center">
-                    <Button variant="warning" onClick={() => dispatch(triggerBookmarks())}>
-                        Dismiss
-                    </Button>
-                    <Button variant="danger" onClick={handleRemoveAll}>
-                        Remove all
-                    </Button>
-                    <Button variant="danger" onClick={handleRemove}>
-                        Remove
-                    </Button>
-                    <Button variant="secondary" onClick={handleLoad}>
-                        Load
-                    </Button>
-                    <Button variant="success" onClick={() => handleSave(title)}>
-                        Save
-                    </Button>
-                </div>
-            </Form>
-        </div>
+        <Offcanvas placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerBookmarks())}>
+            <Offcanvas.Header closeButton>
+                <Offcanvas.Title>Bookmarks</Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+                <Form>
+                    <Form.Group controlId="bookmarktitle">
+                        <Form.Label>Bookmark title</Form.Label>
+                        <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={e => setTitle(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group className="mt-2" controlId="bookmarks-dropdown">
+                        <Form.Label>Select a bookmark</Form.Label>
+                        <Form.Control as="select">
+                            <option id="optionSelector" value="Selector" center="0,0" zoom="0">Select</option>
+                            {bookmarks.map(
+                                (bookmark, key) => {
+                                    return <option id={`option${bookmark.title}`} key={key} value={bookmark.title} center={bookmark.center} zoom={bookmark.zoom}>{bookmark.title}</option>;
+                                }
+                            )}
+                        </Form.Control>
+                    </Form.Group>
+                    <div className="d-grid gap-2 mt-4">
+                        <Button variant="secondary" onClick={handleLoad}>
+                            Load
+                        </Button>
+                        <Button variant="success" onClick={() => handleSave(title)}>
+                            Save
+                        </Button>
+                        <Button variant="danger" onClick={handleRemoveAll}>
+                            Remove all
+                        </Button>
+                        <Button variant="danger" onClick={handleRemove}>
+                            Remove
+                        </Button>
+                    </div>
+                </Form>
+            </Offcanvas.Body>
+        </Offcanvas>
     );
 };
 export default Bookmarks;

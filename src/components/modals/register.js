@@ -84,17 +84,14 @@ const RegisterModal = () => {
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" />
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicSubmit">
-                        <Button variant="primary" onClick={() => {
-                            const username = document.getElementById('registerUsername').value;
-                            const password = document.getElementById('registerPassword').value;
-                            handleRegister(username, password);
-                        }}>Register</Button>
-                    </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => dispatch(triggerShowRegister(!showRegister))}>Dismiss</Button>
+                <Button variant="primary" onClick={() => {
+                    const username = document.getElementById('registerUsername').value;
+                    const password = document.getElementById('registerPassword').value;
+                    handleRegister(username, password);
+                }}>Register</Button>
             </Modal.Footer>
         </Modal>
     );

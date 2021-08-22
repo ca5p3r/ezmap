@@ -126,10 +126,11 @@ const AppNavBar = () => {
       });
   };
   return (
-    <Navbar bg="info" expand="lg">
+    <Navbar bg="light" expand="lg">
       <Navbar.Brand>{svg.logo} EasyMap</Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="me-auto"></Nav>
         <Nav className="menavbar-nav ml-auto">
           {isLogged && (
             <>

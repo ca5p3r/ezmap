@@ -128,17 +128,14 @@ const LoginModal = () => {
                             }
                         }} />
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Button id="loginButton" variant="primary" onClick={() => {
-                            const username = document.getElementById('loginUsername').value;
-                            const password = document.getElementById('loginPassword').value;
-                            handleLogin(username, password);
-                        }}>Login</Button>
-                    </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => dispatch(triggerShowLogin(!showLogin))}>Dismiss</Button>
+                <Button id="loginButton" variant="primary" onClick={() => {
+                    const username = document.getElementById('loginUsername').value;
+                    const password = document.getElementById('loginPassword').value;
+                    handleLogin(username, password);
+                }}>Login</Button>
             </Modal.Footer>
         </Modal>
     );

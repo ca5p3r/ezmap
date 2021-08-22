@@ -149,9 +149,6 @@ const WorkspaceModal = () => {
                         <Form.Label>URL</Form.Label>
                         <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wms" value={url} onChange={e => setUrl(e.target.value)} />
                     </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicUrl">
-                        <Button variant="primary" onClick={() => handleFetch(url)}>Fetch layers</Button>
-                    </Form.Group>
                     {availability && <Form.Group className="mb-3" controlId="formBasicLayer">
                         <Form.Label>Select a layer</Form.Label>
                         <Form.Control as="select">
@@ -166,7 +163,7 @@ const WorkspaceModal = () => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleHide}>Dismiss</Button>
+                <Button variant="primary" onClick={() => handleFetch(url)}>Fetch layers</Button>
                 <Button variant="success" onClick={() => handleAdd(url)}>Add layer</Button>
             </Modal.Footer>
         </Modal>
