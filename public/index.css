@@ -1,14 +1,14 @@
 html, body, #root #application {
     margin: 0;
     padding: 0;
-    background-color: #ffffff;
+    background-color: #f8f9fa;
 }
 
 #map {
     height: 93.9%;
     width: 100%;
     position: absolute;
-    background-color: #ffffffe0;
+    background-color: #f8f9fa;
 }
 
 #map-info {
@@ -26,7 +26,7 @@ html, body, #root #application {
     border: solid 0.5px grey;
     font-family: 'Times New Roman', Times, serif;
     text-align: center;
-    background: white;
+    background-color: #f8f9fa;
 }
 
 #license {
@@ -108,4 +108,5 @@ li {
     float: right;
     top: 58px!important;
     transform: none!important;
+    background-color: #f8f9fa!important;
 }
