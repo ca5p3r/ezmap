@@ -104,17 +104,17 @@ const Bookmarks = () => {
                         </Form.Control>
                     </Form.Group>
                     <div className="d-grid gap-2 mt-4">
-                        <Button variant="secondary" onClick={handleLoad}>
-                            Load
-                        </Button>
                         <Button variant="success" onClick={() => handleSave(title)}>
                             Save
                         </Button>
-                        <Button variant="danger" onClick={handleRemoveAll}>
-                            Remove all
+                        <Button variant="secondary" onClick={handleLoad}>
+                            Load
                         </Button>
                         <Button variant="danger" onClick={handleRemove}>
                             Remove
+                        </Button>
+                        <Button variant="danger" onClick={handleRemoveAll}>
+                            Remove all
                         </Button>
                     </div>
                 </Form>
