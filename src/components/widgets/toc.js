@@ -66,7 +66,7 @@ const TOC = () => {
         dispatch(setLocalizedLayer(title.split('&')[1]));
     };
     return (
-        <Offcanvas placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerShowTOC())}>
+        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerShowTOC())}>
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title>Table of contents</Offcanvas.Title>
             </Offcanvas.Header>

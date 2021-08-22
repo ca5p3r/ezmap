@@ -82,7 +82,7 @@ const Bookmarks = () => {
         dispatch(setMapCenter([centerx, centery]));
     };
     return (
-        <Offcanvas placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerBookmarks())}>
+        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerBookmarks())}>
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title>Bookmarks</Offcanvas.Title>
             </Offcanvas.Header>

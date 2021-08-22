@@ -12,7 +12,7 @@ const Identify = () => {
     const show = useSelector(state => state.identify.visibility);
     const layers = useSelector(state => state.toc.historicalData);
     return (
-        <Offcanvas placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerIdentifyVisibility())}>
+        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerIdentifyVisibility())}>
             <Offcanvas.Header closeButton>
                 <Offcanvas.Title>Identify result</Offcanvas.Title>
             </Offcanvas.Header>

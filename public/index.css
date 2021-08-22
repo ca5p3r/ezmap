@@ -101,3 +101,11 @@ li {
 .ol-scale-line {
     left: 180px!important;
 }
+
+.custom {
+    height: 80%;
+    position: absolute!important;
+    float: right;
+    top: 58px!important;
+    transform: none!important;
+}
