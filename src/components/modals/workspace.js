@@ -132,7 +132,7 @@ const WorkspaceModal = () => {
         else {
             dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Please enter URL!',
+                message: 'Please fetch layers first!',
                 visible: true
             }));
         };
