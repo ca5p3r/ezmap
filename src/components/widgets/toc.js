@@ -81,9 +81,10 @@ const TOC = () => {
                                         <Draggable key={layer.values_.title} index={index} draggableId={layer.values_.title}>
                                             {(provided) => (
                                                 <li className="mb-3" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                    <div>
+                                                    <div className="form-check form-switch">
                                                         <input
                                                             type="checkbox"
+                                                            className="form-check-input"
                                                             checked={layer.values_.visible}
                                                             id={`check${layer.values_.title}`}
                                                             objtitle={layer.values_.title}
@@ -127,6 +128,7 @@ const TOC = () => {
                                                     </div>
                                                     <div>
                                                         <input
+                                                            className="form-range"
                                                             id={`slider${layer.values_.title}`}
                                                             objtitle={layer.values_.title}
                                                             type="range"
