@@ -36,6 +36,7 @@ const TOC = () => {
                 layer.values_.visible = !layer.values_.visible
             }
         });
+        dispatch(setActiveLayers(null));
         dispatch(setActiveLayers(activeLayers));
         dispatch(triggerTOCChange(true));
     };
@@ -75,19 +76,20 @@ const TOC = () => {
                         {(provided) => (
                             <ul {...provided.droppableProps} ref={provided.innerRef} className="container">
                                 {activeLayers && activeLayers.map((layer, index) => {
+                                    console.log(layer.values_.visible)
                                     return (
                                         <Draggable key={layer.values_.title} index={index} draggableId={layer.values_.title}>
                                             {(provided) => (
-                                                <li ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                <li className="mb-3" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                                     <div>
                                                         <input
                                                             type="checkbox"
                                                             checked={layer.values_.visible}
                                                             id={`check${layer.values_.title}`}
-                                                            title={layer.values_.title}
+                                                            objtitle={layer.values_.title}
                                                             onChange={e => {
                                                                 const element = e.target;
-                                                                const title = element.getAttribute('title');
+                                                                const title = element.getAttribute('objtitle');
                                                                 handleVisibility(title);
                                                             }}
                                                         />
