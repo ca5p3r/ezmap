@@ -6,9 +6,9 @@ import React from 'react';
 import App from './components/app';
 import FontAwesomeLicense from './components/containers/license';
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-    <FontAwesomeLicense />
-  </Provider>,
-  document.getElementById('root')
+	<Provider store={store}>
+		<App />
+		<FontAwesomeLicense />
+	</Provider>,
+	document.getElementById('root')
 );
