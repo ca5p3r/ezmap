@@ -1,17 +1,13 @@
-const { Pool } = require('pg');
-
-const dbSettings = require('../settings/database.json');
+import pkg from 'pg';
+const { Pool } = pkg;
+import { obj } from '../settings/database.js';
 
 const config = {
-    host: dbSettings.host || 'localhost',
-    port: dbSettings.port || '5432',
-    user: dbSettings.username || 'postgres',
-    password: dbSettings.password || 'postgres',
-    database: dbSettings.database || 'postgres'
+    host: obj.host || 'localhost',
+    port: obj.port || '5432',
+    user: obj.username || 'postgres',
+    password: obj.password || 'postgres',
+    database: obj.database || 'postgres'
 };
 
-const pool = new Pool(config);
-
-module.exports = {
-    pool
-};
+export const pool = new Pool(config);

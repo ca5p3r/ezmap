@@ -1,5 +1,5 @@
-const fetch = require('node-fetch');
-const transform = require('ol/proj');
+import fetch from 'node-fetch';
+import { transform } from 'ol/proj.js';
 
 const makeBuffer = (geom, point) => {
     let buffer;
@@ -19,7 +19,7 @@ const makeBuffer = (geom, point) => {
     return [p1, p2, p3, p4, p5]
 };
 
-const identify = (req, res) => {
+export const identify = (req, res) => {
     (async () => {
         const layers = req.body.layers;
         const promises = [];
@@ -53,8 +53,4 @@ const identify = (req, res) => {
         ().catch(err => {
             return res.send({ error: err, success: false })
         });
-};
-
-module.exports = {
-    identify
 };

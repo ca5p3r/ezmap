@@ -1,8 +1,6 @@
-const express = require('express');
-const queryControllers = require('../controllers/query');
+import { Router } from 'express';
+import { identify } from '../controllers/query.js';
 
-const router = express.Router();
+export const queryRouters = Router();
 
-router.post('/identify', queryControllers.identify);
-
-module.exports = router;
+queryRouters.post('/identify', identify);
