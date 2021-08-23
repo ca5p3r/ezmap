@@ -88,7 +88,6 @@ const AppNavBar = () => {
     };
     fetch("http://localhost:9000/config/saveSettings", {
       method: "POST",
-      mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },

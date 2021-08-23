@@ -37,7 +37,6 @@ const LoginModal = () => {
                 const data = { username, password };
                 fetch("http://localhost:9000/auth/login", {
                     method: 'POST',
-                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -51,7 +50,6 @@ const LoginModal = () => {
                             const userObj = { id: obj.userID };
                             fetch("http://localhost:9000/config/getSettings", {
                                 method: 'POST',
-                                mode: 'cors',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },

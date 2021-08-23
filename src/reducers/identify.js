@@ -7,7 +7,6 @@ export const identifyReducer = (
     state = myState,
     action
 ) => {
-    const result = state.result;
     switch (action.type) {
         case 'triggerIdentify':
             return {
@@ -20,11 +19,9 @@ export const identifyReducer = (
                 visibility: action.payload
             };
         case 'setResult':
-            const newArr = [...result]
-            newArr.push(action.payload);
             return {
                 ...state,
-                result: newArr
+                result: action.payload
             };
         case 'clearResult':
             return {

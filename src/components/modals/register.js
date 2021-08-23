@@ -20,7 +20,6 @@ const RegisterModal = () => {
                 const data = { username, password };
                 fetch("http://localhost:9000/auth/create", {
                     method: 'POST',
-                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },

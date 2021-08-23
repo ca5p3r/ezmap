@@ -34,13 +34,19 @@ export const identify = (req, res) => {
                 body: raw,
                 headers: { 'Content-Type': 'application/json' }
             };
-            promises.push(fetch(layer.url + "wfs", requestOptions));
+            promises.push(fetch(layer.url + "wfs", requestOptions)
+                .then(response => response.json())
+                .then(obj => {
+                    return { id: layer.id, name: layer.name, data: obj, error: null, success: true }
+                })
+                .catch(err => {
+                    return { id: layer.id, name: layer.name, data: null, error: err, success: false }
+                })
+            );
         });
         Promise.all(promises)
             .then(response => {
-                let items = [];
-                response.forEach(item => items.push(item.json()));
-                return Promise.all(items)
+                return Promise.all(response)
             })
             .then(arr => {
                 return res.send({ error: false, success: true, response: arr })

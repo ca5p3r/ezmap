@@ -9,7 +9,6 @@ import {
 	ScaleLine,
 	defaults as defaultControls,
 } from "ol/control";
-import { transform } from "ol/proj";
 import "ol/ol.css";
 import { Draw } from "ol/interaction";
 import {
@@ -157,71 +156,69 @@ const MyMap = () => {
 	useEffect(() => {
 		if (identifyState) {
 			if (clickedPoint.length > 0) {
-				console.log(clickedPoint);
 				dispatch(triggerIsLoading(true));
 				dispatch(clearResult());
-				const controller = new AbortController();
 				const queriableLayers = historicalData.filter(
 					(item) => item.geometry !== null
 				);
+				const data = {
+					layers: queriableLayers,
+					clickedPoint
+				}
 				if (queriableLayers.length > 0) {
-					queriableLayers.forEach((layer) => {
-						// const buffer = makeBuffer(layer.type, clickedPoint);
-						// const coords = buffer.map((point) =>
-						// 	transform(point, "EPSG:3857", layer.crs).join(" ")
-						// );
-						// const queryParam = coords.join(" ");
-						// const raw = `<wfs:GetFeature service="WFS" outputFormat="application/json" version="1.1.0" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
-						const requestOptions = {
-							method: "POST",
-							// body: raw,
-							mode: "cors",
-						};
-						fetch(layer.url + "wfs", requestOptions)
-							.then((res) => {
-								if (!res.ok) {
-									dispatch(
-										triggerToast({
-											title: "Danger",
-											message: "Could not fetch data!",
-											visible: true,
-										})
-									);
-								}
-								return res.json();
-							})
-							.then((obj) => {
-								if (obj.features.length > 0) {
-									obj.features.forEach((feature) =>
-										dispatch(
-											setResult({ name: layer.name, id: layer.id, feature })
-										)
-									);
+					fetch("http://localhost:9000/query/identify", {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(data)
+					})
+						.then(res => {
+							if (!res.ok) {
+								dispatch(
+									triggerToast({
+										title: "Danger",
+										message: "Could not fetch data!",
+										visible: true,
+									})
+								);
+							}
+							return res.json();
+						})
+						.then(obj => {
+							const result = [];
+							obj.response.forEach(item => {
+								if (item.data.features.length > 0) {
+									item.data.features.forEach(feature => {
+										result.push({ name: item.name, id: item.id, feature })
+									});
+									dispatch(setResult(result));
 									dispatch(triggerIdentifyVisibility(true));
-								} else {
+								}
+								else {
 									dispatch(
 										triggerToast({
 											title: "Warning",
-											message: `No results found for layer ${layer.title}!`,
+											message: 'One of the layers did not return any data!',
 											visible: true,
 										})
 									);
 								}
-								dispatch(triggerIsLoading());
 							})
-							.catch((error) => {
-								if (error.name !== "AbortError") {
-									dispatch(
-										triggerToast({
-											title: "Danger",
-											message: error.toString(),
-											visible: true,
-										})
-									);
-								}
-								dispatch(triggerIsLoading());
-							});
-					});
+							dispatch(triggerIsLoading());
+						})
+						.catch((error) => {
+							if (error.name !== "AbortError") {
+								dispatch(
+									triggerToast({
+										title: "Danger",
+										message: error.toString(),
+										visible: true,
+									})
+								);
+							}
+							dispatch(triggerIsLoading());
+						});
 				} else {
 					dispatch(
 						triggerToast({
@@ -232,9 +229,6 @@ const MyMap = () => {
 					);
 					dispatch(triggerIsLoading());
 				}
-				return () => {
-					controller.abort();
-				};
 			}
 		}
 		// eslint-disable-next-line
