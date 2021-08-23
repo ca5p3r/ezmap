@@ -6,6 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authRouters = require('./routes/auth');
 const settingsRouters = require('./routes/settings');
+const queryRouters = require('./routes/query');
 const { pool } = require('./helpers/database');
 
 const schema = fs.readFileSync(path.resolve(__dirname, "./assets/schema.sql")).toString();
@@ -34,6 +35,7 @@ app.get('/', (_, res) => {
 
 app.use('/auth', authRouters);
 app.use('/config', settingsRouters);
+app.use('/query', queryRouters);
 
 app.use((_, res) => {
     res.status(404).send('<div><h3>Not Found</h3><p>You have reached an undefined endpoint!</p></div>');
