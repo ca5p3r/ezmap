@@ -4,12 +4,10 @@ import ReactDOM from "react-dom";
 import { store } from "./store";
 import React from "react";
 import App from "./components/app";
-import FontAwesomeLicense from "./components/containers/license";
-import "./app.css";
+import "./index.css";
 ReactDOM.render(
   <Provider store={store}>
     <App />
-    {/* <FontAwesomeLicense /> */}
   </Provider>,
   document.getElementById("root")
 );

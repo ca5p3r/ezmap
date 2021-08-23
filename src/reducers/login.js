@@ -1,5 +1,5 @@
 const myState = {
-  isLogged: true,
+  isLogged: false,
   user: null,
   userID: null,
   visibility: false,
