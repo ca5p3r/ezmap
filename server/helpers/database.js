@@ -9,5 +9,4 @@ const config = {
     password: obj.password || 'postgres',
     database: obj.database || 'postgres'
 };
-
 export const pool = new Pool(config);

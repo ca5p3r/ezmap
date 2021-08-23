@@ -1,6 +1,5 @@
 import saltedMd5 from 'salted-md5';
 import { pool } from '../helpers/database.js';
-
 import config from '../settings/config.json';
 
 const salt = 'f387d4f7781b57ac232c227fcef831d0';
@@ -35,7 +34,6 @@ export const create_user = (req, res) => {
 		return res.send({ error: 'Missing information!', success: false });
 	}
 };
-
 export const verify_login = (req, res) => {
 	if (req.body.username && req.body.password) {
 		const query = `SELECT id, password FROM users WHERE username = '${req.body.username}';`;
@@ -70,5 +68,4 @@ export const verify_login = (req, res) => {
 	else {
 		return res.send({ error: 'Missing informarion!', success: false });
 	}
-
 };

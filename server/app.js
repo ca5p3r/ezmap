@@ -14,7 +14,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const schema = readFileSync(resolve(__dirname, "./assets/schema.sql")).toString();
 
-
 const app = express();
 
 pool.connect((err, client, done) => {

@@ -29,7 +29,6 @@ export const load_settings = (req, res) => {
             }
         });
 };
-
 export const save_settings = (req, res) => {
     (async () => {
         const client = await pool.connect();
