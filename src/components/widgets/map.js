@@ -199,7 +199,7 @@ const MyMap = () => {
 									dispatch(
 										triggerToast({
 											title: "Warning",
-											message: 'One of the layers did not return any data!',
+											message: 'One or more layers did not return any data!',
 											visible: true,
 										})
 									);
