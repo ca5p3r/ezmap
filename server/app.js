@@ -9,7 +9,7 @@ import json from 'body-parser';
 import { authRouters } from './routes/auth.js';
 import { settingsRouters } from './routes/settings.js';
 import { queryRouters } from './routes/query.js';
-import { pool } from './helpers/database.js';
+import { pool } from './helpers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

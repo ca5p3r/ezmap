@@ -76,7 +76,6 @@ const TOC = () => {
                         {(provided) => (
                             <ul {...provided.droppableProps} ref={provided.innerRef} className="container">
                                 {activeLayers && activeLayers.map((layer, index) => {
-                                    console.log(layer.values_.visible)
                                     return (
                                         <Draggable key={layer.values_.title} index={index} draggableId={layer.values_.title}>
                                             {(provided) => (

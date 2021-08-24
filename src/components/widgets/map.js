@@ -154,6 +154,7 @@ const MyMap = () => {
 		// eslint-disable-next-line
 	}, [identifyState]);
 	useEffect(() => {
+		const controller = new AbortController();
 		if (identifyState) {
 			if (clickedPoint.length > 0) {
 				dispatch(triggerIsLoading(true));
@@ -171,7 +172,8 @@ const MyMap = () => {
 						headers: {
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify(data)
+						body: JSON.stringify(data),
+						signal: controller.signal
 					})
 						.then(res => {
 							if (!res.ok) {
@@ -230,7 +232,11 @@ const MyMap = () => {
 					dispatch(triggerIsLoading());
 				}
 			}
-		}
+		};
+		return () => {
+			dispatch(triggerIsLoading());
+			controller.abort()
+		};
 		// eslint-disable-next-line
 	}, [clickedPoint, identifyState]);
 	return <div id="map"></div>;

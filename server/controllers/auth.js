@@ -1,11 +1,10 @@
 import saltedMd5 from 'salted-md5';
-import { pool } from '../helpers/database.js';
-import config from '../settings/config.json';
+import { pool } from '../helpers/index.js';
+import { config } from '../settings/index.js';
 
 const salt = 'f387d4f7781b57ac232c227fcef831d0';
 
 export const create_user = (req, res) => {
-	console.log(req.body);
 	if (req.body.username && req.body.password) {
 		const hashed = saltedMd5(req.body.password, salt);
 		const userQuery = `INSERT INTO users (username, password) VALUES ('${req.body.username}', '${hashed}') RETURNING id;`;

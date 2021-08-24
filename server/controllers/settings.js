@@ -1,4 +1,4 @@
-import { pool } from '../helpers/database.js';
+import { pool } from '../helpers/index.js';
 
 export const load_settings = (req, res) => {
     (async () => {
