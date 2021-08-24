@@ -36,6 +36,12 @@ const TOC = () => {
                 layer.values_.visible = !layer.values_.visible
             }
         });
+        historicalData.forEach(layer => {
+            if (layer.id === title.split('&')[1]) {
+                layer.visible = !layer.visible
+            }
+        });
+        dispatch(setHistoricalLayers(historicalData));
         dispatch(setActiveLayers(null));
         dispatch(setActiveLayers(activeLayers));
         dispatch(triggerTOCChange(true));
@@ -46,6 +52,12 @@ const TOC = () => {
                 layer.values_.opacity = value
             }
         });
+        historicalData.forEach(layer => {
+            if (layer.id === title.split('&')[1]) {
+                layer.opacity = value
+            }
+        });
+        dispatch(setHistoricalLayers(historicalData));
         dispatch(setActiveLayers(activeLayers));
         dispatch(triggerTOCChange(true));
     };

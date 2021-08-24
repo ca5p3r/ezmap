@@ -85,7 +85,9 @@ const MyMap = () => {
 			const obj = setter(
 				item.url + "wms",
 				`${item.title}&${item.id}`,
-				item.name
+				item.name,
+				item.opacity,
+				item.visible
 			);
 			olmap.addLayer(obj);
 		});

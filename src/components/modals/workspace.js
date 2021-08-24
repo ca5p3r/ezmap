@@ -102,7 +102,9 @@ const WorkspaceModal = () => {
                             type: geomField[0].localType,
                             geometry: geomField[0].name,
                             crs,
-                            properties: formattedFields
+                            properties: formattedFields,
+                            visible: true,
+                            opacity: 1
                         }));
                     })
                     .catch(() => {
@@ -115,7 +117,9 @@ const WorkspaceModal = () => {
                             type: null,
                             geometry: null,
                             crs,
-                            properties: null
+                            properties: null,
+                            visible: true,
+                            opacity: 1
                         }));
                     });
                 const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);
