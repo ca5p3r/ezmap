@@ -90,7 +90,12 @@ const Bookmarks = () => {
                 <Form>
                     <Form.Group controlId="bookmarktitle">
                         <Form.Label>Bookmark title</Form.Label>
-                        <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={e => setTitle(e.target.value)} />
+                        <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={e => setTitle(e.target.value)} onKeyDown={e => {
+                            if (e.keyCode === 13) {
+                                e.preventDefault();
+                                document.getElementById("bookmarksSaveButton").click();
+                            }
+                        }} />
                     </Form.Group>
                     <Form.Group className="mt-2" controlId="bookmarks-dropdown">
                         <Form.Label>Select a bookmark</Form.Label>
@@ -104,7 +109,7 @@ const Bookmarks = () => {
                         </Form.Control>
                     </Form.Group>
                     <div className="d-grid gap-2 mt-4">
-                        <Button variant="success" onClick={() => handleSave(title)}>
+                        <Button id="bookmarksSaveButton" variant="success" onClick={() => handleSave(title)}>
                             Save
                         </Button>
                         <Button variant="secondary" onClick={handleLoad}>

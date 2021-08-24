@@ -147,7 +147,12 @@ const WorkspaceModal = () => {
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicUrl">
                         <Form.Label>URL</Form.Label>
-                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wms" value={url} onChange={e => setUrl(e.target.value)} />
+                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wms" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => {
+                            if (e.keyCode === 13) {
+                                e.preventDefault();
+                                document.getElementById("fetchLayersButton").click();
+                            }
+                        }} />
                     </Form.Group>
                     {availability && <Form.Group className="mb-3" controlId="formBasicLayer">
                         <Form.Label>Select a layer</Form.Label>
@@ -163,7 +168,7 @@ const WorkspaceModal = () => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="primary" onClick={() => handleFetch(url)}>Fetch layers</Button>
+                <Button id="fetchLayersButton" variant="primary" onClick={() => handleFetch(url)}>Fetch layers</Button>
                 <Button variant="success" onClick={() => handleAdd(url)}>Add layer</Button>
             </Modal.Footer>
         </Modal>
