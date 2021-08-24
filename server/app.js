@@ -36,9 +36,9 @@ app.get('/', (_, res) => {
     res.send('<div><h3>Homepage</h3><p>This is the homepage endpoint for the backend server!</p></div>');
 });
 
-app.use('/auth', authRouters);
-app.use('/config', settingsRouters);
-app.use('/query', queryRouters);
+app.use('/authService', authRouters);
+app.use('/configService', settingsRouters);
+app.use('/queryService', queryRouters);
 
 app.use((_, res) => {
     res.status(404).send('<div><h3>Not Found</h3><p>You have reached an undefined endpoint!</p></div>');

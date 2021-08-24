@@ -35,7 +35,7 @@ const LoginModal = () => {
             if (password.length >= 8 && password.length <= 16) {
                 dispatch(triggerIsLoading(true));
                 const data = { username, password };
-                fetch("http://localhost:9000/auth/login", {
+                fetch("http://localhost:9000/authService/login", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const LoginModal = () => {
                             dispatch(setUser(username));
                             dispatch(setUserID(obj.userID));
                             const userObj = { id: obj.userID };
-                            fetch("http://localhost:9000/config/getSettings", {
+                            fetch("http://localhost:9000/configService/getSettings", {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'

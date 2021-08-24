@@ -164,10 +164,11 @@ const MyMap = () => {
 				);
 				const data = {
 					layers: queriableLayers,
-					clickedPoint
+					clickedPoint,
+					type: 'identify'
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9000/query/identify", {
+					fetch("http://localhost:9000/queryService/query", {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
