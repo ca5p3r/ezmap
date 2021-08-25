@@ -1,20 +1,20 @@
 import { Table, Alert, Offcanvas } from "react-bootstrap";
 import {
-    triggerIdentifyVisibility
+    triggerSpatialSearchVisibility
 } from "../../actions";
 import {
     useSelector,
     useDispatch
 } from "react-redux";
-const Identify = () => {
+const SpatialSearch = () => {
     const dispatch = useDispatch();
-    const results = useSelector(state => state.identify.result);
-    const show = useSelector(state => state.identify.visibility);
+    const results = useSelector(state => state.spatialSearch.result);
+    const show = useSelector(state => state.spatialSearch.visibility);
     const layers = useSelector(state => state.toc.historicalData);
     return (
-        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerIdentifyVisibility())}>
+        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerSpatialSearchVisibility())}>
             <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Identify result</Offcanvas.Title>
+                <Offcanvas.Title>Spatial search result</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
                 {results.length > 0 &&
@@ -60,4 +60,4 @@ const Identify = () => {
         </Offcanvas>
     );
 };
-export default Identify;
+export default SpatialSearch;

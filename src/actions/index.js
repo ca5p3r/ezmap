@@ -162,6 +162,12 @@ export const triggerIdentify = (x = false) => {
         payload: x
     };
 };
+export const triggerSpatialSearch = (x = false) => {
+    return {
+        type: 'triggerSpatialSearch',
+        payload: x
+    };
+};
 export const triggerIsLoading = (x = false) => {
     return {
         type: 'triggerIsLoading',
@@ -171,6 +177,12 @@ export const triggerIsLoading = (x = false) => {
 export const setClickedPoint = (x = []) => {
     return {
         type: 'setClickedPoint',
+        payload: x
+    };
+};
+export const setDrawnPolygon = (x = []) => {
+    return {
+        type: 'setDrawnPolygon',
         payload: x
     };
 };
@@ -185,9 +197,26 @@ export const clearResult = () => {
         type: 'clearResult'
     };
 };
+export const setSpatialResult = (x = []) => {
+    return {
+        type: 'setSpatialResult',
+        payload: x
+    };
+};
+export const clearSpatialResult = () => {
+    return {
+        type: 'clearSpatialResult'
+    };
+};
 export const triggerIdentifyVisibility = (x = false) => {
     return {
         type: 'triggerIdentifyVisibility',
+        payload: x
+    };
+};
+export const triggerSpatialSearchVisibility = (x = false) => {
+    return {
+        type: 'triggerSpatialSearchVisibility',
         payload: x
     };
 };

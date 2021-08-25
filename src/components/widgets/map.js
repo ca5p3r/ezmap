@@ -25,6 +25,10 @@ import {
 	setResult,
 	triggerIdentifyVisibility,
 	triggerIsLoading,
+	setSpatialResult,
+	setDrawnPolygon,
+	clearSpatialResult,
+	triggerSpatialSearchVisibility
 } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
 import { setter } from "../../utils";
@@ -40,9 +44,17 @@ const MyMap = () => {
 	const comonentChanged = useSelector(state => state.toc.comonentChanged);
 	const activeLayers = useSelector(state => state.toc.activeLayers);
 	const identifyState = useSelector(state => state.identify.enabled);
-	const draw = new Draw({
+	const spatialSearchState = useSelector(state => state.spatialSearch.enabled);
+	const drawnPolygon = useSelector(state => state.mapInfo.drawnPolygon);
+	const drawPoint = new Draw({
 		type: "Point",
 	});
+	const drawPolygon = new Draw({
+		type: "Polygon",
+	});
+	drawPolygon.on('drawend', e => {
+		dispatch(setDrawnPolygon(e.feature.getGeometry().getCoordinates()[0]));
+	})
 	const [olmap] = useState(
 		new Map({
 			controls: defaultControls().extend([
@@ -145,7 +157,7 @@ const MyMap = () => {
 					visible: true,
 				})
 			);
-			olmap.addInteraction(draw);
+			olmap.addInteraction(drawPoint);
 		} else {
 			olmap.getInteractions().forEach((interaction) => {
 				if (interaction instanceof Draw) {
@@ -156,6 +168,25 @@ const MyMap = () => {
 		// eslint-disable-next-line
 	}, [identifyState]);
 	useEffect(() => {
+		if (spatialSearchState) {
+			dispatch(
+				triggerToast({
+					title: "Info",
+					message: "Draw a polygon on desired features!",
+					visible: true,
+				})
+			);
+			olmap.addInteraction(drawPolygon);
+		} else {
+			olmap.getInteractions().forEach((interaction) => {
+				if (interaction instanceof Draw) {
+					olmap.removeInteraction(interaction);
+				}
+			});
+		}
+		// eslint-disable-next-line
+	}, [spatialSearchState]);
+	useEffect(() => {
 		const controller = new AbortController();
 		if (identifyState) {
 			if (clickedPoint.length > 0) {
@@ -165,7 +196,8 @@ const MyMap = () => {
 				const data = {
 					layers: queriableLayers,
 					clickedPoint,
-					type: 'identify'
+					type: 'query',
+					subtype: 'identify'
 				}
 				if (queriableLayers.length > 0) {
 					fetch("http://localhost:9000/queryService/query", {
@@ -197,6 +229,92 @@ const MyMap = () => {
 									});
 									dispatch(setResult(result));
 									dispatch(triggerIdentifyVisibility(true));
+								}
+								else {
+									dispatch(
+										triggerToast({
+											title: "Warning",
+											message: 'One or more layers did not return any data!',
+											visible: true,
+										})
+									);
+								}
+							})
+							dispatch(triggerIsLoading());
+						})
+						.catch((error) => {
+							if (error.name !== "AbortError") {
+								dispatch(
+									triggerToast({
+										title: "Danger",
+										message: error.toString(),
+										visible: true,
+									})
+								);
+							}
+							dispatch(triggerIsLoading());
+						});
+				} else {
+					dispatch(
+						triggerToast({
+							title: "Warning",
+							message: "No queriable layers found!",
+							visible: true,
+						})
+					);
+					dispatch(triggerIsLoading());
+				}
+			}
+		};
+		return () => {
+			dispatch(triggerIsLoading());
+			controller.abort()
+		};
+		// eslint-disable-next-line
+	}, [clickedPoint, identifyState]);
+	useEffect(() => {
+		const controller = new AbortController();
+		if (spatialSearchState) {
+			if (drawnPolygon.length > 0) {
+				dispatch(triggerIsLoading(true));
+				dispatch(clearSpatialResult());
+				const queriableLayers = historicalData.filter(item => item.geometry !== null);
+				const data = {
+					layers: queriableLayers,
+					drawnPolygon,
+					type: 'query',
+					subtype: 'spatialSearch'
+				}
+				if (queriableLayers.length > 0) {
+					fetch("http://localhost:9000/queryService/query", {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(data),
+						signal: controller.signal
+					})
+						.then(res => {
+							if (!res.ok) {
+								dispatch(
+									triggerToast({
+										title: "Danger",
+										message: "Could not fetch data!",
+										visible: true,
+									})
+								);
+							}
+							return res.json();
+						})
+						.then(obj => {
+							const result = [];
+							obj.response.forEach(item => {
+								if (item.data.features.length > 0) {
+									item.data.features.forEach(feature => {
+										result.push({ name: item.name, id: item.id, feature })
+									});
+									dispatch(setSpatialResult(result));
+									dispatch(triggerSpatialSearchVisibility(true));
 								}
 								else {
 									dispatch(

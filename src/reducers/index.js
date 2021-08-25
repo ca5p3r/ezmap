@@ -9,6 +9,7 @@ import { identifyReducer } from "./identify";
 import { registerReducer } from './register';
 import { localizationReducer } from './localization';
 import { simpleSearchReducer } from './simpleSearch';
+import { spatialSearchReducer } from './spatialSearch';
 export const reducers = combineReducers({
     login: loginReducer,
     mapInfo: mapInfoReducer,
@@ -19,5 +20,6 @@ export const reducers = combineReducers({
     identify: identifyReducer,
     register: registerReducer,
     localization: localizationReducer,
-    simpleSearch: simpleSearchReducer
+    simpleSearch: simpleSearchReducer,
+    spatialSearch: spatialSearchReducer
 });
