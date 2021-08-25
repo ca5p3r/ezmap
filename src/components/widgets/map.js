@@ -52,9 +52,6 @@ const MyMap = () => {
 	const drawPolygon = new Draw({
 		type: "Polygon",
 	});
-	drawPolygon.on('drawend', e => {
-		dispatch(setDrawnPolygon(e.feature.getGeometry().getCoordinates()[0]));
-	})
 	const [olmap] = useState(
 		new Map({
 			controls: defaultControls().extend([
@@ -177,6 +174,13 @@ const MyMap = () => {
 				})
 			);
 			olmap.addInteraction(drawPolygon);
+			drawPolygon.on('drawstart', e => {
+				dispatch(clearSpatialResult());
+				dispatch(setDrawnPolygon());
+			});
+			drawPolygon.on('drawend', e => {
+				dispatch(setDrawnPolygon(e.feature.getGeometry().getCoordinates()[0]));
+			});
 		} else {
 			olmap.getInteractions().forEach((interaction) => {
 				if (interaction instanceof Draw) {
@@ -275,9 +279,8 @@ const MyMap = () => {
 	useEffect(() => {
 		const controller = new AbortController();
 		if (spatialSearchState) {
-			if (drawnPolygon.length > 0) {
+			if (drawnPolygon.length > 3) {
 				dispatch(triggerIsLoading(true));
-				dispatch(clearSpatialResult());
 				const queriableLayers = historicalData.filter(item => item.geometry !== null);
 				const data = {
 					layers: queriableLayers,
