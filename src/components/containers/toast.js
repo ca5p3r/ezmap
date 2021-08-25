@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { triggerToast } from "../../actions";
 const MyToast = () => {
   const dispatch = useDispatch();
-  const color = useSelector((state) => state.toast.color);
-  const visibility = useSelector((state) => state.toast.visibility);
-  const title = useSelector((state) => state.toast.title);
-  const message = useSelector((state) => state.toast.message);
+  const color = useSelector(state => state.toast.color);
+  const visibility = useSelector(state => state.toast.visibility);
+  const title = useSelector(state => state.toast.title);
+  const message = useSelector(state => state.toast.message);
   return (
     <div className="toast-message">
       <Toast

@@ -16,24 +16,24 @@ import {
   triggerToast,
   setUser,
   setUserID,
+  triggerSimpleSearch,
 } from "../../actions";
 import { svg } from "../assets";
 const AppNavBar = () => {
   const dispatch = useDispatch();
-  const userID = useSelector((state) => state.login.userID);
-  const visibility = useSelector((state) => state.login.visibility);
-  const isLogged = useSelector((state) => state.login.isLogged);
-  const showRegister = useSelector((state) => state.register.visibility);
-  const showBookmarks = useSelector((state) => state.bookmarks.visibility);
-  const bookmarks = useSelector((state) => state.bookmarks.list);
-  const mapCenter = useSelector((state) => state.mapInfo.mapCenter);
-  const mapZoom = useSelector((state) => state.mapInfo.mapZoom);
-  const data = useSelector((state) => state.toc.historicalData);
-  const showTOC = useSelector((state) => state.toc.visibility);
-  const workspaceVisibility = useSelector(
-    (state) => state.workspace.visibility
-  );
-  const identifyState = useSelector((state) => state.identify.enabled);
+  const userID = useSelector(state => state.login.userID);
+  const visibility = useSelector(state => state.login.visibility);
+  const isLogged = useSelector(state => state.login.isLogged);
+  const showRegister = useSelector(state => state.register.visibility);
+  const showBookmarks = useSelector(state => state.bookmarks.visibility);
+  const bookmarks = useSelector(state => state.bookmarks.list);
+  const mapCenter = useSelector(state => state.mapInfo.mapCenter);
+  const mapZoom = useSelector(state => state.mapInfo.mapZoom);
+  const data = useSelector(state => state.toc.historicalData);
+  const showTOC = useSelector(state => state.toc.visibility);
+  const workspaceVisibility = useSelector(state => state.workspace.visibility);
+  const identifyState = useSelector(state => state.identify.enabled);
+  const showSimpleSearch = useSelector(state => state.simpleSearch.visibility);
   const handleLogout = () => {
     dispatch(setHistoricalLayers());
     dispatch(triggerLogin());
@@ -44,24 +44,28 @@ const AppNavBar = () => {
     dispatch(setUserID());
     dispatch(triggerIdentifyVisibility());
     dispatch(triggerIdentify());
+    dispatch(triggerSimpleSearch());
   };
   const handleBookmarkClick = () => {
     dispatch(triggerBookmarks(!showBookmarks));
     dispatch(triggerShowWorkspace());
     dispatch(triggerShowTOC());
     dispatch(triggerIdentifyVisibility());
+    dispatch(triggerSimpleSearch());
   };
   const handleWorkspaceClick = () => {
     dispatch(triggerShowWorkspace(!workspaceVisibility));
     dispatch(triggerBookmarks());
     dispatch(triggerShowTOC());
     dispatch(triggerIdentifyVisibility());
+    dispatch(triggerSimpleSearch());
   };
   const handleTOCClick = () => {
     dispatch(triggerShowTOC(!showTOC));
     dispatch(triggerBookmarks());
     dispatch(triggerShowWorkspace());
     dispatch(triggerIdentifyVisibility());
+    dispatch(triggerSimpleSearch());
   };
   const handleIdentifyClick = () => {
     dispatch(triggerIdentify(!identifyState));
@@ -70,6 +74,14 @@ const AppNavBar = () => {
     dispatch(triggerIdentifyVisibility());
     dispatch(setClickedPoint([]));
     dispatch(clearResult());
+    dispatch(triggerSimpleSearch());
+  };
+  const handleSimpleSearchClick = () => {
+    dispatch(triggerSimpleSearch(!showSimpleSearch));
+    dispatch(triggerIdentify());
+    dispatch(triggerBookmarks());
+    dispatch(triggerShowTOC());
+    dispatch(triggerIdentifyVisibility());
   };
   const handleSave = () => {
     dispatch(triggerIsLoading(true));
@@ -144,7 +156,9 @@ const AppNavBar = () => {
               <Nav.Link title="Editing">{svg.editing}</Nav.Link>
               <Nav.Link title="Spatial search">{svg.spatialSearch}</Nav.Link>
               <Nav.Link title="Tabular search">{svg.tabularSearch}</Nav.Link>
-              <Nav.Link title="Simple search">{svg.simpleSearch}</Nav.Link>
+              <Nav.Link onClick={handleSimpleSearchClick} title="Simple search">
+                {svg.simpleSearch}
+              </Nav.Link>
               <Nav.Link onClick={handleIdentifyClick} title="Identify">
                 {svg.identify}
               </Nav.Link>

@@ -8,8 +8,8 @@ import LoginModal from "./modals/login";
 import RegisterModal from "./modals/register";
 
 function App() {
-  const login = useSelector((state) => state.login.isLogged);
-  const isLoading = useSelector((state) => state.mapInfo.isLoading);
+  const login = useSelector(state => state.login.isLogged);
+  const isLoading = useSelector(state => state.mapInfo.isLoading);
   return (
     <div id="app">
       <LoginModal />

@@ -26,7 +26,8 @@ const Identify = () => {
                                 <Table striped bordered hover size="sm">
                                     <tbody>
                                         {resProps.map((item, key) => {
-                                            if (!item.name.includes('geom')) {
+                                            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+                                            if (!geometries.includes(item.type)) {
                                                 return (
                                                     <tr key={key}>
                                                         <td>{item.local ? item.local : item.name}</td>

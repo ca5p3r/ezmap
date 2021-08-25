@@ -30,16 +30,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { setter } from "../../utils";
 const MyMap = () => {
 	const dispatch = useDispatch();
-	const defaultExtent = useSelector((state) => state.mapInfo.defaultExtent);
-	const mapCenter = useSelector((state) => state.mapInfo.mapCenter);
-	const mapZoom = useSelector((state) => state.mapInfo.mapZoom);
-	const clickedPoint = useSelector((state) => state.mapInfo.clickedPoint);
-	const mapExtent = useSelector((state) => state.mapInfo.mapExtent);
-	const pendingLayer = useSelector((state) => state.workspace.pendingLayer);
-	const historicalData = useSelector((state) => state.toc.historicalData);
-	const comonentChanged = useSelector((state) => state.toc.comonentChanged);
-	const activeLayers = useSelector((state) => state.toc.activeLayers);
-	const identifyState = useSelector((state) => state.identify.enabled);
+	const defaultExtent = useSelector(state => state.mapInfo.defaultExtent);
+	const mapCenter = useSelector(state => state.mapInfo.mapCenter);
+	const mapZoom = useSelector(state => state.mapInfo.mapZoom);
+	const clickedPoint = useSelector(state => state.mapInfo.clickedPoint);
+	const mapExtent = useSelector(state => state.mapInfo.mapExtent);
+	const pendingLayer = useSelector(state => state.workspace.pendingLayer);
+	const historicalData = useSelector(state => state.toc.historicalData);
+	const comonentChanged = useSelector(state => state.toc.comonentChanged);
+	const activeLayers = useSelector(state => state.toc.activeLayers);
+	const identifyState = useSelector(state => state.identify.enabled);
 	const draw = new Draw({
 		type: "Point",
 	});
@@ -161,9 +161,7 @@ const MyMap = () => {
 			if (clickedPoint.length > 0) {
 				dispatch(triggerIsLoading(true));
 				dispatch(clearResult());
-				const queriableLayers = historicalData.filter(
-					(item) => item.geometry !== null
-				);
+				const queriableLayers = historicalData.filter(item => item.geometry !== null);
 				const data = {
 					layers: queriableLayers,
 					clickedPoint,
