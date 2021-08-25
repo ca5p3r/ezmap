@@ -39,6 +39,19 @@ export const query = (req, res) => {
                     return res.send({ error: err.message, success: false })
                 });
             break;
+        case 'simpleSearch':
+            const body = req.body;
+            const raw = `<wfs:GetFeature service="WFS" version="1.1.0" outputFormat="application/json" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd"><wfs:Query typeName="${body.layer}"><ogc:Filter><ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="." escapeChar="!"><ogc:PropertyName>${body.field}</ogc:PropertyName><ogc:Literal>*${body.queryParam}*</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></wfs:Query></wfs:GetFeature>`
+            const requestOptions = {
+                method: 'POST',
+                body: raw,
+                headers: { 'Content-Type': 'application/json' }
+            };
+            fetch(body.url + 'wfs', requestOptions)
+                .then(response => response.json())
+                .then(obj => res.send(obj))
+                .catch(err => res.send(err));
+            break;
         default:
             return res.send({ error: 'Bad request', success: false })
     }
