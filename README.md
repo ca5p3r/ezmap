@@ -20,6 +20,7 @@ Feel free to clone the project and use it on your own or extend it to fit your n
 * Rich "Table of Contents" (aka. TOC), with powerful tools:
   * Visibility handler
   * Opacity handler
+  * Order handler (Drag & Drop support)
   * Layer localization
   * Layer refresh
   * GoTo layer
