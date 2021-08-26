@@ -88,76 +88,81 @@ const TOC = () => {
                         {(provided) => (
                             <ul {...provided.droppableProps} ref={provided.innerRef} className="container">
                                 {activeLayers && activeLayers.map((layer, index) => {
-                                    return (
-                                        <Draggable key={layer.values_.title} index={index} draggableId={layer.values_.title}>
-                                            {(provided) => (
-                                                <li className="mb-3" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                    <div className="form-check form-switch">
-                                                        <input
-                                                            type="checkbox"
-                                                            className="form-check-input"
-                                                            checked={layer.values_.visible}
-                                                            id={`check${layer.values_.title}`}
-                                                            objtitle={layer.values_.title}
-                                                            onChange={e => {
-                                                                const element = e.target;
-                                                                const title = element.getAttribute('objtitle');
-                                                                handleVisibility(title);
-                                                            }}
-                                                        />
-                                                        {layer.values_.title.split('&')[0]}
-                                                        <button
-                                                            title='Remove'
-                                                            objtitle={layer.values_.title}
-                                                            disabled={layer.values_.title === 'OpenStreetMap'}
-                                                            onClick={e => {
-                                                                const element = e.currentTarget;
-                                                                const title = element.getAttribute('objtitle');
-                                                                handleRemove(title);
-                                                            }}
-                                                        >{svg.remove}</button>
-                                                        <button
-                                                            title='GoTo'
-                                                            objtitle={layer.values_.title}
-                                                            disabled={layer.values_.title === 'OpenStreetMap'}
-                                                            onClick={e => {
-                                                                const element = e.currentTarget;
-                                                                const title = element.getAttribute('objtitle');
-                                                                handleGoTo(title);
-                                                            }}
-                                                        >{svg.goto}</button>
-                                                        <button
-                                                            title='Update localization'
-                                                            objtitle={layer.values_.title}
-                                                            disabled={layer.values_.title === 'OpenStreetMap'}
-                                                            onClick={e => {
-                                                                const element = e.currentTarget;
-                                                                const title = element.getAttribute('objtitle');
-                                                                handleAddLocal(title);
-                                                            }}
-                                                        >{svg.lang}</button>
-                                                    </div>
-                                                    <div>
-                                                        <input
-                                                            className="form-range"
-                                                            id={`slider${layer.values_.title}`}
-                                                            objtitle={layer.values_.title}
-                                                            type="range"
-                                                            min="0"
-                                                            max="100"
-                                                            defaultValue={layer.values_.opacity * 100}
-                                                            step="10"
-                                                            onChange={e => {
-                                                                const element = e.currentTarget;
-                                                                const title = element.getAttribute('objtitle');
-                                                                const value = element.value / 100;
-                                                                handleTransparency(title, value)
-                                                            }} />
-                                                    </div>
-                                                </li>
-                                            )}
-                                        </Draggable>
-                                    );
+                                    if (layer.values_.title.split('&')[1] !== 'h79mm8h') {
+                                        return (
+                                            <Draggable key={layer.values_.title} index={index} draggableId={layer.values_.title}>
+                                                {(provided) => (
+                                                    <li className="mb-3" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                        <div className="form-check form-switch">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                checked={layer.values_.visible}
+                                                                id={`check${layer.values_.title}`}
+                                                                objtitle={layer.values_.title}
+                                                                onChange={e => {
+                                                                    const element = e.target;
+                                                                    const title = element.getAttribute('objtitle');
+                                                                    handleVisibility(title);
+                                                                }}
+                                                            />
+                                                            {layer.values_.title.split('&')[0]}
+                                                            <button
+                                                                title='Remove'
+                                                                objtitle={layer.values_.title}
+                                                                disabled={layer.values_.title === 'OpenStreetMap'}
+                                                                onClick={e => {
+                                                                    const element = e.currentTarget;
+                                                                    const title = element.getAttribute('objtitle');
+                                                                    handleRemove(title);
+                                                                }}
+                                                            >{svg.remove}</button>
+                                                            <button
+                                                                title='GoTo'
+                                                                objtitle={layer.values_.title}
+                                                                disabled={layer.values_.title === 'OpenStreetMap'}
+                                                                onClick={e => {
+                                                                    const element = e.currentTarget;
+                                                                    const title = element.getAttribute('objtitle');
+                                                                    handleGoTo(title);
+                                                                }}
+                                                            >{svg.goto}</button>
+                                                            <button
+                                                                title='Update localization'
+                                                                objtitle={layer.values_.title}
+                                                                disabled={layer.values_.title === 'OpenStreetMap'}
+                                                                onClick={e => {
+                                                                    const element = e.currentTarget;
+                                                                    const title = element.getAttribute('objtitle');
+                                                                    handleAddLocal(title);
+                                                                }}
+                                                            >{svg.lang}</button>
+                                                        </div>
+                                                        <div>
+                                                            <input
+                                                                className="form-range"
+                                                                id={`slider${layer.values_.title}`}
+                                                                objtitle={layer.values_.title}
+                                                                type="range"
+                                                                min="0"
+                                                                max="100"
+                                                                defaultValue={layer.values_.opacity * 100}
+                                                                step="10"
+                                                                onChange={e => {
+                                                                    const element = e.currentTarget;
+                                                                    const title = element.getAttribute('objtitle');
+                                                                    const value = element.value / 100;
+                                                                    handleTransparency(title, value)
+                                                                }} />
+                                                        </div>
+                                                    </li>
+                                                )}
+                                            </Draggable>
+                                        )
+                                    }
+                                    else {
+                                        return null;
+                                    }
                                 }
                                 )}
                                 {provided.placeholder}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Map } from "ol";
-import { Tile as TileLayer } from "ol/layer";
-import { OSM } from "ol/source";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { OSM, Vector as VectorSource } from "ol/source";
 import {
 	ZoomToExtent,
 	FullScreen,
@@ -48,9 +48,6 @@ const MyMap = () => {
 	const drawnPolygon = useSelector(state => state.mapInfo.drawnPolygon);
 	const drawPoint = new Draw({
 		type: "Point",
-	});
-	const drawPolygon = new Draw({
-		type: "Polygon",
 	});
 	const [olmap] = useState(
 		new Map({
@@ -165,6 +162,15 @@ const MyMap = () => {
 		// eslint-disable-next-line
 	}, [identifyState]);
 	useEffect(() => {
+		const source = new VectorSource({ wrapX: false });
+		const vector = new VectorLayer({
+			source: source,
+			title: 'Drawing&h79mm8h'
+		});
+		const drawPolygon = new Draw({
+			type: "Polygon",
+			source
+		});
 		if (spatialSearchState) {
 			dispatch(
 				triggerToast({
@@ -173,10 +179,12 @@ const MyMap = () => {
 					visible: true,
 				})
 			);
+			olmap.addLayer(vector);
 			olmap.addInteraction(drawPolygon);
 			drawPolygon.on('drawstart', e => {
 				dispatch(clearSpatialResult());
 				dispatch(setDrawnPolygon());
+				source.clear();
 			});
 			drawPolygon.on('drawend', e => {
 				dispatch(setDrawnPolygon(e.feature.getGeometry().getCoordinates()[0]));
@@ -187,7 +195,11 @@ const MyMap = () => {
 					olmap.removeInteraction(interaction);
 				}
 			});
-		}
+		};
+		return () => {
+			olmap.removeLayer(vector);
+			source.clear();
+		};
 		// eslint-disable-next-line
 	}, [spatialSearchState]);
 	useEffect(() => {

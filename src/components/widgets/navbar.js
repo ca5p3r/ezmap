@@ -11,6 +11,7 @@ import {
 	setClickedPoint,
 	clearResult,
 	triggerIdentifyVisibility,
+	triggerSpatialSearchVisibility,
 	setHistoricalLayers,
 	triggerIsLoading,
 	triggerToast,
@@ -90,7 +91,7 @@ const AppNavBar = () => {
 		dispatch(triggerIdentify());
 		dispatch(triggerBookmarks());
 		dispatch(triggerShowTOC());
-		dispatch(triggerIdentifyVisibility());
+		dispatch(triggerSpatialSearchVisibility());
 		dispatch(setDrawnPolygon([]));
 		dispatch(clearSpatialResult());
 		dispatch(triggerSimpleSearch());
@@ -174,10 +175,10 @@ const AppNavBar = () => {
 							<Nav.Link title="Import file">{svg.import}</Nav.Link>
 							<Nav.Link title="Sketching">{svg.sketching}</Nav.Link>
 							<Nav.Link title="Editing">{svg.editing}</Nav.Link>
+							<Nav.Link title="Tabular search">{svg.tabularSearch}</Nav.Link>
 							<Nav.Link onClick={handleSpatialSearchClick} title="Spatial search">
 								{svg.spatialSearch}
 							</Nav.Link>
-							<Nav.Link title="Tabular search">{svg.tabularSearch}</Nav.Link>
 							<Nav.Link onClick={handleSimpleSearchClick} title="Simple search">
 								{svg.simpleSearch}
 							</Nav.Link>
