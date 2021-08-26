@@ -81,11 +81,7 @@ const WorkspaceModal = () => {
                 const p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
                 const p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
                 fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
-                    .then(response => response.text())
-                    .then(text => {
-                        const obj = JSON.parse(text);
-                        return obj;
-                    })
+                    .then(response => response.json())
                     .then(obj => {
                         const fields = obj.featureTypes[0].properties
                         const formattedFields = fields.map(field => {

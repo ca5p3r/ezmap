@@ -1,4 +1,4 @@
-import { Offcanvas } from "react-bootstrap";
+import { Offcanvas, ButtonGroup, Button } from "react-bootstrap";
 import {
     DragDropContext,
     Droppable,
@@ -15,6 +15,7 @@ import {
     setHistoricalLayers,
     triggerTOCChange,
     triggerShowLocalization,
+    triggerToast,
     setLocalizedLayer
 } from "../../actions";
 import { svg } from "../assets";
@@ -77,6 +78,36 @@ const TOC = () => {
         dispatch(triggerShowTOC());
         dispatch(setLocalizedLayer(title.split('&')[1]));
     };
+    const handleRefresh = (title) => {
+        const layer = historicalData.filter(item => item.id === title.split('&')[1])[0]
+        fetch(`${layer.url}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layer.name}`)
+            .then(response => response.json())
+            .then(obj => {
+                const fields = obj.featureTypes[0].properties
+                const formattedFields = fields.map(field => {
+                    const obj = { name: field.name, type: field.localType, local: '' }
+                    return obj
+                });
+                const targetIndex = historicalData.findIndex(layer => layer.id === title.split('&')[1]);
+                const targetLayer = historicalData.filter(layer => layer.id === title.split('&')[1])[0];
+                targetLayer.properties = formattedFields;
+                historicalData.splice(targetIndex, 1);
+                historicalData.splice(targetIndex, 0, targetLayer);
+                dispatch(setHistoricalLayers(historicalData));
+                dispatch(triggerToast({
+                    title: 'Success',
+                    message: 'Layer has been refreshed!',
+                    visible: true
+                }));
+            })
+            .catch(err => {
+                dispatch(triggerToast({
+                    title: 'Danger',
+                    message: err.message,
+                    visible: true
+                }));
+            });
+    };
     return (
         <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerShowTOC())}>
             <Offcanvas.Header closeButton>
@@ -107,36 +138,6 @@ const TOC = () => {
                                                                 }}
                                                             />
                                                             {layer.values_.title.split('&')[0]}
-                                                            <button
-                                                                title='Remove'
-                                                                objtitle={layer.values_.title}
-                                                                disabled={layer.values_.title === 'OpenStreetMap'}
-                                                                onClick={e => {
-                                                                    const element = e.currentTarget;
-                                                                    const title = element.getAttribute('objtitle');
-                                                                    handleRemove(title);
-                                                                }}
-                                                            >{svg.remove}</button>
-                                                            <button
-                                                                title='GoTo'
-                                                                objtitle={layer.values_.title}
-                                                                disabled={layer.values_.title === 'OpenStreetMap'}
-                                                                onClick={e => {
-                                                                    const element = e.currentTarget;
-                                                                    const title = element.getAttribute('objtitle');
-                                                                    handleGoTo(title);
-                                                                }}
-                                                            >{svg.goto}</button>
-                                                            <button
-                                                                title='Update localization'
-                                                                objtitle={layer.values_.title}
-                                                                disabled={layer.values_.title === 'OpenStreetMap'}
-                                                                onClick={e => {
-                                                                    const element = e.currentTarget;
-                                                                    const title = element.getAttribute('objtitle');
-                                                                    handleAddLocal(title);
-                                                                }}
-                                                            >{svg.lang}</button>
                                                         </div>
                                                         <div>
                                                             <input
@@ -154,6 +155,50 @@ const TOC = () => {
                                                                     const value = element.value / 100;
                                                                     handleTransparency(title, value)
                                                                 }} />
+                                                        </div>
+                                                        <div className={layer.values_.title === 'OpenStreetMap' ? 'hideen-group' : 'visible-group'}>
+                                                            <ButtonGroup size="sm">
+                                                                <Button
+                                                                    variant="secondary"
+                                                                    title='Remove'
+                                                                    objtitle={layer.values_.title}
+                                                                    onClick={e => {
+                                                                        const element = e.currentTarget;
+                                                                        const title = element.getAttribute('objtitle');
+                                                                        handleRemove(title);
+                                                                    }}
+                                                                >{svg.remove}</Button>
+                                                                <Button
+                                                                    variant="secondary"
+                                                                    title='GoTo'
+                                                                    objtitle={layer.values_.title}
+                                                                    onClick={e => {
+                                                                        const element = e.currentTarget;
+                                                                        const title = element.getAttribute('objtitle');
+                                                                        handleGoTo(title);
+                                                                    }}
+                                                                >{svg.goto}</Button>
+                                                                <Button
+                                                                    variant="secondary"
+                                                                    title='Update localization'
+                                                                    objtitle={layer.values_.title}
+                                                                    onClick={e => {
+                                                                        const element = e.currentTarget;
+                                                                        const title = element.getAttribute('objtitle');
+                                                                        handleAddLocal(title);
+                                                                    }}
+                                                                >{svg.lang}</Button>
+                                                                <Button
+                                                                    variant="secondary"
+                                                                    title='Refresh layer'
+                                                                    objtitle={layer.values_.title}
+                                                                    onClick={e => {
+                                                                        const element = e.currentTarget;
+                                                                        const title = element.getAttribute('objtitle');
+                                                                        handleRefresh(title);
+                                                                    }}
+                                                                >{svg.refresh}</Button>
+                                                            </ButtonGroup>
                                                         </div>
                                                     </li>
                                                 )}

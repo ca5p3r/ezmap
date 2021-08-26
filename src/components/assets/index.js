@@ -18,6 +18,7 @@ import { ReactComponent as LOGIN } from "./svg/login.svg";
 import { ReactComponent as REMOVE } from "./svg/remove.svg";
 import { ReactComponent as GOTO } from "./svg/goto.svg";
 import { ReactComponent as LANG } from "./svg/language.svg";
+import { ReactComponent as REFRESH } from "./svg/refresh.svg";
 export const svg = {
 	logo: <LOGO />,
 	save: <SAVE />,
@@ -39,4 +40,5 @@ export const svg = {
 	remove: <REMOVE />,
 	goto: <GOTO />,
 	lang: <LANG />,
+	refresh: <REFRESH />
 };
