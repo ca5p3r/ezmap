@@ -23,7 +23,7 @@ import {
 const LoginModal = () => {
     const dispatch = useDispatch();
     const showLogin = useSelector(state => state.login.visibility);
-    const load_settings = (obj) => {
+    const load_settings = obj => {
         dispatch(setBookmarks(obj.config.bookmarks));
         dispatch(setMapZoom(obj.config.map.zoom));
         dispatch(setMapCenter(obj.config.map.center));
@@ -35,9 +35,8 @@ const LoginModal = () => {
             if (password.length >= 8 && password.length <= 16) {
                 dispatch(triggerIsLoading(true));
                 const data = { username, password };
-                fetch("http://localhost:9000/auth/login", {
+                fetch("http://localhost:9000/authService/login", {
                     method: 'POST',
-                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -49,9 +48,8 @@ const LoginModal = () => {
                             dispatch(setUser(username));
                             dispatch(setUserID(obj.userID));
                             const userObj = { id: obj.userID };
-                            fetch("http://localhost:9000/config/getSettings", {
+                            fetch("http://localhost:9000/configService/getSettings", {
                                 method: 'POST',
-                                mode: 'cors',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
@@ -128,17 +126,14 @@ const LoginModal = () => {
                             }
                         }} />
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Button id="loginButton" variant="primary" onClick={() => {
-                            const username = document.getElementById('loginUsername').value;
-                            const password = document.getElementById('loginPassword').value;
-                            handleLogin(username, password);
-                        }}>Login</Button>
-                    </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => dispatch(triggerShowLogin(!showLogin))}>Dismiss</Button>
+                <Button id="loginButton" variant="primary" onClick={() => {
+                    const username = document.getElementById('loginUsername').value;
+                    const password = document.getElementById('loginPassword').value;
+                    handleLogin(username, password);
+                }}>Login</Button>
             </Modal.Footer>
         </Modal>
     );

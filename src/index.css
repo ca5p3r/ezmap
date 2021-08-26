@@ -1,0 +1,106 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  font-family: "Urbanist", sans-serif !important;
+}
+
+html, body, #app, #root {
+  width: 100%;
+  height: 100%;
+}
+
+#map {
+  height: 100%;
+  background-color: #f8f9fa;
+}
+
+.layout-container {
+  position: relative;
+  height: 92%;
+}
+
+.navbar {
+  height: 8%;
+}
+
+#map-info {
+  position: absolute;
+  bottom: 6px;
+  right: 10%;
+  left: 10%;
+  width: 80%;
+  text-align: center;
+}
+
+.ol-attribution.ol-uncollapsible {
+  display: none;
+}
+
+#map-info label {
+  display: inline-block;
+  padding: 0.5rem;
+  width: 180px;
+  font-size: small;
+  border: solid 0.5px grey;
+  text-align: center;
+  background-color: #f8f9fa;
+}
+
+.toast-message {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1051;
+}
+
+.custom {
+  max-height: 100%;
+  top: 8%;
+  bottom: 2rem;
+  background-color: #f8f9fa;
+}
+
+.landing {
+  height: 90%;
+  width: 100%;
+  position: absolute;
+}
+
+.landing-footer {
+  height: 7%;
+}
+
+.landing-header {
+  height: 77%;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  font-size: small;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.container input[type='checkbox'] {
+  float: left;
+}
+
+.container button {
+  float: right;
+}
+
+.ol-scale-line {
+  left: 170px!important;
+}
+
+.hideen-group {
+  display: none;
+}

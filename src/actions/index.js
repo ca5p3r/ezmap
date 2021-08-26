@@ -28,37 +28,37 @@ export const triggerShowRegister = (x = false) => {
         payload: x
     };
 };
-export const setMapCenter = (x) => {
+export const setMapCenter = (x = null) => {
     return {
         type: 'setMapCenter',
         payload: x
     };
 };
-export const setMapZoom = (x) => {
+export const setMapZoom = (x = []) => {
     return {
         type: 'setMapZoom',
         payload: x
     };
 };
-export const setActiveLayers = (x) => {
+export const setActiveLayers = (x = []) => {
     return {
         type: 'setActiveLayers',
         payload: x
     };
 };
-export const setCursor = (x) => {
+export const setCursor = (x = []) => {
     return {
         type: 'setCursor',
         payload: x
     };
 };
-export const setBookmarks = (x) => {
+export const setBookmarks = (x = []) => {
     return {
         type: 'setBookmarks',
         payload: x
     };
 };
-export const removeBookmark = (x) => {
+export const removeBookmark = (x = null) => {
     return {
         type: 'removeBookmark',
         payload: x
@@ -69,7 +69,7 @@ export const removeAllBookmarks = () => {
         type: 'removeAllBookmarks'
     };
 };
-export const addBookmark = (x) => {
+export const addBookmark = (x = null) => {
     return {
         type: 'addBookmark',
         payload: x
@@ -87,7 +87,7 @@ export const triggerShowWorkspace = (x = false) => {
         payload: x
     };
 };
-export const updateLayers = (x) => {
+export const updateLayers = (x = []) => {
     return {
         type: 'updateLayers',
         payload: x
@@ -98,7 +98,7 @@ export const resetLayers = () => {
         type: 'resetLayers'
     };
 };
-export const addPendingLayer = (x) => {
+export const addPendingLayer = (x = null) => {
     return {
         type: 'addPendingLayer',
         payload: x
@@ -127,7 +127,7 @@ export const triggerToast = (x = {}) => {
         payload: x
     };
 };
-export const insertHistoricalLayer = (x) => {
+export const insertHistoricalLayer = (x = {}) => {
     return {
         type: 'insertHistoricalLayer',
         payload: x
@@ -139,13 +139,13 @@ export const setHistoricalLayers = (x = []) => {
         payload: x
     };
 };
-export const setDefaultExtent = (x) => {
+export const setDefaultExtent = (x = []) => {
     return {
         type: 'setDefaultExtent',
         payload: x
     };
 };
-export const setMapExtent = (x) => {
+export const setMapExtent = (x = []) => {
     return {
         type: 'setMapExtent',
         payload: x
@@ -162,19 +162,31 @@ export const triggerIdentify = (x = false) => {
         payload: x
     };
 };
+export const triggerSpatialSearch = (x = false) => {
+    return {
+        type: 'triggerSpatialSearch',
+        payload: x
+    };
+};
 export const triggerIsLoading = (x = false) => {
     return {
         type: 'triggerIsLoading',
         payload: x
     };
 };
-export const setClickedPoint = (x) => {
+export const setClickedPoint = (x = []) => {
     return {
         type: 'setClickedPoint',
         payload: x
     };
 };
-export const setResult = (x) => {
+export const setDrawnPolygon = (x = []) => {
+    return {
+        type: 'setDrawnPolygon',
+        payload: x
+    };
+};
+export const setResult = (x = []) => {
     return {
         type: 'setResult',
         payload: x
@@ -185,9 +197,26 @@ export const clearResult = () => {
         type: 'clearResult'
     };
 };
+export const setSpatialResult = (x = []) => {
+    return {
+        type: 'setSpatialResult',
+        payload: x
+    };
+};
+export const clearSpatialResult = () => {
+    return {
+        type: 'clearSpatialResult'
+    };
+};
 export const triggerIdentifyVisibility = (x = false) => {
     return {
         type: 'triggerIdentifyVisibility',
+        payload: x
+    };
+};
+export const triggerSpatialSearchVisibility = (x = false) => {
+    return {
+        type: 'triggerSpatialSearchVisibility',
         payload: x
     };
 };
@@ -197,9 +226,15 @@ export const triggerShowLocalization = (x = false) => {
         payload: x
     };
 };
-export const setLocalizedLayer = (x) => {
+export const setLocalizedLayer = (x = null) => {
     return {
         type: 'setLocalizedLayer',
+        payload: x
+    };
+};
+export const triggerSimpleSearch = (x = false) => {
+    return {
+        type: 'triggerSimpleSearch',
         payload: x
     };
 };

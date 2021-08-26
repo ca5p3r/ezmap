@@ -9,16 +9,17 @@ export const bookmarksReducer = (
     const list = state.list;
     switch (action.type) {
         case 'addBookmark':
-            list.push(action.payload);
-            return {
-                ...state,
-                list
-            };
-        case 'removeBookmark':
-            const newList = list.filter(bookmark => bookmark.title !== action.payload);
+            const newList = Array.from(list);
+            newList.push(action.payload);
             return {
                 ...state,
                 list: newList
+            };
+        case 'removeBookmark':
+            const updatedList = list.filter(bookmark => bookmark.title !== action.payload);
+            return {
+                ...state,
+                list: updatedList
             };
         case 'removeAllBookmarks':
             return {

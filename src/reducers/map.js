@@ -5,6 +5,7 @@ const myState = {
     defaultExtent: [],
     mapExtent: [],
     clickedPoint: [],
+    drawnPolygon: [],
     isLoading: false
 };
 export const mapInfoReducer = (
@@ -51,6 +52,11 @@ export const mapInfoReducer = (
             return {
                 ...state,
                 clickedPoint: action.payload
+            };
+        case 'setDrawnPolygon':
+            return {
+                ...state,
+                drawnPolygon: action.payload
             };
         default:
             return state;

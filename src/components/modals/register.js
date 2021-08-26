@@ -18,9 +18,8 @@ const RegisterModal = () => {
         if (username.length >= 4 && username.length <= 16) {
             if (password.length >= 8 && password.length <= 20) {
                 const data = { username, password };
-                fetch("http://localhost:9000/auth/create", {
+                fetch("http://localhost:9000/authService/register", {
                     method: 'POST',
-                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -82,19 +81,21 @@ const RegisterModal = () => {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="registerPassword">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicSubmit">
-                        <Button variant="primary" onClick={() => {
-                            const username = document.getElementById('registerUsername').value;
-                            const password = document.getElementById('registerPassword').value;
-                            handleRegister(username, password);
-                        }}>Register</Button>
+                        <Form.Control type="password" placeholder="Password" onKeyDown={e => {
+                            if (e.keyCode === 13) {
+                                e.preventDefault();
+                                document.getElementById("registerButton").click();
+                            }
+                        }} />
                     </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => dispatch(triggerShowRegister(!showRegister))}>Dismiss</Button>
+                <Button id="registerButton" variant="primary" onClick={() => {
+                    const username = document.getElementById('registerUsername').value;
+                    const password = document.getElementById('registerPassword').value;
+                    handleRegister(username, password);
+                }}>Register</Button>
             </Modal.Footer>
         </Modal>
     );

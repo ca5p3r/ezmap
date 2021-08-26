@@ -25,7 +25,8 @@ const WorkspaceModal = () => {
     const dispatch = useDispatch();
     const [url, setUrl] = useState('');
     const [availability, setAvailability] = useState(false);
-    const workspace = useSelector(state => state.workspace);
+    const visibility = useSelector(state => state.workspace.visibility);
+    const layers = useSelector(state => state.workspace.layers);
     const handleHide = () => {
         dispatch(triggerShowWorkspace());
         setAvailability(false);
@@ -80,11 +81,7 @@ const WorkspaceModal = () => {
                 const p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
                 const p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
                 fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
-                    .then(response => response.text())
-                    .then(text => {
-                        const obj = JSON.parse(text);
-                        return obj;
-                    })
+                    .then(response => response.json())
                     .then(obj => {
                         const fields = obj.featureTypes[0].properties
                         const formattedFields = fields.map(field => {
@@ -101,7 +98,9 @@ const WorkspaceModal = () => {
                             type: geomField[0].localType,
                             geometry: geomField[0].name,
                             crs,
-                            properties: formattedFields
+                            properties: formattedFields,
+                            visible: true,
+                            opacity: 1
                         }));
                     })
                     .catch(() => {
@@ -114,7 +113,9 @@ const WorkspaceModal = () => {
                             type: null,
                             geometry: null,
                             crs,
-                            properties: null
+                            properties: null,
+                            visible: true,
+                            opacity: 1
                         }));
                     });
                 const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);
@@ -131,13 +132,13 @@ const WorkspaceModal = () => {
         else {
             dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Please enter URL!',
+                message: 'Please fetch layers first!',
                 visible: true
             }));
         };
     };
     return (
-        <Modal show={workspace.visibility} onHide={handleHide}>
+        <Modal show={visibility} onHide={handleHide}>
             <Modal.Header closeButton>
                 <Modal.Title>Workspace</Modal.Title>
             </Modal.Header>
@@ -146,16 +147,18 @@ const WorkspaceModal = () => {
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicUrl">
                         <Form.Label>URL</Form.Label>
-                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wms" value={url} onChange={e => setUrl(e.target.value)} />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicUrl">
-                        <Button variant="primary" onClick={() => handleFetch(url)}>Fetch layers</Button>
+                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wms" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => {
+                            if (e.keyCode === 13) {
+                                e.preventDefault();
+                                document.getElementById("fetchLayersButton").click();
+                            }
+                        }} />
                     </Form.Group>
                     {availability && <Form.Group className="mb-3" controlId="formBasicLayer">
                         <Form.Label>Select a layer</Form.Label>
                         <Form.Control as="select">
                             <option id="optionSelector" value="Selector">Select</option>
-                            {workspace.layers.map(
+                            {layers.map(
                                 (layer, key) => {
                                     return <option id={`option${layer.Name}`} key={key} crs={layer.CRS[0]} value={layer.Name} title={layer.Title} extent={layer.EX_GeographicBoundingBox}>{layer.Title}</option>;
                                 }
@@ -165,7 +168,7 @@ const WorkspaceModal = () => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleHide}>Dismiss</Button>
+                <Button id="fetchLayersButton" variant="primary" onClick={() => handleFetch(url)}>Fetch layers</Button>
                 <Button variant="success" onClick={() => handleAdd(url)}>Add layer</Button>
             </Modal.Footer>
         </Modal>

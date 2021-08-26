@@ -17,7 +17,8 @@ import {
 const LocalizationModal = () => {
     const [locals, setLocals] = useState("");
     const dispatch = useDispatch();
-    const localization = useSelector(state => state.localization);
+    const visibility = useSelector(state => state.localization.visibility);
+    const layerID = useSelector(state => state.localization.layerID);
     const data = useSelector(state => state.toc.historicalData);
     const handleChange = e => {
         if (e.target.files[0].name.endsWith('.json')) {
@@ -39,12 +40,12 @@ const LocalizationModal = () => {
     const handleHide = () => {
         setLocals(null);
         dispatch(setLocalizedLayer(null));
-        dispatch(triggerShowLocalization(!localization.visibility))
+        dispatch(triggerShowLocalization(!visibility))
     };
     const handleAdd = () => {
         if (locals) {
-            const targetIndex = data.findIndex(layer => layer.id === localization.layerID);
-            const targetLayer = data.filter(layer => layer.id === localization.layerID)[0];
+            const targetIndex = data.findIndex(layer => layer.id === layerID);
+            const targetLayer = data.filter(layer => layer.id === layerID)[0];
             targetLayer.properties.forEach(property => property.local = locals[property.name] ? locals[property.name] : null);
             data.splice(targetIndex, 1);
             data.splice(targetIndex, 0, targetLayer);
@@ -65,7 +66,7 @@ const LocalizationModal = () => {
         };
     };
     return (
-        <Modal show={localization.visibility} onHide={handleHide}>
+        <Modal show={visibility} onHide={handleHide}>
             <Modal.Header closeButton>
                 <Modal.Title>Localization</Modal.Title>
             </Modal.Header>
@@ -79,7 +80,6 @@ const LocalizationModal = () => {
             </Modal.Body>
             <Modal.Footer>
                 <Button id="uploadButton" variant="primary" onClick={handleAdd}>Upload</Button>
-                <Button variant="secondary" onClick={handleHide}>Dismiss</Button>
             </Modal.Footer>
         </Modal>
     );

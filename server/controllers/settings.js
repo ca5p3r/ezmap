@@ -1,6 +1,6 @@
-const { pool } = require('../helpers/database');
+import { pool } from '../helpers/index.js';
 
-const load_settings = (req, res) => {
+export const load_settings = (req, res) => {
     (async () => {
         const client = await pool.connect();
         try {
@@ -29,8 +29,7 @@ const load_settings = (req, res) => {
             }
         });
 };
-
-const save_settings = (req, res) => {
+export const save_settings = (req, res) => {
     (async () => {
         const client = await pool.connect();
         try {
@@ -53,9 +52,4 @@ const save_settings = (req, res) => {
                     return res.send({ error: err.detail, success: false });
             }
         });
-};
-
-module.exports = {
-    load_settings,
-    save_settings
 };

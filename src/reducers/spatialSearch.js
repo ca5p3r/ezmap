@@ -3,27 +3,27 @@ const myState = {
     visibility: false,
     result: []
 };
-export const identifyReducer = (
+export const spatialSearchReducer = (
     state = myState,
     action
 ) => {
     switch (action.type) {
-        case 'triggerIdentify':
+        case 'triggerSpatialSearch':
             return {
                 ...state,
                 enabled: action.payload
             };
-        case 'triggerIdentifyVisibility':
+        case 'triggerSpatialSearchVisibility':
             return {
                 ...state,
                 visibility: action.payload
             };
-        case 'setResult':
+        case 'setSpatialResult':
             return {
                 ...state,
                 result: action.payload
             };
-        case 'clearResult':
+        case 'clearSpatialResult':
             return {
                 ...state,
                 result: []
