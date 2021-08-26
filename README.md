@@ -13,7 +13,7 @@ Feel free to clone the project and use it on your own or extend it to fit your n
 * Rich map with controls:
   * Zoom in/out
   * Default extent
-  * Legend
+  * Map overview
   * Scale bar
   * Full screen
 * Cursor & Map information widget "Shows current cursor position and view extent"
