@@ -30,7 +30,7 @@ export const query = (req, res) => {
                     body: raw,
                     headers: { 'Content-Type': 'application/json' }
                 };
-                promises.push(fetch(layer.url + "wfs", requestOptions)
+                promises.push(fetch(layer.url, requestOptions)
                     .then(response => response.json())
                     .then(obj => {
                         return { id: layer.id, name: layer.name, data: obj, error: null, success: true }
