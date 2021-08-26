@@ -241,9 +241,41 @@ const MyMap = () => {
 						.then(obj => {
 							const result = [];
 							obj.response.forEach(item => {
-								if (item.data.features.length > 0) {
-									item.data.features.forEach(feature => {
-										result.push({ name: item.name, id: item.id, feature })
+								let returnedData;
+								switch (item.provider) {
+									case 'EsriOGC':
+										if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
+											returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
+										}
+										else {
+											returnedData = []
+											dispatch(
+												triggerToast({
+													title: "Warning",
+													message: 'One or more layers did not return any data!',
+													visible: true,
+												})
+											);
+										};
+										break;
+									case 'GeoServer':
+										returnedData = item.data.features;
+										break;
+									default:
+										break;
+								}
+								if (returnedData.length > 0) {
+									returnedData.forEach(feature => {
+										switch (item.provider) {
+											case 'EsriOGC':
+												result.push({ provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
+												break;
+											case 'GeoServer':
+												result.push({ provider: item.provider, name: item.name, id: item.id, feature })
+												break;
+											default:
+												break;
+										}
 									});
 									dispatch(setResult(result));
 									dispatch(triggerIdentifyVisibility(true));

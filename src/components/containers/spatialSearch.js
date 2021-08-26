@@ -34,7 +34,7 @@ const SpatialSearch = () => {
                                             <Table striped bordered hover size="sm">
                                                 <tbody>
                                                     {resProps.map((item, key) => {
-                                                        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+                                                        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
                                                         if (!geometries.includes(item.type)) {
                                                             return (
                                                                 <tr key={key}>

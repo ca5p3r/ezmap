@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
-import { makeBuffer, convert } from '../helpers/index.js';
+import { makeBuffer, tranform } from '../helpers/index.js';
+import convert from 'xml-js';
 
 export const query = (req, res) => {
     switch (req.body.type) {
@@ -9,34 +10,54 @@ export const query = (req, res) => {
             layers.forEach(layer => {
                 let buffer;
                 let coords;
+                let version;
+                let format;
                 switch (req.body.subtype) {
                     case 'identify':
                         buffer = makeBuffer(layer.type, req.body.clickedPoint);
                         coords = buffer.map((point) =>
-                            convert("EPSG:3857", layer.crs, point).join(" ")
+                            tranform("EPSG:3857", layer.crs, point).join(" ")
                         );
                         break;
                     case 'spatialSearch':
                         buffer = req.body.drawnPolygon;
                         coords = buffer.map((point) =>
-                            convert("EPSG:3857", layer.crs, point).join(" ")
+                            tranform("EPSG:3857", layer.crs, point).join(" ")
                         );
                         break;
                 }
+                switch (layer.provider) {
+                    case 'EsriOGC':
+                        version = '1.0.0';
+                        format = 'GML2';
+                        break;
+                    case 'GeoServer':
+                        version = '1.1.0';
+                        format = 'application/json';
+                        break;
+                }
                 const queryParam = coords.join(" ");
-                const raw = `<wfs:GetFeature service="WFS" outputFormat="application/json" version="1.1.0" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
+                const raw = `<wfs:GetFeature service="WFS" outputFormat="${format}" version="${version}" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
                 const requestOptions = {
                     method: 'POST',
                     body: raw,
                     headers: { 'Content-Type': 'application/json' }
                 };
                 promises.push(fetch(layer.url, requestOptions)
-                    .then(response => response.json())
+                    .then(response => response.text())
+                    .then(text => {
+                        switch (layer.provider) {
+                            case 'GeoServer':
+                                return JSON.parse(text);
+                            case 'EsriOGC':
+                                return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))
+                        };
+                    })
                     .then(obj => {
-                        return { id: layer.id, name: layer.name, data: obj, error: null, success: true }
+                        return { id: layer.id, provider: layer.provider, name: layer.name, data: obj, error: null, success: true }
                     })
                     .catch(err => {
-                        return { id: layer.id, name: layer.name, data: null, error: err, success: false }
+                        return { id: layer.id, provider: layer.provider, name: layer.name, data: null, error: err, success: false }
                     })
                 );
             });

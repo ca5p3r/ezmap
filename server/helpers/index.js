@@ -31,7 +31,7 @@ export const makeBuffer = (geom, point) => {
     return [p1, p2, p3, p4, p5]
 };
 
-export const convert = (source, target, point) => {
+export const tranform = (source, target, point) => {
     const sourceProj = projections[source];
     const targetProj = projections[target];
     return proj4(sourceProj, targetProj, point)

@@ -27,7 +27,7 @@ const SimpleSearch = () => {
         </option>
     ));
     const fields = queriableLayers.find(item => item.name === layer)?.properties.map(field => {
-        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
         if (!geometries.includes(field.type)) {
             return (<option key={field.name} value={field.name}>
                 {field.local ? field.local : field.name}
@@ -171,7 +171,7 @@ const SimpleSearch = () => {
                                                 <Table className="mt-4" striped bordered hover size="sm">
                                                     <tbody>
                                                         {resProps.map((item, key) => {
-                                                            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+                                                            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
                                                             if (!geometries.includes(item.type)) {
                                                                 return (
                                                                     <tr key={key}>
