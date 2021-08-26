@@ -58,6 +58,7 @@ html, body, #app, #root {
   max-height: 100%;
   top: 8%;
   bottom: 2rem;
+  background-color: #f8f9fa;
 }
 
 .landing {
@@ -81,7 +82,6 @@ ul {
 li {
   font-size: small;
   text-align: center;
-  border: ridge white 0.5px;
 }
 
 .container {

@@ -89,10 +89,9 @@ const TOC = () => {
                     return obj
                 });
                 const targetIndex = historicalData.findIndex(layer => layer.id === title.split('&')[1]);
-                const targetLayer = historicalData.filter(layer => layer.id === title.split('&')[1])[0];
-                targetLayer.properties = formattedFields;
+                layer.properties = formattedFields;
                 historicalData.splice(targetIndex, 1);
-                historicalData.splice(targetIndex, 0, targetLayer);
+                historicalData.splice(targetIndex, 0, layer);
                 dispatch(setHistoricalLayers(historicalData));
                 dispatch(triggerToast({
                     title: 'Success',
@@ -159,7 +158,7 @@ const TOC = () => {
                                                         <div className={layer.values_.title === 'OpenStreetMap' ? 'hideen-group' : 'visible-group'}>
                                                             <ButtonGroup size="sm">
                                                                 <Button
-                                                                    variant="secondary"
+                                                                    variant="light"
                                                                     title='Remove'
                                                                     objtitle={layer.values_.title}
                                                                     onClick={e => {
@@ -169,7 +168,7 @@ const TOC = () => {
                                                                     }}
                                                                 >{svg.remove}</Button>
                                                                 <Button
-                                                                    variant="secondary"
+                                                                    variant="light"
                                                                     title='GoTo'
                                                                     objtitle={layer.values_.title}
                                                                     onClick={e => {
@@ -179,7 +178,7 @@ const TOC = () => {
                                                                     }}
                                                                 >{svg.goto}</Button>
                                                                 <Button
-                                                                    variant="secondary"
+                                                                    variant="light"
                                                                     title='Update localization'
                                                                     objtitle={layer.values_.title}
                                                                     onClick={e => {
@@ -189,7 +188,7 @@ const TOC = () => {
                                                                     }}
                                                                 >{svg.lang}</Button>
                                                                 <Button
-                                                                    variant="secondary"
+                                                                    variant="light"
                                                                     title='Refresh layer'
                                                                     objtitle={layer.values_.title}
                                                                     onClick={e => {
