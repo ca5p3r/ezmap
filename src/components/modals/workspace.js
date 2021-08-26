@@ -103,6 +103,7 @@ const WorkspaceModal = () => {
             const crs = selectedElement.getAttribute('crs');
             const uniqueID = uuidv4();
             const extentGeographic = selectedElement.getAttribute('extent');
+            let wmsURL;
             if (layerName && layerName !== 'Selector') {
                 dispatch(triggerIsLoading(true));
                 const p1 = transform(extentGeographic.split(' ').slice(0, 2), crs, 'EPSG:3857');
@@ -127,6 +128,7 @@ const WorkspaceModal = () => {
                         let geomType;
                         switch (selectedService) {
                             case 'GeoServer':
+                                wmsURL = url;
                                 fields = obj.featureTypes[0].properties;
                                 formattedFields = fields.map(field => {
                                     const obj = { name: field.name, type: field.localType, local: '' }
@@ -137,6 +139,7 @@ const WorkspaceModal = () => {
                                 geomType = geomField.localType;
                                 break;
                             case 'EsriOGC':
+                                wmsURL = url.slice(0, -9) + 'WMSServer';
                                 fields = obj['xsd:sequence']['xsd:element'];
                                 formattedFields = fields.map(field => {
                                     const obj = { name: field._attributes.name, type: field._attributes.type, local: '' }
@@ -154,7 +157,8 @@ const WorkspaceModal = () => {
                             name: layerName,
                             title: layerTitle,
                             provider: selectedService,
-                            url: url,
+                            url,
+                            wmsURL,
                             extent: [...p1, ...p2],
                             type: geomType,
                             geometry: geomName,
@@ -171,7 +175,8 @@ const WorkspaceModal = () => {
                             name: layerName,
                             title: layerTitle,
                             provider: selectedService,
-                            url: url,
+                            url,
+                            wmsURL,
                             extent: [...p1, ...p2],
                             type: null,
                             geometry: null,

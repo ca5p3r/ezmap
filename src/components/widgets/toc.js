@@ -16,8 +16,10 @@ import {
     triggerTOCChange,
     triggerShowLocalization,
     triggerToast,
-    setLocalizedLayer
+    setLocalizedLayer,
+    triggerIsLoading
 } from "../../actions";
+import convert from 'xml-js';
 import { svg } from "../assets";
 const TOC = () => {
     const dispatch = useDispatch();
@@ -79,16 +81,42 @@ const TOC = () => {
         dispatch(setLocalizedLayer(title.split('&')[1]));
     };
     const handleRefresh = (title) => {
-        const layer = historicalData.filter(item => item.id === title.split('&')[1])[0]
-        fetch(`${layer.url}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layer.name}`)
-            .then(response => response.json())
+        dispatch(triggerIsLoading(true));
+        const layer = historicalData.filter(item => item.id === title.split('&')[1])[0];
+        fetch(`${layer.url}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layer.name}`)
+            .then(response => response.text())
+            .then(text => {
+                switch (layer.provider) {
+                    case 'GeoServer':
+                        return JSON.parse(text);
+                    case 'EsriOGC':
+                        return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
+                    default:
+                        return null;
+                }
+            })
             .then(obj => {
-                const fields = obj.featureTypes[0].properties
-                const formattedFields = fields.map(field => {
-                    const obj = { name: field.name, type: field.localType, local: '' }
-                    return obj
-                });
+                let fields;
+                let formattedFields;
                 const targetIndex = historicalData.findIndex(layer => layer.id === title.split('&')[1]);
+                switch (layer.provider) {
+                    case 'GeoServer':
+                        fields = obj.featureTypes[0].properties;
+                        formattedFields = fields.map(field => {
+                            const obj = { name: field.name, type: field.localType, local: '' }
+                            return obj
+                        });
+                        break;
+                    case 'EsriOGC':
+                        fields = obj['xsd:sequence']['xsd:element'];
+                        formattedFields = fields.map(field => {
+                            const obj = { name: field._attributes.name, type: field._attributes.type, local: '' }
+                            return obj
+                        });
+                        break;
+                    default:
+                        return null;
+                }
                 layer.properties = formattedFields;
                 historicalData.splice(targetIndex, 1);
                 historicalData.splice(targetIndex, 0, layer);
@@ -98,6 +126,7 @@ const TOC = () => {
                     message: 'Layer has been refreshed!',
                     visible: true
                 }));
+                dispatch(triggerIsLoading());
             })
             .catch(err => {
                 dispatch(triggerToast({
