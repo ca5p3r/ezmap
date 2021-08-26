@@ -7,6 +7,39 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 This project was created from scratch up to provide a fruitful collection of GeoSpatial tools and plugins.\
 Feel free to clone the project and use it on your own or extend it to fit your needs.
 
+## Features list
+
+* Multi-Tenancy "The ability to use the application user independent"
+* Rich map with controls:
+  * Zoom in/out
+  * Default extent
+  * Map overview
+  * Scale bar
+  * Full screen
+* Cursor & Map information widget "Shows current cursor position and view extent"
+* Rich "Table of Contents" (aka. TOC), with powerful tools:
+  * Visibility handler
+  * Opacity handler
+  * Order handler (Drag & Drop support)
+  * Layer localization
+  * Layer refresh
+  * GoTo layer
+  * Layer removal
+* Workspace manager, to fetch layers from remote spatial server (Currently only supports GeoServer)
+* Bookmarks manager
+* Identify, to get full information about clicked feature on the map
+* Simple search, to look a feature up using simple input
+* Spatial search, to get features that intersect with a drawn polygon on the map
+
+## Upcoming features
+
+* Tabular search
+* Live feature editing "Both tabular & spatial"
+* Map sketching
+* Spatial import
+* Spatial export
+* Spatial routing
+
 ## Available Scripts
 
 In the project directory, you can run:
