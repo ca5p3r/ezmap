@@ -23,7 +23,7 @@ const SimpleSearch = () => {
     const queriableLayers = historicalData.filter(item => item.geometry !== null);
     const layers = queriableLayers.map(layer => (
         <option id={`option+${layer.name}`} layerid={layer.id} url={layer.url} key={layer.name} value={layer.name}>
-            {layer.name}
+            {layer.title}
         </option>
     ));
     const fields = queriableLayers.find(item => item.name === layer)?.properties.map(field => {
