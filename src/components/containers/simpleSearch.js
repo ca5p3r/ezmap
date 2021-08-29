@@ -178,7 +178,7 @@ const SimpleSearch = () => {
                         setResults([]);
                     }
                     } onKeyDown={e => {
-                        if (e.keyCode === 13) {
+                        if (e.key === 'Enter') {
                             e.preventDefault();
                             document.getElementById("searchButton").click();
                         }

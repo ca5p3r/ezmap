@@ -82,7 +82,7 @@ const RegisterModal = () => {
                     <Form.Group className="mb-3" controlId="registerPassword">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" onKeyDown={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 e.preventDefault();
                                 document.getElementById("registerButton").click();
                             }

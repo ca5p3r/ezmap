@@ -1,7 +1,6 @@
 import { readFileSync } from 'fs';
-import { resolve } from "path";
+import { resolve, dirname } from "path";
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
 import express from 'express';
@@ -17,14 +16,14 @@ const schema = readFileSync(resolve(__dirname, "./assets/schema.sql")).toString(
 
 const app = express();
 
-pool.connect((err, client, done) => {
-    if (err) return done(err);
-    client.query(schema, (err) => {
+pool.connect((connError, client, done) => {
+    if (connError) return done(connError);
+    client.query(schema, (clientError) => {
         done();
-        if (err) console.log(err);
+        if (clientError) console.log(clientError);
         else {
             app.listen(9090);
-        };
+        }
     });
 });
 

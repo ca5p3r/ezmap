@@ -131,8 +131,7 @@ const WorkspaceModal = () => {
                                 wmsURL = url;
                                 fields = obj.featureTypes[0].properties;
                                 formattedFields = fields.map(field => {
-                                    const obj = { name: field.name, type: field.localType, local: '' }
-                                    return obj
+                                    return { name: field.name, type: field.localType, local: '' }
                                 });
                                 geomField = fields.filter(field => geometries.includes(field.localType))[0];
                                 geomName = geomField.name;
@@ -142,8 +141,7 @@ const WorkspaceModal = () => {
                                 wmsURL = url.slice(0, -9) + 'WMSServer';
                                 fields = obj['xsd:sequence']['xsd:element'];
                                 formattedFields = fields.map(field => {
-                                    const obj = { name: field._attributes.name, type: field._attributes.type, local: '' }
-                                    return obj
+                                    return { name: field._attributes.name, type: field._attributes.type, local: '' }
                                 });
                                 geomField = fields.filter(field => geometries.includes(field._attributes.type))[0];
                                 geomName = geomField._attributes.name;
@@ -233,7 +231,7 @@ const WorkspaceModal = () => {
                     <Form.Group className="mt-2 mb-2" controlId="formBasicUrl">
                         <Form.Label>URL</Form.Label>
                         <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wfs" value={url} onChange={handleURLChange} onKeyDown={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 e.preventDefault();
                                 document.getElementById("fetchLayersButton").click();
                             }

@@ -20,7 +20,7 @@ export const makeBuffer = (geom, point) => {
     }
     else {
         buffer = 100
-    };
+    }
     const x = point[0];
     const y = point[1];
     const p1 = [x - buffer, y + buffer];

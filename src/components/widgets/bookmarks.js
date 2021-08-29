@@ -91,7 +91,7 @@ const Bookmarks = () => {
                     <Form.Group controlId="bookmarktitle">
                         <Form.Label>Bookmark title</Form.Label>
                         <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={e => setTitle(e.target.value)} onKeyDown={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 e.preventDefault();
                                 document.getElementById("bookmarksSaveButton").click();
                             }

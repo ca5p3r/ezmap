@@ -18,7 +18,7 @@ export const setter = (provider, url, id, title, name, opacity = 1, visible = tr
             LAYERS = [];
             break;
     }
-    const obj = new Image(
+    return new Image(
         {
             title: layerTitle,
             source: new ImageWMS(
@@ -34,5 +34,4 @@ export const setter = (provider, url, id, title, name, opacity = 1, visible = tr
             visible
         }
     );
-    return obj;
 };

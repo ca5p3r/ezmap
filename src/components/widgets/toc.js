@@ -103,15 +103,13 @@ const TOC = () => {
                     case 'GeoServer':
                         fields = obj.featureTypes[0].properties;
                         formattedFields = fields.map(field => {
-                            const obj = { name: field.name, type: field.localType, local: '' }
-                            return obj
+                            return { name: field.name, type: field.localType, local: '' }
                         });
                         break;
                     case 'EsriOGC':
                         fields = obj['xsd:sequence']['xsd:element'];
                         formattedFields = fields.map(field => {
-                            const obj = { name: field._attributes.name, type: field._attributes.type, local: '' }
-                            return obj
+                            return { name: field._attributes.name, type: field._attributes.type, local: '' }
                         });
                         break;
                     default:
