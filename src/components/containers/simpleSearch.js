@@ -79,7 +79,7 @@ const SimpleSearch = () => {
                 queryParam: value
             };
             dispatch(triggerIsLoading(true));
-            fetch("http://localhost:9000/queryService/query", {
+            fetch("http://localhost:9090/queryService/query", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

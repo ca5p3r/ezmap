@@ -119,7 +119,7 @@ const AppNavBar = () => {
 			id: userID,
 			obj,
 		};
-		fetch("http://localhost:9000/configService/saveSettings", {
+		fetch("http://localhost:9090/configService/saveSettings", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

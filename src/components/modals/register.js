@@ -18,7 +18,7 @@ const RegisterModal = () => {
         if (username.length >= 4 && username.length <= 16) {
             if (password.length >= 8 && password.length <= 20) {
                 const data = { username, password };
-                fetch("http://localhost:9000/authService/register", {
+                fetch("http://localhost:9090/authService/register", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

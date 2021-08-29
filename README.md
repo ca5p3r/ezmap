@@ -47,7 +47,7 @@ In the project directory, you can run:
 ### `node server/app.js`
 
 Runs the backend server in development mode.\
-Open [http://localhost:9000](http://localhost:9000) to view it in the browser.\
+Open [http://localhost:9090](http://localhost:9090) to view it in the browser.\
 Use Postman to easily post requests.
 
 ### `npm start`

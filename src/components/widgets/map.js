@@ -218,7 +218,7 @@ const MyMap = () => {
 					subtype: 'identify'
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9000/queryService/query", {
+					fetch("http://localhost:9090/queryService/query", {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -343,7 +343,7 @@ const MyMap = () => {
 					subtype: 'spatialSearch'
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9000/queryService/query", {
+					fetch("http://localhost:9090/queryService/query", {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
