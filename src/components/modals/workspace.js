@@ -17,13 +17,14 @@ import {
     insertHistoricalLayer,
     addPendingLayer
 } from '../../actions';
-import WMSCapabilities from 'ol/format/WMSCapabilities';
+import convert from 'xml-js';
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
 import { setter } from '../../utils';
 const WorkspaceModal = () => {
     const dispatch = useDispatch();
     const [url, setUrl] = useState('');
+    const [selectedService, setSelectedService] = useState('');
     const [availability, setAvailability] = useState(false);
     const visibility = useSelector(state => state.workspace.visibility);
     const layers = useSelector(state => state.workspace.layers);
@@ -34,81 +35,148 @@ const WorkspaceModal = () => {
         setUrl('');
     };
     const handleFetch = (url) => {
-        const parser = new WMSCapabilities();
-        if (url && url !== '') {
-            dispatch(triggerIsLoading(true));
-            fetch(`${url}?request=getCapabilities`)
-                .then(response => response.text())
-                .then(text => {
-                    const result = parser.read(text);
-                    return result.Capability.Layer.Layer;
-                })
-                .then(arr => {
-                    dispatch(updateLayers(arr));
-                    setAvailability(true);
-                    dispatch(triggerIsLoading());
-                })
-                .catch(err => {
-                    dispatch(triggerToast({
-                        title: 'Danger',
-                        message: err.toString(),
-                        visible: true
-                    }));
-                    dispatch(resetLayers());
-                    setAvailability(false);
-                    dispatch(triggerIsLoading());
-                });
+        const selectedService = document.getElementById('serviceType').value;
+        if (selectedService !== 'Selector') {
+            setSelectedService(selectedService);
+            if (url && url !== '') {
+                dispatch(triggerIsLoading(true));
+                fetch(`${url}?service=wfs&version=2.0.0&request=GetCapabilities`)
+                    .then(response => response.text())
+                    .then(text => {
+                        const obj = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
+                        switch (selectedService) {
+                            case 'EsriOGC':
+                                return obj['wfs:FeatureTypeList']['wfs:FeatureType'];
+                            case 'GeoServer':
+                                return obj.FeatureTypeList.FeatureType;
+                            default:
+                                return null
+                        }
+                    })
+                    .then(arr => {
+                        if (arr) {
+                            dispatch(updateLayers(arr));
+                            setAvailability(true);
+                        }
+                        else {
+                            dispatch(triggerToast({
+                                title: 'Danger',
+                                message: 'Unable to fetch the given url with the given service type!',
+                                visible: true
+                            }));
+                        }
+                        dispatch(triggerIsLoading());
+                    })
+                    .catch(() => {
+                        dispatch(triggerToast({
+                            title: 'Danger',
+                            message: 'Unable to fetch the given url with the given service type!',
+                            visible: true
+                        }));
+                        dispatch(resetLayers());
+                        setAvailability(false);
+                        dispatch(triggerIsLoading());
+                    });
+            }
+            else {
+                dispatch(triggerToast({
+                    title: 'Warning',
+                    message: 'Please enter URL!',
+                    visible: true
+                }));
+            };
         }
         else {
             dispatch(triggerToast({
                 title: 'Warning',
-                message: 'Please enter URL!',
+                message: 'Please select all fields!',
                 visible: true
             }));
         };
-
     };
     const handleAdd = (url) => {
         if (availability) {
-            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
             const layerName = document.getElementById('formBasicLayer').value;
             const selectedElement = document.getElementById(`option${layerName}`);
             const layerTitle = selectedElement.getAttribute('title');
             const crs = selectedElement.getAttribute('crs');
             const uniqueID = uuidv4();
             const extentGeographic = selectedElement.getAttribute('extent');
+            let wmsURL;
             if (layerName && layerName !== 'Selector') {
-                const p1 = transform(extentGeographic.split(',').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
-                const p2 = transform(extentGeographic.split(',').slice(2), 'EPSG:4326', 'EPSG:3857');
-                fetch(`${url.slice(0, -3)}wfs?request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
-                    .then(response => response.json())
+                dispatch(triggerIsLoading(true));
+                const p1 = transform(extentGeographic.split(' ').slice(0, 2), crs, 'EPSG:3857');
+                const p2 = transform(extentGeographic.split(' ').slice(2), crs, 'EPSG:3857');
+                fetch(`${url}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
+                    .then(response => response.text())
+                    .then(text => {
+                        switch (selectedService) {
+                            case 'GeoServer':
+                                return JSON.parse(text);
+                            case 'EsriOGC':
+                                return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
+                            default:
+                                return null;
+                        }
+                    })
                     .then(obj => {
-                        const fields = obj.featureTypes[0].properties
-                        const formattedFields = fields.map(field => {
-                            const obj = { name: field.name, type: field.localType, local: '' }
-                            return obj
-                        });
-                        const geomField = fields.filter(field => geometries.includes(field.localType));
+                        let fields;
+                        let formattedFields;
+                        let geomField;
+                        let geomName;
+                        let geomType;
+                        switch (selectedService) {
+                            case 'GeoServer':
+                                wmsURL = url;
+                                fields = obj.featureTypes[0].properties;
+                                formattedFields = fields.map(field => {
+                                    const obj = { name: field.name, type: field.localType, local: '' }
+                                    return obj
+                                });
+                                geomField = fields.filter(field => geometries.includes(field.localType))[0];
+                                geomName = geomField.name;
+                                geomType = geomField.localType;
+                                break;
+                            case 'EsriOGC':
+                                wmsURL = url.slice(0, -9) + 'WMSServer';
+                                fields = obj['xsd:sequence']['xsd:element'];
+                                formattedFields = fields.map(field => {
+                                    const obj = { name: field._attributes.name, type: field._attributes.type, local: '' }
+                                    return obj
+                                });
+                                geomField = fields.filter(field => geometries.includes(field._attributes.type))[0];
+                                geomName = geomField._attributes.name;
+                                geomType = geomField._attributes.type;
+                                break;
+                            default:
+                                break;
+                        }
                         dispatch(insertHistoricalLayer({
                             id: uniqueID,
                             name: layerName,
                             title: layerTitle,
-                            url: url.slice(0, -3),
+                            provider: selectedService,
+                            url,
+                            wmsURL,
                             extent: [...p1, ...p2],
-                            type: geomField[0].localType,
-                            geometry: geomField[0].name,
+                            type: geomType,
+                            geometry: geomName,
                             crs,
                             properties: formattedFields,
                             visible: true,
                             opacity: 1
                         }));
+                        dispatch(triggerIsLoading());
                     })
                     .catch(() => {
                         dispatch(insertHistoricalLayer({
                             id: uniqueID,
                             name: layerName,
                             title: layerTitle,
-                            url: url.slice(0, -3),
+                            provider: selectedService,
+                            url,
+                            wmsURL,
                             extent: [...p1, ...p2],
                             type: null,
                             geometry: null,
@@ -117,8 +185,9 @@ const WorkspaceModal = () => {
                             visible: true,
                             opacity: 1
                         }));
+                        dispatch(triggerIsLoading());
                     });
-                const obj = setter(url, `${layerTitle}&${uniqueID}`, layerName);
+                const obj = setter(selectedService, url, uniqueID, layerTitle, layerName);
                 dispatch(addPendingLayer(obj));
             }
             else {
@@ -137,6 +206,14 @@ const WorkspaceModal = () => {
             }));
         };
     };
+    const handleURLChange = e => {
+        setUrl(e.target.value);
+        setAvailability(false);
+    };
+    const handleServiceChange = e => {
+        setUrl('');
+        setAvailability(false);
+    };
     return (
         <Modal show={visibility} onHide={handleHide}>
             <Modal.Header closeButton>
@@ -145,24 +222,41 @@ const WorkspaceModal = () => {
             <Modal.Body>
                 <p>Please provider layers info below!</p>
                 <Form>
-                    <Form.Group className="mb-3" controlId="formBasicUrl">
+                    <Form.Group className="mt-2 mb-2" controlId="serviceType">
+                        <Form.Label>Select service type</Form.Label>
+                        <Form.Control as="select" onChange={handleServiceChange}>
+                            <option id="selector" value="Selector">Select</option>
+                            <option id="esri-ogc" value="EsriOGC">ESRI OGC</option>
+                            <option id="geoserver" value="GeoServer">GeoServer</option>
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group className="mt-2 mb-2" controlId="formBasicUrl">
                         <Form.Label>URL</Form.Label>
-                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wms" value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => {
+                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wfs" value={url} onChange={handleURLChange} onKeyDown={e => {
                             if (e.keyCode === 13) {
                                 e.preventDefault();
                                 document.getElementById("fetchLayersButton").click();
                             }
                         }} />
                     </Form.Group>
-                    {availability && <Form.Group className="mb-3" controlId="formBasicLayer">
+                    {availability && <Form.Group className="mt-2 mb-2" controlId="formBasicLayer">
                         <Form.Label>Select a layer</Form.Label>
                         <Form.Control as="select">
                             <option id="optionSelector" value="Selector">Select</option>
-                            {layers.map(
-                                (layer, key) => {
-                                    return <option id={`option${layer.Name}`} key={key} crs={layer.CRS[0]} value={layer.Name} title={layer.Title} extent={layer.EX_GeographicBoundingBox}>{layer.Title}</option>;
-                                }
-                            )}
+                            {
+                                layers.map(
+                                    (layer, key) => {
+                                        switch (selectedService) {
+                                            case 'GeoServer':
+                                                return <option id={`option${layer.Name._text}`} key={key} crs={layer.DefaultCRS._text.split('crs:')[1].replace('::', ':')} value={layer.Name._text} title={layer.Title._text} extent={layer['ows:WGS84BoundingBox']['ows:LowerCorner']._text.replace(',', ' ') + ' ' + layer['ows:WGS84BoundingBox']['ows:UpperCorner']._text.replace(',', ' ')}>{layer.Title._text}</option>;
+                                            case 'EsriOGC':
+                                                return <option id={`option${layer['wfs:Name']._text}`} key={key} crs={layer['wfs:DefaultCRS']._text.split('crs:')[1].replace('::', ':')} value={layer['wfs:Name']._text} title={layer['wfs:Title']._text} extent={layer['ows:WGS84BoundingBox']['ows:LowerCorner']._text.replace(',', ' ') + ' ' + layer['ows:WGS84BoundingBox']['ows:UpperCorner']._text.replace(',', ' ')}>{layer['wfs:Title']._text}</option>;
+                                            default:
+                                                return null;
+                                        }
+                                    }
+                                )
+                            }
                         </Form.Control>
                     </Form.Group>}
                 </Form>

@@ -22,12 +22,12 @@ const SimpleSearch = () => {
     const historicalData = useSelector(state => state.toc.historicalData);
     const queriableLayers = historicalData.filter(item => item.geometry !== null);
     const layers = queriableLayers.map(layer => (
-        <option id={`option+${layer.name}`} layerid={layer.id} url={layer.url} key={layer.name} value={layer.name}>
+        <option id={`option+${layer.name}`} layerid={layer.id} provider={layer.provider} url={layer.url} key={layer.name} value={layer.name}>
             {layer.title}
         </option>
     ));
     const fields = queriableLayers.find(item => item.name === layer)?.properties.map(field => {
-        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
         if (!geometries.includes(field.type)) {
             return (<option key={field.name} value={field.name}>
                 {field.local ? field.local : field.name}
@@ -37,12 +37,28 @@ const SimpleSearch = () => {
             return null
         }
     });
+    const renderHeader = (header, provider) => {
+        switch (provider) {
+            case 'EsriOGC':
+                return header._attributes.fid.split('.')[1];
+            case 'GeoServer':
+                return header.id.split('.')[1];
+            default:
+                return;
+        }
+    };
     const handleLayerChange = e => {
         const selectedLayer = document.getElementById('searchLayer').value;
-        const selectedElement = document.getElementById(`option+${selectedLayer}`);
-        const id = selectedElement.getAttribute('layerid');
-        setData(data => ({ ...data, id, layer: e.target.value, field: '' }));
-        setResults([]);
+        if (selectedLayer !== 'Selector') {
+            const selectedElement = document.getElementById(`option+${selectedLayer}`);
+            const id = selectedElement.getAttribute('layerid');
+            setData(data => ({ ...data, id, layer: e.target.value, field: '', value: '' }));
+            setResults([]);
+        }
+        else {
+            setData(data => ({ ...data, id: "", layer: "", field: '', value: '' }));
+            setResults([]);
+        }
     };
     const handleFieldChange = e => {
         setData(data => ({ ...data, field: e.target.value }));
@@ -53,11 +69,13 @@ const SimpleSearch = () => {
             const selectedLayer = document.getElementById('searchLayer').value;
             const selectedElement = document.getElementById(`option+${selectedLayer}`);
             const url = selectedElement.getAttribute('url');
+            const provider = selectedElement.getAttribute('provider');
             const data = {
                 type: 'simpleSearch',
                 url,
                 layer,
                 field,
+                provider,
                 queryParam: value
             };
             dispatch(triggerIsLoading(true));
@@ -81,8 +99,24 @@ const SimpleSearch = () => {
                     return res.json();
                 })
                 .then(obj => {
-                    if (obj.features.length > 0) {
-                        setResults(obj.features);
+                    let results = [];
+                    if (obj.response.length > 0) {
+                        switch (obj.provider) {
+                            case 'GeoServer':
+                                obj.response.forEach(item => results.push({ provider: obj.provider, feature: item }));
+                                break;
+                            case 'EsriOGC':
+                                if (obj.response.length > 1) {
+                                    obj.response.forEach(item => results.push({ provider: obj.provider, feature: Object.entries(item[1])[0][1] }));
+                                }
+                                else {
+                                    results.push({ provider: obj.provider, feature: obj.response[0][1] });
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        setResults(results);
                     }
                     else {
                         setResults([]);
@@ -135,7 +169,7 @@ const SimpleSearch = () => {
                     </Form.Group>
                     <Form.Group className="mt-2" controlId="searchField">
                         <Form.Control as="select" value={field} onChange={handleFieldChange}>
-                            <option value="Selector">Select field</option>
+                            <option value="Selector" layerid="">Select field</option>
                             {fields}
                         </Form.Control>
                     </Form.Group>
@@ -162,21 +196,37 @@ const SimpleSearch = () => {
                             {
                                 results.map(
                                     (result, key) => {
+                                        let properties = {};
+                                        switch (result.provider) {
+                                            case 'EsriOGC':
+                                                const oldProps = Object.entries(result.feature).slice(1);
+                                                oldProps.forEach(item => {
+                                                    const head = item[0].split(':')[1];
+                                                    const value = item[1]._text;
+                                                    properties[head] = value;
+                                                })
+                                                break;
+                                            case 'GeoServer':
+                                                properties = result.feature.properties
+                                                break;
+                                            default:
+                                                break;
+                                        };
                                         const resProps = historicalData.filter(layer => layer.id === id)[0].properties;
                                         return (
                                             <div key={key}>
                                                 <Alert className="mt-4 text-center" variant='info'>
-                                                    Feature ID: {result.id.split('.')[1]}
+                                                    Feature: {result.name}.{renderHeader(result.feature, result.provider)}
                                                 </Alert>
                                                 <Table className="mt-4" striped bordered hover size="sm">
                                                     <tbody>
                                                         {resProps.map((item, key) => {
-                                                            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection'];
+                                                            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
                                                             if (!geometries.includes(item.type)) {
                                                                 return (
                                                                     <tr key={key}>
                                                                         <td>{item.local ? item.local : item.name}</td>
-                                                                        <td>{result.properties[item.name]}</td>
+                                                                        <td>{properties[item.name]}</td>
                                                                     </tr>
                                                                 )
                                                             }
