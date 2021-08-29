@@ -57,6 +57,7 @@ html, body, #app, #root {
 .custom {
   max-height: 100%;
   top: 8%;
+  width: 27%;
   bottom: 2rem;
   background-color: #f8f9fa;
 }
