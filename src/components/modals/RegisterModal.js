@@ -41,7 +41,7 @@ const RegisterModal = () => {
                                 message: obj.error,
                                 visible: true
                             }));
-                        };
+                        }
                     })
                     .catch(err => {
                         dispatch(triggerToast({

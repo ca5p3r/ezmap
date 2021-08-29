@@ -44,7 +44,7 @@ const Bookmarks = () => {
                 message: 'Please enter bookmark title!',
                 visible: true
             }));
-        };
+        }
     };
     const handleRemoveAll = () => {
         dispatch(removeAllBookmarks());
@@ -70,7 +70,7 @@ const Bookmarks = () => {
                 message: 'Please select a bookmark first!',
                 visible: true
             }));
-        };
+        }
     };
     const handleLoad = () => {
         const selectedBookmark = document.getElementById('bookmarks-dropdown').value;

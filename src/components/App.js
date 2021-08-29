@@ -1,11 +1,11 @@
-import AppContainer from "./appContainer";
-import Navbar from "./widgets/navbar";
+import AppContainer from "./AppContainer";
+import Navbar from "./widgets/AppNavBar";
 import { useSelector } from "react-redux";
-import LandingPage from "./containers/landing";
-import Loading from "./containers/loader";
-import MyToast from "./containers/toast";
-import LoginModal from "./modals/login";
-import RegisterModal from "./modals/register";
+import LandingPage from "./containers/LandingPage";
+import Loading from "./containers/Loading";
+import MyToast from "./containers/MyToast";
+import LoginModal from "./modals/LoginModal";
+import RegisterModal from "./modals/RegisterModal";
 
 function App() {
   const login = useSelector(state => state.login.isLogged);

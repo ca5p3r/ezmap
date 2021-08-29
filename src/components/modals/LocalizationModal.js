@@ -35,7 +35,7 @@ const LocalizationModal = () => {
                 message: 'Only JSON files are supported!',
                 visible: true
             }));
-        };
+        }
     };
     const handleHide = () => {
         setLocals(null);
@@ -63,7 +63,7 @@ const LocalizationModal = () => {
                 message: 'Please upload a valid localization file!',
                 visible: true
             }));
-        };
+        }
     };
     return (
         <Modal show={visibility} onHide={handleHide}>

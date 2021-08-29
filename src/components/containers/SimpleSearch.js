@@ -211,7 +211,7 @@ const SimpleSearch = () => {
                                                 break;
                                             default:
                                                 break;
-                                        };
+                                        }
                                         const resProps = historicalData.filter(layer => layer.id === id)[0].properties;
                                         return (
                                             <div key={key}>
@@ -232,7 +232,7 @@ const SimpleSearch = () => {
                                                             }
                                                             else {
                                                                 return null;
-                                                            };
+                                                            }
                                                         })}
                                                     </tbody>
                                                 </Table>

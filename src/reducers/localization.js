@@ -4,7 +4,7 @@ const myState = {
 };
 export const localizationReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     switch (action.type) {
         case 'triggerShowLocalization':
@@ -19,5 +19,5 @@ export const localizationReducer = (
             };
         default:
             return state;
-    };
+    }
 };

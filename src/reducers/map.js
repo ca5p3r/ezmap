@@ -10,7 +10,7 @@ const myState = {
 };
 export const mapInfoReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     switch (action.type) {
         case 'setCursor':
@@ -60,5 +60,5 @@ export const mapInfoReducer = (
             };
         default:
             return state;
-    };
+    }
 };

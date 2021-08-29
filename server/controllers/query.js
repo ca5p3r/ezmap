@@ -25,6 +25,8 @@ export const query = (req, res) => {
                             tranform("EPSG:3857", layer.crs, point).join(" ")
                         );
                         break;
+                    default:
+                        break;
                 }
                 switch (layer.provider) {
                     case 'EsriOGC':
@@ -34,6 +36,8 @@ export const query = (req, res) => {
                     case 'GeoServer':
                         version = '1.1.0';
                         format = 'application/json';
+                        break;
+                    default:
                         break;
                 }
                 const queryParam = coords.join(" ");
@@ -50,8 +54,10 @@ export const query = (req, res) => {
                             case 'GeoServer':
                                 return JSON.parse(text);
                             case 'EsriOGC':
-                                return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))
-                        };
+                                return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }));
+                            default:
+                                break;
+                        }
                     })
                     .then(obj => {
                         return { id: layer.id, provider: layer.provider, name: layer.name, data: obj, error: null, success: true }
@@ -85,6 +91,8 @@ export const query = (req, res) => {
                     version = '1.1.0';
                     format = 'application/json';
                     break;
+                default:
+                    break;
             }
             const raw = `<wfs:GetFeature service="WFS" version="${version}" outputFormat="${format}" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd"><wfs:Query typeName="${body.layer}"><ogc:Filter><ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="." escapeChar="!"><ogc:PropertyName>${body.field}</ogc:PropertyName><ogc:Literal>*${body.queryParam}*</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></wfs:Query></wfs:GetFeature>`
             const requestOptions = {
@@ -99,8 +107,10 @@ export const query = (req, res) => {
                         case 'GeoServer':
                             return JSON.parse(text);
                         case 'EsriOGC':
-                            return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))
-                    };
+                            return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }));
+                        default:
+                            break;
+                    }
                 })
                 .then(obj => {
                     switch (body.provider) {
@@ -110,7 +120,9 @@ export const query = (req, res) => {
                         case 'EsriOGC':
                             res.send({ provider: body.provider, response: obj['wfs:FeatureCollection']['gml:featureMember'] ? Object.entries(obj['wfs:FeatureCollection']['gml:featureMember']) : [] });
                             break;
-                    };
+                        default:
+                            break;
+                    }
                 })
                 .catch(err => res.send(err));
             break;

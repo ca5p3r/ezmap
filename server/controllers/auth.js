@@ -21,11 +21,11 @@ export const create_user = (req, res) => {
 			}
 		})
 			().catch(err => {
-				switch (err.code) {
-					case '23505':
-						return res.send({ error: 'User already exists', success: false });
-					default:
-						return res.send({ error: err.detail, success: false });
+				if (err.code === '23505') {
+					return res.send({ error: 'User already exists', success: false });
+				}
+				else {
+					return res.send({ error: err.detail, success: false });
 				}
 			});
 	}
@@ -48,7 +48,7 @@ export const verify_login = (req, res) => {
 					}
 					else {
 						return res.send({ error: 'Wrong credentials!', success: false });
-					};
+					}
 				}
 				else {
 					return res.send({ error: 'User not found!', success: false });
@@ -58,10 +58,7 @@ export const verify_login = (req, res) => {
 			}
 		})
 			().catch(err => {
-				switch (err.code) {
-					default:
-						return res.send({ error: err.detail, success: false });
-				}
+				return res.send({ error: err.detail, success: false });
 			});
 	}
 	else {

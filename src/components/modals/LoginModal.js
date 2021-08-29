@@ -78,7 +78,7 @@ const LoginModal = () => {
                                 message: obj.error,
                                 visible: true
                             }));
-                        };
+                        }
                     })
                     .catch(err => {
                         dispatch(triggerIsLoading());
@@ -103,7 +103,7 @@ const LoginModal = () => {
                 message: 'Username should be of length 4-16',
                 visible: true
             }));
-        };
+        }
     };
     return (
         <Modal show={showLogin} onHide={() => dispatch(triggerShowLogin(!showLogin))}>

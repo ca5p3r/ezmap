@@ -197,7 +197,7 @@ const MyMap = () => {
 					olmap.removeInteraction(interaction);
 				}
 			});
-		};
+		}
 		return () => {
 			olmap.removeLayer(vector);
 			source.clear();
@@ -252,7 +252,7 @@ const MyMap = () => {
 											}
 											else {
 												returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
-											};
+											}
 										}
 										else {
 											dispatch(
@@ -262,7 +262,7 @@ const MyMap = () => {
 													visible: true,
 												})
 											);
-										};
+										}
 										break;
 									case 'GeoServer':
 										returnedData = item.data.features;
@@ -323,7 +323,7 @@ const MyMap = () => {
 					dispatch(triggerIsLoading());
 				}
 			}
-		};
+		}
 		return () => {
 			dispatch(triggerIsLoading());
 			controller.abort()
@@ -377,7 +377,7 @@ const MyMap = () => {
 											}
 											else {
 												returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
-											};
+											}
 										}
 										else {
 											dispatch(
@@ -387,7 +387,7 @@ const MyMap = () => {
 													visible: true,
 												})
 											);
-										};
+										}
 										break;
 									case 'GeoServer':
 										returnedData = item.data.features;
@@ -422,7 +422,7 @@ const MyMap = () => {
 							if (result.length > 0) {
 								dispatch(setSpatialResult(result));
 								dispatch(triggerSpatialSearchVisibility(true));
-							};
+							}
 							dispatch(triggerIsLoading());
 						})
 						.catch((error) => {
@@ -448,7 +448,7 @@ const MyMap = () => {
 					dispatch(triggerIsLoading());
 				}
 			}
-		};
+		}
 		return () => {
 			dispatch(triggerIsLoading());
 			controller.abort()

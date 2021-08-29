@@ -1,13 +1,13 @@
-import TOC from "./widgets/toc";
-import Bookmarks from "./widgets/bookmarks";
-import MapInfo from "./containers/info";
-import Identify from "./containers/identify";
-import SpatialSearch from "./containers/spatialSearch";
-import MyMap from "./widgets/map";
+import TOC from "./widgets/TOC";
+import Bookmarks from "./widgets/Bookmarks";
+import MapInfo from "./containers/MapInfo";
+import Identify from "./containers/Identify";
+import SpatialSearch from "./containers/SpatialSearch";
+import MyMap from "./widgets/MyMap";
 import { useSelector } from "react-redux";
-import WorkspaceModal from "./modals/workspace";
-import LocalizationModal from "./modals/localization";
-import SimpleSearch from "./containers/simpleSearch";
+import WorkspaceModal from "./modals/WorkspaceModal";
+import LocalizationModal from "./modals/LocalizationModal";
+import SimpleSearch from "./containers/SimpleSearch";
 const AppContainer = () => {
   const showBookmark = useSelector(state => state.bookmarks.visibility);
   const showIdentify = useSelector(state => state.identify.visibility);

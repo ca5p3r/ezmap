@@ -3,15 +3,15 @@ const myState = {
 };
 export const simpleSearchReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
-    switch (action.type) {
-        case 'triggerSimpleSearch':
-            return {
-                ...state,
-                visibility: action.payload
-            };
-        default:
-            return state;
-    };
+    if (action.type === 'triggerSimpleSearch') {
+        return {
+            ...state,
+            visibility: action.payload
+        };
+    }
+    else {
+        return state;
+    }
 };

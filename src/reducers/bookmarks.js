@@ -4,7 +4,7 @@ const myState = {
 };
 export const bookmarksReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     const list = state.list;
     switch (action.type) {
@@ -38,5 +38,5 @@ export const bookmarksReducer = (
             };
         default:
             return state;
-    };
+    }
 };

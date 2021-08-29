@@ -84,7 +84,7 @@ const WorkspaceModal = () => {
                     message: 'Please enter URL!',
                     visible: true
                 }));
-            };
+            }
         }
         else {
             dispatch(triggerToast({
@@ -92,7 +92,7 @@ const WorkspaceModal = () => {
                 message: 'Please select all fields!',
                 visible: true
             }));
-        };
+        }
     };
     const handleAdd = (url) => {
         if (availability) {
@@ -194,7 +194,7 @@ const WorkspaceModal = () => {
                     message: 'Please select a layer!',
                     visible: true
                 }));
-            };
+            }
         }
         else {
             dispatch(triggerToast({
@@ -202,7 +202,7 @@ const WorkspaceModal = () => {
                 message: 'Please fetch layers first!',
                 visible: true
             }));
-        };
+        }
     };
     const handleURLChange = e => {
         setUrl(e.target.value);
