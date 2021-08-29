@@ -29,3 +29,5 @@ yarn-error.log*
 
 /.scannerwork
 sonar-project.properties
+
+/server/settings/index.js
