@@ -15,7 +15,7 @@ export const pool = new Pool(config);
 
 export const makeBuffer = (geom, point) => {
     let buffer;
-    if (geom === 'Polygon' || geom === 'MultiPolygon') {
+    if (geom === 'Polygon' || geom === 'MultiPolygon' || geom === 'gml:MultiSurfacePropertyType') {
         buffer = 5
     }
     else {

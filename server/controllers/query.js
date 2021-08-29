@@ -80,7 +80,7 @@ export const query = (req, res) => {
                 body: raw,
                 headers: { 'Content-Type': 'application/json' }
             };
-            fetch(body.url + 'wfs', requestOptions)
+            fetch(body.url, requestOptions)
                 .then(response => response.json())
                 .then(obj => res.send(obj))
                 .catch(err => res.send(err));

@@ -11,7 +11,7 @@ const Identify = () => {
     const results = useSelector(state => state.identify.result);
     const show = useSelector(state => state.identify.visibility);
     const layers = useSelector(state => state.toc.historicalData);
-    const renderHerder = (header, provider) => {
+    const renderHeader = (header, provider) => {
         switch (provider) {
             case 'EsriOGC':
                 return header._attributes.fid.split('.')[1];
@@ -55,7 +55,7 @@ const Identify = () => {
                                     return (
                                         <div key={key}>
                                             <Alert className="mt-4 text-center" variant='info'>
-                                                Feature: {result.name}.{renderHerder(result.feature, result.provider)}
+                                                Feature: {result.name}.{renderHeader(result.feature, result.provider)}
                                             </Alert>
                                             <Table striped bordered hover size="sm">
                                                 <tbody>

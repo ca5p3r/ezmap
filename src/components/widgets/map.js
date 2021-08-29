@@ -46,9 +46,6 @@ const MyMap = () => {
 	const identifyState = useSelector(state => state.identify.enabled);
 	const spatialSearchState = useSelector(state => state.spatialSearch.enabled);
 	const drawnPolygon = useSelector(state => state.mapInfo.drawnPolygon);
-	const drawPoint = new Draw({
-		type: "Point",
-	});
 	const [olmap] = useState(
 		new Map({
 			controls: defaultControls().extend([
@@ -145,6 +142,9 @@ const MyMap = () => {
 		// eslint-disable-next-line
 	}, [mapExtent.length]);
 	useEffect(() => {
+		const drawPoint = new Draw({
+			type: "Point",
+		});
 		if (identifyState) {
 			dispatch(
 				triggerToast({
@@ -241,14 +241,20 @@ const MyMap = () => {
 						.then(obj => {
 							const result = [];
 							obj.response.forEach(item => {
-								let returnedData;
+								let returnedData = [];
 								switch (item.provider) {
 									case 'EsriOGC':
 										if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
-											returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
+											if (item.data['wfs:FeatureCollection']['gml:featureMember'].length > 1) {
+												item.data['wfs:FeatureCollection']['gml:featureMember'].forEach(entry => {
+													returnedData.push(Object.entries(entry)[0]);
+												});
+											}
+											else {
+												returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
+											};
 										}
 										else {
-											returnedData = []
 											dispatch(
 												triggerToast({
 													title: "Warning",
@@ -277,8 +283,6 @@ const MyMap = () => {
 												break;
 										}
 									});
-									dispatch(setResult(result));
-									dispatch(triggerIdentifyVisibility(true));
 								}
 								else {
 									dispatch(
@@ -289,7 +293,11 @@ const MyMap = () => {
 										})
 									);
 								}
-							})
+							});
+							if (result.length > 0) {
+								dispatch(setResult(result));
+								dispatch(triggerIdentifyVisibility(true));
+							}
 							dispatch(triggerIsLoading());
 						})
 						.catch((error) => {
@@ -358,12 +366,48 @@ const MyMap = () => {
 						.then(obj => {
 							const result = [];
 							obj.response.forEach(item => {
-								if (item.data.features.length > 0) {
-									item.data.features.forEach(feature => {
-										result.push({ name: item.name, id: item.id, feature })
+								let returnedData = [];
+								switch (item.provider) {
+									case 'EsriOGC':
+										if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
+											if (item.data['wfs:FeatureCollection']['gml:featureMember'].length > 1) {
+												item.data['wfs:FeatureCollection']['gml:featureMember'].forEach(entry => {
+													returnedData.push(Object.entries(entry)[0]);
+												});
+											}
+											else {
+												returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
+											};
+										}
+										else {
+											dispatch(
+												triggerToast({
+													title: "Warning",
+													message: 'One or more layers did not return any data!',
+													visible: true,
+												})
+											);
+										};
+										break;
+									case 'GeoServer':
+										returnedData = item.data.features;
+										break;
+									default:
+										break;
+								}
+								if (returnedData.length > 0) {
+									returnedData.forEach(feature => {
+										switch (item.provider) {
+											case 'EsriOGC':
+												result.push({ provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
+												break;
+											case 'GeoServer':
+												result.push({ provider: item.provider, name: item.name, id: item.id, feature })
+												break;
+											default:
+												break;
+										}
 									});
-									dispatch(setSpatialResult(result));
-									dispatch(triggerSpatialSearchVisibility(true));
 								}
 								else {
 									dispatch(
@@ -374,7 +418,11 @@ const MyMap = () => {
 										})
 									);
 								}
-							})
+							});
+							if (result.length > 0) {
+								dispatch(setSpatialResult(result));
+								dispatch(triggerSpatialSearchVisibility(true));
+							};
 							dispatch(triggerIsLoading());
 						})
 						.catch((error) => {
@@ -406,7 +454,7 @@ const MyMap = () => {
 			controller.abort()
 		};
 		// eslint-disable-next-line
-	}, [clickedPoint, identifyState]);
+	}, [drawnPolygon, spatialSearchState]);
 	return <div id="map"></div>;
 };
 export default MyMap;

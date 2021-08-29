@@ -39,10 +39,16 @@ const SimpleSearch = () => {
     });
     const handleLayerChange = e => {
         const selectedLayer = document.getElementById('searchLayer').value;
-        const selectedElement = document.getElementById(`option+${selectedLayer}`);
-        const id = selectedElement.getAttribute('layerid');
-        setData(data => ({ ...data, id, layer: e.target.value, field: '' }));
-        setResults([]);
+        if (selectedLayer !== 'Selector') {
+            const selectedElement = document.getElementById(`option+${selectedLayer}`);
+            const id = selectedElement.getAttribute('layerid');
+            setData(data => ({ ...data, id, layer: e.target.value, field: '', value: '' }));
+            setResults([]);
+        }
+        else {
+            setData(data => ({ ...data, id: "", layer: "", field: '', value: '' }));
+            setResults([]);
+        }
     };
     const handleFieldChange = e => {
         setData(data => ({ ...data, field: e.target.value }));
@@ -135,7 +141,7 @@ const SimpleSearch = () => {
                     </Form.Group>
                     <Form.Group className="mt-2" controlId="searchField">
                         <Form.Control as="select" value={field} onChange={handleFieldChange}>
-                            <option value="Selector">Select field</option>
+                            <option value="Selector" layerid="">Select field</option>
                             {fields}
                         </Form.Control>
                     </Form.Group>
