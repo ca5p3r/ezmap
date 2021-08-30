@@ -308,12 +308,10 @@ const MyMap = () => {
 				const queriableLayers = historicalData.filter(item => item.geometry !== null);
 				const data = {
 					layers: queriableLayers,
-					clickedPoint,
-					type: 'query',
-					subtype: 'identify'
+					clickedPoint
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9090/queryService/query", {
+					fetch("http://localhost:9090/queryService/identify", {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -350,12 +348,10 @@ const MyMap = () => {
 				const queriableLayers = historicalData.filter(item => item.geometry !== null);
 				const data = {
 					layers: queriableLayers,
-					drawnPolygon,
-					type: 'query',
-					subtype: 'spatialSearch'
+					drawnPolygon
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9090/queryService/query", {
+					fetch("http://localhost:9090/queryService/ssearch", {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'

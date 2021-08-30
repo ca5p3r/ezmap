@@ -43,11 +43,11 @@ const SimpleSearch = () => {
         if (selectedLayer !== 'Selector') {
             const selectedElement = document.getElementById(`option+${selectedLayer}`);
             const layerID = selectedElement.getAttribute('layerid');
-            setData(data => ({ ...data, layerID, layer: e.target.value, field: '', value: '' }));
+            setData(data => ({ ...data, id: layerID, layer: e.target.value, field: '', value: '' }));
             setResults([]);
         }
         else {
-            setData(data => ({ ...data, layerID: "", layer: "", field: '', value: '' }));
+            setData(data => ({ ...data, id: "", layer: "", field: '', value: '' }));
             setResults([]);
         }
     };
@@ -119,7 +119,6 @@ const SimpleSearch = () => {
             const url = selectedElement.getAttribute('url');
             const provider = selectedElement.getAttribute('provider');
             const data = {
-                type: 'simpleSearch',
                 url,
                 layer,
                 field,
@@ -127,7 +126,7 @@ const SimpleSearch = () => {
                 queryParam: value
             };
             dispatch(triggerIsLoading(true));
-            fetch("http://localhost:9090/queryService/query", {
+            fetch("http://localhost:9090/queryService/tsearch", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
