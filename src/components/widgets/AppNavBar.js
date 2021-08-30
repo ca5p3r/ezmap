@@ -104,6 +104,36 @@ const AppNavBar = () => {
 		dispatch(triggerIdentifyVisibility());
 		dispatch(triggerSpatialSearch());
 	};
+	const handleJSONReponse = obj => {
+		dispatch(triggerIsLoading());
+		if (obj.success) {
+			dispatch(
+				triggerToast({
+					title: "Success",
+					message: "Settings have been saved!",
+					visible: true,
+				})
+			);
+		} else {
+			dispatch(
+				triggerToast({
+					title: "Danger",
+					message: obj.error,
+					visible: true,
+				})
+			);
+		}
+	};
+	const handleError = err => {
+		dispatch(triggerIsLoading());
+		dispatch(
+			triggerToast({
+				title: "Danger",
+				message: err.toString(),
+				visible: true,
+			})
+		);
+	};
 	const handleSave = () => {
 		dispatch(triggerIsLoading(true));
 		const settingsObject = {
@@ -127,36 +157,8 @@ const AppNavBar = () => {
 			body: JSON.stringify(body),
 		})
 			.then(response => response.json())
-			.then(obj => {
-				dispatch(triggerIsLoading());
-				if (obj.success) {
-					dispatch(
-						triggerToast({
-							title: "Success",
-							message: "Settings have been saved!",
-							visible: true,
-						})
-					);
-				} else {
-					dispatch(
-						triggerToast({
-							title: "Danger",
-							message: obj.error,
-							visible: true,
-						})
-					);
-				}
-			})
-			.catch(err => {
-				dispatch(triggerIsLoading());
-				dispatch(
-					triggerToast({
-						title: "Danger",
-						message: err.toString(),
-						visible: true,
-					})
-				);
-			});
+			.then(obj => handleJSONReponse(obj))
+			.catch(err => handleError(err));
 	};
 	return (
 		<Navbar bg="light" expand="lg" className="navbar">

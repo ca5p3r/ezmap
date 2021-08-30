@@ -80,6 +80,44 @@ const TOC = () => {
         dispatch(triggerShowTOC());
         dispatch(setLocalizedLayer(title.split('&')[1]));
     };
+    const handleError = err => {
+        dispatch(triggerToast({
+            title: 'Danger',
+            message: err.message,
+            visible: true
+        }));
+    };
+    const handleObjectReponse = (obj, title, layer) => {
+        let fields;
+        let formattedFields;
+        const targetIndex = historicalData.findIndex(item => item.id === title.split('&')[1]);
+        switch (layer.provider) {
+            case 'GeoServer':
+                fields = obj.featureTypes[0].properties;
+                formattedFields = fields.map(field => {
+                    return { name: field.name, type: field.localType, local: '' }
+                });
+                break;
+            case 'EsriOGC':
+                fields = obj['xsd:sequence']['xsd:element'];
+                formattedFields = fields.map(field => {
+                    return { name: field._attributes.name, type: field._attributes.type, local: '' }
+                });
+                break;
+            default:
+                return null;
+        }
+        layer.properties = formattedFields;
+        historicalData.splice(targetIndex, 1);
+        historicalData.splice(targetIndex, 0, layer);
+        dispatch(setHistoricalLayers(historicalData));
+        dispatch(triggerToast({
+            title: 'Success',
+            message: 'Layer has been refreshed!',
+            visible: true
+        }));
+        dispatch(triggerIsLoading());
+    };
     const handleRefresh = (title) => {
         dispatch(triggerIsLoading(true));
         const layer = historicalData.filter(item => item.id === title.split('&')[1])[0];
@@ -95,44 +133,8 @@ const TOC = () => {
                         return null;
                 }
             })
-            .then(obj => {
-                let fields;
-                let formattedFields;
-                const targetIndex = historicalData.findIndex(item => item.id === title.split('&')[1]);
-                switch (layer.provider) {
-                    case 'GeoServer':
-                        fields = obj.featureTypes[0].properties;
-                        formattedFields = fields.map(field => {
-                            return { name: field.name, type: field.localType, local: '' }
-                        });
-                        break;
-                    case 'EsriOGC':
-                        fields = obj['xsd:sequence']['xsd:element'];
-                        formattedFields = fields.map(field => {
-                            return { name: field._attributes.name, type: field._attributes.type, local: '' }
-                        });
-                        break;
-                    default:
-                        return null;
-                }
-                layer.properties = formattedFields;
-                historicalData.splice(targetIndex, 1);
-                historicalData.splice(targetIndex, 0, layer);
-                dispatch(setHistoricalLayers(historicalData));
-                dispatch(triggerToast({
-                    title: 'Success',
-                    message: 'Layer has been refreshed!',
-                    visible: true
-                }));
-                dispatch(triggerIsLoading());
-            })
-            .catch(err => {
-                dispatch(triggerToast({
-                    title: 'Danger',
-                    message: err.message,
-                    visible: true
-                }));
-            });
+            .then(obj => handleObjectReponse(obj, title, layer))
+            .catch(err => handleError(err));
     };
     return (
         <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerShowTOC())}>

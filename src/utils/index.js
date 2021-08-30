@@ -35,3 +35,13 @@ export const setter = (provider, url, id, title, name, opacity = 1, visible = tr
         }
     );
 };
+export const renderHeader = (header, provider) => {
+    switch (provider) {
+        case 'EsriOGC':
+            return header._attributes.fid.split('.')[1];
+        case 'GeoServer':
+            return header.id.split('.')[1];
+        default:
+            return;
+    }
+};

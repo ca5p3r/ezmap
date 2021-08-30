@@ -6,21 +6,12 @@ import {
     useSelector,
     useDispatch
 } from "react-redux";
+import { renderHeader } from "../../utils";
 const SpatialSearch = () => {
     const dispatch = useDispatch();
     const results = useSelector(state => state.spatialSearch.result);
     const show = useSelector(state => state.spatialSearch.visibility);
     const layers = useSelector(state => state.toc.historicalData);
-    const renderHeader = (header, provider) => {
-        switch (provider) {
-            case 'EsriOGC':
-                return header._attributes.fid.split('.')[1];
-            case 'GeoServer':
-                return header.id.split('.')[1];
-            default:
-                return;
-        }
-    };
     return (
         <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerSpatialSearchVisibility())}>
             <Offcanvas.Header closeButton>

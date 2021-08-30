@@ -34,6 +34,41 @@ const WorkspaceModal = () => {
         dispatch(resetLayers());
         setUrl('');
     };
+    const handleTextResponse = (text, serviceType) => {
+        const capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
+        switch (serviceType) {
+            case 'EsriOGC':
+                return capabilityObject['wfs:FeatureTypeList']['wfs:FeatureType'];
+            case 'GeoServer':
+                return capabilityObject.FeatureTypeList.FeatureType;
+            default:
+                return null
+        }
+    };
+    const handleArray = arr => {
+        if (arr) {
+            dispatch(updateLayers(arr));
+            setAvailability(true);
+        }
+        else {
+            dispatch(triggerToast({
+                title: 'Danger',
+                message: 'Unable to fetch the given url with the given service type!',
+                visible: true
+            }));
+        }
+        dispatch(triggerIsLoading());
+    };
+    const handleError = () => {
+        dispatch(triggerToast({
+            title: 'Danger',
+            message: 'Unable to fetch the given url with the given service type!',
+            visible: true
+        }));
+        dispatch(resetLayers());
+        setAvailability(false);
+        dispatch(triggerIsLoading());
+    }
     const handleFetch = (fetchurl) => {
         const serviceType = document.getElementById('serviceType').value;
         if (serviceType !== 'Selector') {
@@ -42,41 +77,9 @@ const WorkspaceModal = () => {
                 dispatch(triggerIsLoading(true));
                 fetch(`${fetchurl}?service=wfs&version=2.0.0&request=GetCapabilities`)
                     .then(response => response.text())
-                    .then(text => {
-                        const capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
-                        switch (serviceType) {
-                            case 'EsriOGC':
-                                return capabilityObject['wfs:FeatureTypeList']['wfs:FeatureType'];
-                            case 'GeoServer':
-                                return capabilityObject.FeatureTypeList.FeatureType;
-                            default:
-                                return null
-                        }
-                    })
-                    .then(arr => {
-                        if (arr) {
-                            dispatch(updateLayers(arr));
-                            setAvailability(true);
-                        }
-                        else {
-                            dispatch(triggerToast({
-                                title: 'Danger',
-                                message: 'Unable to fetch the given url with the given service type!',
-                                visible: true
-                            }));
-                        }
-                        dispatch(triggerIsLoading());
-                    })
-                    .catch(() => {
-                        dispatch(triggerToast({
-                            title: 'Danger',
-                            message: 'Unable to fetch the given url with the given service type!',
-                            visible: true
-                        }));
-                        dispatch(resetLayers());
-                        setAvailability(false);
-                        dispatch(triggerIsLoading());
-                    });
+                    .then(text => handleTextResponse(text, serviceType))
+                    .then(arr => handleArray(arr))
+                    .catch(() => handleError);
             }
             else {
                 dispatch(triggerToast({

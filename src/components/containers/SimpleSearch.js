@@ -9,6 +9,7 @@ import {
     useDispatch
 } from "react-redux";
 import { useState } from "react";
+import { renderHeader } from "../../utils";
 const SimpleSearch = () => {
     const [{ id, layer, field, value }, setData] = useState({
         id: "",
@@ -37,16 +38,6 @@ const SimpleSearch = () => {
             return null
         }
     });
-    const renderHeader = (header, provider) => {
-        switch (provider) {
-            case 'EsriOGC':
-                return header._attributes.fid.split('.')[1];
-            case 'GeoServer':
-                return header.id.split('.')[1];
-            default:
-                return;
-        }
-    };
     const handleLayerChange = e => {
         const selectedLayer = document.getElementById('searchLayer').value;
         if (selectedLayer !== 'Selector') {
@@ -62,6 +53,63 @@ const SimpleSearch = () => {
     };
     const handleFieldChange = e => {
         setData(data => ({ ...data, field: e.target.value }));
+        setResults([]);
+    };
+    const handleInitialResponse = response => {
+        if (!response.ok) {
+            dispatch(
+                triggerToast({
+                    title: "Danger",
+                    message: "Could not fetch data!",
+                    visible: true,
+                })
+            );
+        }
+        return response.json();
+    };
+    const handleJSONResponse = obj => {
+        let queryResults = [];
+        if (obj.response.length > 0) {
+            switch (obj.provider) {
+                case 'GeoServer':
+                    obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: item }));
+                    break;
+                case 'EsriOGC':
+                    if (obj.response.length > 1) {
+                        obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: Object.entries(item[1])[0][1] }));
+                    }
+                    else {
+                        queryResults.push({ provider: obj.provider, feature: obj.response[0][1] });
+                    }
+                    break;
+                default:
+                    break;
+            }
+            setResults(queryResults);
+        }
+        else {
+            setResults([]);
+            dispatch(
+                triggerToast({
+                    title: "Warning",
+                    message: 'No results found!',
+                    visible: true,
+                })
+            );
+        }
+        dispatch(triggerIsLoading());
+    };
+    const hnadleFetchError = err => {
+        if (err.name !== "AbortError") {
+            dispatch(
+                triggerToast({
+                    title: "Danger",
+                    message: err.toString(),
+                    visible: true,
+                })
+            );
+        }
+        dispatch(triggerIsLoading());
         setResults([]);
     };
     const handleSearch = () => {
@@ -86,63 +134,9 @@ const SimpleSearch = () => {
                 },
                 body: JSON.stringify(data)
             })
-                .then(res => {
-                    if (!res.ok) {
-                        dispatch(
-                            triggerToast({
-                                title: "Danger",
-                                message: "Could not fetch data!",
-                                visible: true,
-                            })
-                        );
-                    }
-                    return res.json();
-                })
-                .then(obj => {
-                    let queryResults = [];
-                    if (obj.response.length > 0) {
-                        switch (obj.provider) {
-                            case 'GeoServer':
-                                obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: item }));
-                                break;
-                            case 'EsriOGC':
-                                if (obj.response.length > 1) {
-                                    obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: Object.entries(item[1])[0][1] }));
-                                }
-                                else {
-                                    queryResults.push({ provider: obj.provider, feature: obj.response[0][1] });
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                        setResults(queryResults);
-                    }
-                    else {
-                        setResults([]);
-                        dispatch(
-                            triggerToast({
-                                title: "Warning",
-                                message: 'No results found!',
-                                visible: true,
-                            })
-                        );
-                    }
-                    dispatch(triggerIsLoading());
-                })
-                .catch(error => {
-                    if (error.name !== "AbortError") {
-                        dispatch(
-                            triggerToast({
-                                title: "Danger",
-                                message: error.toString(),
-                                visible: true,
-                            })
-                        );
-                    }
-                    dispatch(triggerIsLoading());
-                    setResults([]);
-                });
+                .then(res => handleInitialResponse(res))
+                .then(obj => handleJSONResponse(obj))
+                .catch(error => hnadleFetchError(error));
         }
         else {
             dispatch(
