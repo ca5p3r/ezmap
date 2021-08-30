@@ -30,6 +30,14 @@ const LoginModal = () => {
         dispatch(setDefaultExtent(obj.config.map.extent));
         dispatch(setHistoricalLayers(obj.config.map.layers));
     };
+    const handleError = error => {
+        dispatch(triggerIsLoading());
+        dispatch(triggerToast({
+            title: 'Danger',
+            message: error.toString(),
+            visible: true
+        }));
+    };
     const handleLogin = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
             if (password.length >= 8 && password.length <= 16) {
@@ -62,14 +70,7 @@ const LoginModal = () => {
                                     dispatch(triggerLogin(true));
                                     dispatch(triggerShowLogin());
                                 })
-                                .catch(err => {
-                                    dispatch(triggerIsLoading());
-                                    dispatch(triggerToast({
-                                        title: 'Danger',
-                                        message: err.toString(),
-                                        visible: true
-                                    }));
-                                });
+                                .catch(err => handleError(err));
                         }
                         else {
                             dispatch(triggerIsLoading());
@@ -80,14 +81,7 @@ const LoginModal = () => {
                             }));
                         }
                     })
-                    .catch(err => {
-                        dispatch(triggerIsLoading());
-                        dispatch(triggerToast({
-                            title: 'Danger',
-                            message: err.toString(),
-                            visible: true
-                        }));
-                    });
+                    .catch(err => handleError(err));
             }
             else {
                 dispatch(triggerToast({

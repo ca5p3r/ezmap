@@ -236,7 +236,7 @@ const TOC = () => {
                                     }
                                 }
                                 )}
-                                {provided.placeholder}
+                                {dropProvided.placeholder}
                             </ul>
                         )
                         }
