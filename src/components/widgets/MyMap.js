@@ -310,7 +310,7 @@ const MyMap = () => {
 			if (clickedPoint.length > 0) {
 				dispatch(triggerIsLoading(true));
 				dispatch(clearResult());
-				const queriableLayers = historicalData.filter(item => item.geometry !== null);
+				const queriableLayers = historicalData.filter(item => item.geometry !== null && item.visible === true);
 				const data = {
 					layers: queriableLayers,
 					clickedPoint
@@ -350,7 +350,7 @@ const MyMap = () => {
 		if (spatialSearchState) {
 			if (drawnPolygon.length > 3) {
 				dispatch(triggerIsLoading(true));
-				const queriableLayers = historicalData.filter(item => item.geometry !== null);
+				const queriableLayers = historicalData.filter(item => item.geometry !== null && item.visible === true);
 				const data = {
 					layers: queriableLayers,
 					drawnPolygon
