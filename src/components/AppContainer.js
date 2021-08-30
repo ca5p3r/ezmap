@@ -7,7 +7,7 @@ import MyMap from "./widgets/MyMap";
 import { useSelector } from "react-redux";
 import WorkspaceModal from "./modals/WorkspaceModal";
 import LocalizationModal from "./modals/LocalizationModal";
-import SimpleSearch from "./containers/SimpleSearch";
+import SimpleSearch from "./widgets/SimpleSearch";
 const AppContainer = () => {
   const showBookmark = useSelector(state => state.bookmarks.visibility);
   const showIdentify = useSelector(state => state.identify.visibility);
