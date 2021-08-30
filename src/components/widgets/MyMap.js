@@ -97,31 +97,36 @@ const MyMap = () => {
 		}
 		dispatch(triggerIsLoading());
 	};
+	const handleEsriData = item => {
+		let returnedData = [];
+		if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
+			if (item.data['wfs:FeatureCollection']['gml:featureMember'].length > 1) {
+				item.data['wfs:FeatureCollection']['gml:featureMember'].forEach(entry => {
+					returnedData.push(Object.entries(entry)[0]);
+				});
+			}
+			else {
+				returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
+			}
+		}
+		else {
+			dispatch(
+				triggerToast({
+					title: "Warning",
+					message: 'One or more layers did not return any data!',
+					visible: true,
+				})
+			);
+		}
+		return returnedData;
+	};
 	const handleSpatialQuery = (obj, operation) => {
 		const result = [];
 		obj.response.forEach(item => {
 			let returnedData = [];
 			switch (item.provider) {
 				case 'EsriOGC':
-					if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
-						if (item.data['wfs:FeatureCollection']['gml:featureMember'].length > 1) {
-							item.data['wfs:FeatureCollection']['gml:featureMember'].forEach(entry => {
-								returnedData.push(Object.entries(entry)[0]);
-							});
-						}
-						else {
-							returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
-						}
-					}
-					else {
-						dispatch(
-							triggerToast({
-								title: "Warning",
-								message: 'One or more layers did not return any data!',
-								visible: true,
-							})
-						);
-					}
+					returnedData = handleEsriData(item);
 					break;
 				case 'GeoServer':
 					returnedData = item.data.features;
