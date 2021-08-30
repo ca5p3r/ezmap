@@ -98,7 +98,7 @@ const TOC = () => {
             .then(obj => {
                 let fields;
                 let formattedFields;
-                const targetIndex = historicalData.findIndex(layer => layer.id === title.split('&')[1]);
+                const targetIndex = historicalData.findIndex(item => item.id === title.split('&')[1]);
                 switch (layer.provider) {
                     case 'GeoServer':
                         fields = obj.featureTypes[0].properties;
@@ -142,14 +142,14 @@ const TOC = () => {
             <Offcanvas.Body>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="toc-list">
-                        {(provided) => (
-                            <ul {...provided.droppableProps} ref={provided.innerRef} className="container">
+                        {dropProvided => (
+                            <ul {...dropProvided.droppableProps} ref={dropProvided.innerRef} className="container">
                                 {activeLayers && activeLayers.map((layer, index) => {
                                     if (layer.values_.title.split('&')[1] !== 'h79mm8h') {
                                         return (
                                             <Draggable key={layer.values_.title} index={index} draggableId={layer.values_.title}>
-                                                {(provided) => (
-                                                    <li className="mb-3" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                {dragProvided => (
+                                                    <li className="mb-3" ref={dragProvided.innerRef} {...dragProvided.draggableProps} {...dragProvided.dragHandleProps}>
                                                         <div className="form-check form-switch">
                                                             <input
                                                                 type="checkbox"

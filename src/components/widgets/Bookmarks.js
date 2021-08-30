@@ -24,12 +24,12 @@ const Bookmarks = () => {
     const show = useSelector(state => state.bookmarks.visibility);
     const mapCenter = useSelector(state => state.mapInfo.mapCenter);
     const mapZoom = useSelector(state => state.mapInfo.mapZoom);
-    const handleSave = (title) => {
-        if (title) {
+    const handleSave = (savedTitle) => {
+        if (savedTitle) {
             const myObj = {
                 center: mapCenter,
                 zoom: mapZoom,
-                title
+                title: savedTitle
             };
             dispatch(addBookmark(myObj));
             dispatch(triggerToast({

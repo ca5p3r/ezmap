@@ -21,16 +21,16 @@ const SimpleSearch = () => {
     const show = useSelector(state => state.simpleSearch.visibility);
     const historicalData = useSelector(state => state.toc.historicalData);
     const queriableLayers = historicalData.filter(item => item.geometry !== null);
-    const layers = queriableLayers.map(layer => (
-        <option id={`option+${layer.name}`} layerid={layer.id} provider={layer.provider} url={layer.url} key={layer.name} value={layer.name}>
-            {layer.title}
+    const layers = queriableLayers.map(item => (
+        <option id={`option+${item.name}`} layerid={item.id} provider={item.provider} url={item.url} key={item.name} value={item.name}>
+            {item.title}
         </option>
     ));
-    const fields = queriableLayers.find(item => item.name === layer)?.properties.map(field => {
+    const fields = queriableLayers.find(item => item.name === layer)?.properties.map(property => {
         const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
-        if (!geometries.includes(field.type)) {
-            return (<option key={field.name} value={field.name}>
-                {field.local ? field.local : field.name}
+        if (!geometries.includes(property.type)) {
+            return (<option key={property.name} value={property.name}>
+                {property.local ? property.local : property.name}
             </option>)
         }
         else {
@@ -51,12 +51,12 @@ const SimpleSearch = () => {
         const selectedLayer = document.getElementById('searchLayer').value;
         if (selectedLayer !== 'Selector') {
             const selectedElement = document.getElementById(`option+${selectedLayer}`);
-            const id = selectedElement.getAttribute('layerid');
-            setData(data => ({ ...data, id, layer: e.target.value, field: '', value: '' }));
+            const layerID = selectedElement.getAttribute('layerid');
+            setData(data => ({ ...data, layerID, layer: e.target.value, field: '', value: '' }));
             setResults([]);
         }
         else {
-            setData(data => ({ ...data, id: "", layer: "", field: '', value: '' }));
+            setData(data => ({ ...data, layerID: "", layer: "", field: '', value: '' }));
             setResults([]);
         }
     };
@@ -99,24 +99,24 @@ const SimpleSearch = () => {
                     return res.json();
                 })
                 .then(obj => {
-                    let results = [];
+                    let queryResults = [];
                     if (obj.response.length > 0) {
                         switch (obj.provider) {
                             case 'GeoServer':
-                                obj.response.forEach(item => results.push({ provider: obj.provider, feature: item }));
+                                obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: item }));
                                 break;
                             case 'EsriOGC':
                                 if (obj.response.length > 1) {
-                                    obj.response.forEach(item => results.push({ provider: obj.provider, feature: Object.entries(item[1])[0][1] }));
+                                    obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: Object.entries(item[1])[0][1] }));
                                 }
                                 else {
-                                    results.push({ provider: obj.provider, feature: obj.response[0][1] });
+                                    queryResults.push({ provider: obj.provider, feature: obj.response[0][1] });
                                 }
                                 break;
                             default:
                                 break;
                         }
-                        setResults(results);
+                        setResults(queryResults);
                     }
                     else {
                         setResults([]);
@@ -130,7 +130,7 @@ const SimpleSearch = () => {
                     }
                     dispatch(triggerIsLoading());
                 })
-                .catch((error) => {
+                .catch(error => {
                     if (error.name !== "AbortError") {
                         dispatch(
                             triggerToast({
@@ -202,8 +202,8 @@ const SimpleSearch = () => {
                                                 const oldProps = Object.entries(result.feature).slice(1);
                                                 oldProps.forEach(item => {
                                                     const head = item[0].split(':')[1];
-                                                    const value = item[1]._text;
-                                                    properties[head] = value;
+                                                    const peropertyValue = item[1]._text;
+                                                    properties[head] = peropertyValue;
                                                 })
                                                 break;
                                             case 'GeoServer':
@@ -212,7 +212,7 @@ const SimpleSearch = () => {
                                             default:
                                                 break;
                                         }
-                                        const resProps = historicalData.filter(layer => layer.id === id)[0].properties;
+                                        const resProps = historicalData.filter(item => item.id === id)[0].properties;
                                         return (
                                             <div key={key}>
                                                 <Alert className="mt-4 text-center" variant='info'>
@@ -220,11 +220,11 @@ const SimpleSearch = () => {
                                                 </Alert>
                                                 <Table className="mt-4" striped bordered hover size="sm">
                                                     <tbody>
-                                                        {resProps.map((item, key) => {
+                                                        {resProps.map((item, resultKey) => {
                                                             const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
                                                             if (!geometries.includes(item.type)) {
                                                                 return (
-                                                                    <tr key={key}>
+                                                                    <tr key={resultKey}>
                                                                         <td>{item.local ? item.local : item.name}</td>
                                                                         <td>{properties[item.name]}</td>
                                                                     </tr>

@@ -34,7 +34,7 @@ const Identify = () => {
                         </Alert>
                         {
                             results.map(
-                                (result, key) => {
+                                (result, layerKey) => {
                                     let properties = {};
                                     switch (result.provider) {
                                         case 'EsriOGC':
@@ -53,17 +53,17 @@ const Identify = () => {
                                     }
                                     const resProps = layers.filter(layer => layer.id === result.id)[0].properties;
                                     return (
-                                        <div key={key}>
+                                        <div key={layerKey}>
                                             <Alert className="mt-4 text-center" variant='info'>
                                                 Feature: {result.name}.{renderHeader(result.feature, result.provider)}
                                             </Alert>
                                             <Table striped bordered hover size="sm">
                                                 <tbody>
-                                                    {resProps.map((item, key) => {
+                                                    {resProps.map((item, resultKey) => {
                                                         const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
                                                         if (!geometries.includes(item.type)) {
                                                             return (
-                                                                <tr key={key}>
+                                                                <tr key={resultKey}>
                                                                     <td>{item.local ? item.local : item.name}</td>
                                                                     <td>{properties[item.name]}</td>
                                                                 </tr>

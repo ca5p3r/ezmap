@@ -3,6 +3,10 @@ import { makeBuffer, tranform } from '../helpers/index.js';
 import convert from 'xml-js';
 
 export const query = (req, res) => {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    };
     switch (req.body.type) {
         case 'query':
             const layers = req.body.layers;
@@ -10,8 +14,8 @@ export const query = (req, res) => {
             layers.forEach(layer => {
                 let buffer;
                 let coords;
-                let version;
-                let format;
+                let identifyVersion;
+                let identifyFormat;
                 switch (req.body.subtype) {
                     case 'identify':
                         buffer = makeBuffer(layer.type, req.body.clickedPoint);
@@ -30,24 +34,19 @@ export const query = (req, res) => {
                 }
                 switch (layer.provider) {
                     case 'EsriOGC':
-                        version = '1.0.0';
-                        format = 'GML2';
+                        identifyVersion = '1.0.0';
+                        identifyFormat = 'GML2';
                         break;
                     case 'GeoServer':
-                        version = '1.1.0';
-                        format = 'application/json';
+                        identifyVersion = '1.1.0';
+                        identifyFormat = 'application/json';
                         break;
                     default:
                         break;
                 }
                 const queryParam = coords.join(" ");
-                const raw = `<wfs:GetFeature service="WFS" outputFormat="${format}" version="${version}" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
-                const requestOptions = {
-                    method: 'POST',
-                    body: raw,
-                    headers: { 'Content-Type': 'application/json' }
-                };
-                promises.push(fetch(layer.url, requestOptions)
+                const identifyBody = `<wfs:GetFeature service="WFS" outputFormat="${identifyFormat}" version="${identifyVersion}" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
+                promises.push(fetch(layer.url, { ...requestOptions, body: identifyBody })
                     .then(response => response.text())
                     .then(text => {
                         switch (layer.provider) {
@@ -79,28 +78,23 @@ export const query = (req, res) => {
                 });
             break;
         case 'simpleSearch':
-            let version;
-            let format;
+            let searchVersion;
+            let searchFormat;
             const body = req.body;
             switch (body.provider) {
                 case 'EsriOGC':
-                    version = '2.0.0';
-                    format = 'GML2';
+                    searchVersion = '2.0.0';
+                    searchFormat = 'GML2';
                     break;
                 case 'GeoServer':
-                    version = '1.1.0';
-                    format = 'application/json';
+                    searchVersion = '1.1.0';
+                    searchFormat = 'application/json';
                     break;
                 default:
                     break;
             }
-            const raw = `<wfs:GetFeature service="WFS" version="${version}" outputFormat="${format}" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd"><wfs:Query typeName="${body.layer}"><ogc:Filter><ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="." escapeChar="!"><ogc:PropertyName>${body.field}</ogc:PropertyName><ogc:Literal>*${body.queryParam}*</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></wfs:Query></wfs:GetFeature>`
-            const requestOptions = {
-                method: 'POST',
-                body: raw,
-                headers: { 'Content-Type': 'application/json' }
-            };
-            fetch(body.url, requestOptions)
+            const searchBody = `<wfs:GetFeature service="WFS" version="${searchVersion}" outputFormat="${searchFormat}" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd"><wfs:Query typeName="${body.layer}"><ogc:Filter><ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="." escapeChar="!"><ogc:PropertyName>${body.field}</ogc:PropertyName><ogc:Literal>*${body.queryParam}*</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></wfs:Query></wfs:GetFeature>`
+            fetch(body.url, { ...requestOptions, body: searchBody })
                 .then(response => response.text())
                 .then(text => {
                     switch (body.provider) {

@@ -34,21 +34,21 @@ const WorkspaceModal = () => {
         dispatch(resetLayers());
         setUrl('');
     };
-    const handleFetch = (url) => {
-        const selectedService = document.getElementById('serviceType').value;
-        if (selectedService !== 'Selector') {
-            setSelectedService(selectedService);
-            if (url && url !== '') {
+    const handleFetch = (fetchurl) => {
+        const serviceType = document.getElementById('serviceType').value;
+        if (serviceType !== 'Selector') {
+            setSelectedService(serviceType);
+            if (fetchurl && fetchurl !== '') {
                 dispatch(triggerIsLoading(true));
-                fetch(`${url}?service=wfs&version=2.0.0&request=GetCapabilities`)
+                fetch(`${fetchurl}?service=wfs&version=2.0.0&request=GetCapabilities`)
                     .then(response => response.text())
                     .then(text => {
-                        const obj = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
-                        switch (selectedService) {
+                        const capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
+                        switch (serviceType) {
                             case 'EsriOGC':
-                                return obj['wfs:FeatureTypeList']['wfs:FeatureType'];
+                                return capabilityObject['wfs:FeatureTypeList']['wfs:FeatureType'];
                             case 'GeoServer':
-                                return obj.FeatureTypeList.FeatureType;
+                                return capabilityObject.FeatureTypeList.FeatureType;
                             default:
                                 return null
                         }
@@ -94,7 +94,7 @@ const WorkspaceModal = () => {
             }));
         }
     };
-    const handleAdd = (url) => {
+    const handleAdd = (addurl) => {
         if (availability) {
             const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
             const layerName = document.getElementById('formBasicLayer').value;
@@ -108,7 +108,7 @@ const WorkspaceModal = () => {
                 dispatch(triggerIsLoading(true));
                 const p1 = transform(extentGeographic.split(' ').slice(0, 2), crs, 'EPSG:3857');
                 const p2 = transform(extentGeographic.split(' ').slice(2), crs, 'EPSG:3857');
-                fetch(`${url}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
+                fetch(`${addurl}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
                     .then(response => response.text())
                     .then(text => {
                         switch (selectedService) {
@@ -185,8 +185,8 @@ const WorkspaceModal = () => {
                         }));
                         dispatch(triggerIsLoading());
                     });
-                const obj = setter(selectedService, url, uniqueID, layerTitle, layerName);
-                dispatch(addPendingLayer(obj));
+                const wmsobject = setter(selectedService, url, uniqueID, layerTitle, layerName);
+                dispatch(addPendingLayer(wmsobject));
             }
             else {
                 dispatch(triggerToast({

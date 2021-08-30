@@ -106,7 +106,7 @@ const AppNavBar = () => {
 	};
 	const handleSave = () => {
 		dispatch(triggerIsLoading(true));
-		const obj = {
+		const settingsObject = {
 			bookmarks: bookmarks,
 			map: {
 				center: mapCenter,
@@ -117,7 +117,7 @@ const AppNavBar = () => {
 		};
 		const body = {
 			id: userID,
-			obj,
+			obj: settingsObject,
 		};
 		fetch("http://localhost:9090/configService/saveSettings", {
 			method: "POST",
@@ -126,8 +126,8 @@ const AppNavBar = () => {
 			},
 			body: JSON.stringify(body),
 		})
-			.then((response) => response.json())
-			.then((obj) => {
+			.then(response => response.json())
+			.then(obj => {
 				dispatch(triggerIsLoading());
 				if (obj.success) {
 					dispatch(
@@ -147,7 +147,7 @@ const AppNavBar = () => {
 					);
 				}
 			})
-			.catch((err) => {
+			.catch(err => {
 				dispatch(triggerIsLoading());
 				dispatch(
 					triggerToast({

@@ -43,11 +43,11 @@ const LoginModal = () => {
                     body: JSON.stringify(data)
                 })
                     .then(response => response.json())
-                    .then(obj => {
-                        if (!obj.error) {
+                    .then(loginObj => {
+                        if (!loginObj.error) {
                             dispatch(setUser(username));
-                            dispatch(setUserID(obj.userID));
-                            const userObj = { id: obj.userID };
+                            dispatch(setUserID(loginObj.userID));
+                            const userObj = { id: loginObj.userID };
                             fetch("http://localhost:9090/configService/getSettings", {
                                 method: 'POST',
                                 headers: {
@@ -56,8 +56,8 @@ const LoginModal = () => {
                                 body: JSON.stringify(userObj)
                             })
                                 .then(response => response.json())
-                                .then(obj => {
-                                    load_settings(obj);
+                                .then(settingsObj => {
+                                    load_settings(settingsObj);
                                     dispatch(triggerIsLoading());
                                     dispatch(triggerLogin(true));
                                     dispatch(triggerShowLogin());
@@ -75,7 +75,7 @@ const LoginModal = () => {
                             dispatch(triggerIsLoading());
                             dispatch(triggerToast({
                                 title: 'Warning',
-                                message: obj.error,
+                                message: loginObj.error,
                                 visible: true
                             }));
                         }

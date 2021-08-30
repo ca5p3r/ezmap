@@ -300,7 +300,7 @@ const MyMap = () => {
 							}
 							dispatch(triggerIsLoading());
 						})
-						.catch((error) => {
+						.catch(error => {
 							if (error.name !== "AbortError") {
 								dispatch(
 									triggerToast({
@@ -425,7 +425,7 @@ const MyMap = () => {
 							}
 							dispatch(triggerIsLoading());
 						})
-						.catch((error) => {
+						.catch(error => {
 							if (error.name !== "AbortError") {
 								dispatch(
 									triggerToast({
