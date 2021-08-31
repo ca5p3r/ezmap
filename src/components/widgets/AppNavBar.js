@@ -175,7 +175,8 @@ const AppNavBar = () => {
 							<Nav.Link title="Routing">{svg.routing}</Nav.Link>
 							<Nav.Link title="Export file">{svg.export}</Nav.Link>
 							<Nav.Link title="Import file">{svg.import}</Nav.Link>
-							<Nav.Link title="Sketching">{svg.sketching}</Nav.Link>
+							<Nav.Link title="Sketching">{svg.sketch}</Nav.Link>
+							<Nav.Link title="Measurements">{svg.measure}</Nav.Link>
 							<Nav.Link title="Editing">{svg.editing}</Nav.Link>
 							<Nav.Link title="Tabular search">{svg.tabularSearch}</Nav.Link>
 							<Nav.Link onClick={handleSpatialSearchClick} title="Spatial search">
