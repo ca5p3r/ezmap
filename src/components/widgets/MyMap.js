@@ -340,7 +340,6 @@ const MyMap = () => {
 			}
 		}
 		return () => {
-			dispatch(triggerIsLoading());
 			controller.abort()
 		};
 		// eslint-disable-next-line
@@ -380,7 +379,6 @@ const MyMap = () => {
 			}
 		}
 		return () => {
-			dispatch(triggerIsLoading());
 			controller.abort()
 		};
 		// eslint-disable-next-line
