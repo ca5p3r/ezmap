@@ -57,7 +57,6 @@ const WorkspaceModal = () => {
                 visible: true
             }));
         }
-        dispatch(triggerIsLoading());
     };
     const handleError = () => {
         dispatch(triggerToast({
@@ -67,7 +66,6 @@ const WorkspaceModal = () => {
         }));
         dispatch(resetLayers());
         setAvailability(false);
-        dispatch(triggerIsLoading());
     }
     const handleFetch = (fetchurl) => {
         const serviceType = document.getElementById('serviceType').value;
@@ -79,7 +77,10 @@ const WorkspaceModal = () => {
                     .then(response => response.text())
                     .then(text => handleTextResponse(text, serviceType))
                     .then(arr => handleArray(arr))
-                    .catch(() => handleError);
+                    .catch(() => handleError)
+                    .finally(
+                        dispatch(triggerIsLoading())
+                    )
             }
             else {
                 dispatch(triggerToast({
@@ -168,7 +169,6 @@ const WorkspaceModal = () => {
                             visible: true,
                             opacity: 1
                         }));
-                        dispatch(triggerIsLoading());
                     })
                     .catch(() => {
                         dispatch(insertHistoricalLayer({
@@ -186,8 +186,10 @@ const WorkspaceModal = () => {
                             visible: true,
                             opacity: 1
                         }));
-                        dispatch(triggerIsLoading());
-                    });
+                    })
+                    .finally(
+                        dispatch(triggerIsLoading())
+                    )
                 const wmsobject = setter(selectedService, url, uniqueID, layerTitle, layerName);
                 dispatch(addPendingLayer(wmsobject));
             }

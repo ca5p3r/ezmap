@@ -9,7 +9,8 @@ import {
 } from 'react-redux';
 import {
     triggerShowRegister,
-    triggerToast
+    triggerToast,
+    triggerIsLoading
 } from '../../actions';
 const RegisterModal = () => {
     const dispatch = useDispatch();
@@ -41,6 +42,7 @@ const RegisterModal = () => {
     const handleRegister = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
             if (password.length >= 8 && password.length <= 20) {
+                dispatch(triggerIsLoading(true));
                 const data = { username, password };
                 fetch("http://localhost:9090/authService/register", {
                     method: 'POST',
@@ -51,7 +53,10 @@ const RegisterModal = () => {
                 })
                     .then(response => response.json())
                     .then(obj => handleRegisterResponse(obj))
-                    .catch(err => handleError(err));
+                    .catch(err => handleError(err))
+                    .finally(
+                        dispatch(triggerIsLoading())
+                    )
             }
             else {
                 dispatch(triggerToast({

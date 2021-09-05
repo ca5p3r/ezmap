@@ -105,7 +105,6 @@ const AppNavBar = () => {
 		dispatch(triggerSpatialSearch());
 	};
 	const handleJSONReponse = obj => {
-		dispatch(triggerIsLoading());
 		if (obj.success) {
 			dispatch(
 				triggerToast({
@@ -125,7 +124,6 @@ const AppNavBar = () => {
 		}
 	};
 	const handleError = err => {
-		dispatch(triggerIsLoading());
 		dispatch(
 			triggerToast({
 				title: "Danger",
@@ -158,7 +156,10 @@ const AppNavBar = () => {
 		})
 			.then(response => response.json())
 			.then(obj => handleJSONReponse(obj))
-			.catch(err => handleError(err));
+			.catch(err => handleError(err))
+			.finally(
+				dispatch(triggerIsLoading())
+			)
 	};
 	return (
 		<Navbar bg="light" expand="lg" className="navbar">
