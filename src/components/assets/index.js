@@ -20,7 +20,6 @@ import { ReactComponent as GOTO } from "./svg/goto.svg";
 import { ReactComponent as LANG } from "./svg/language.svg";
 import { ReactComponent as REFRESH } from "./svg/refresh.svg";
 import { ReactComponent as MEASURE } from "./svg/measure.svg";
-import { ReactComponent as HIGHLIGHT } from "./svg/highlight.svg";
 export const svg = {
 	logo: <LOGO />,
 	save: <SAVE />,
@@ -43,6 +42,5 @@ export const svg = {
 	goto: <GOTO />,
 	lang: <LANG />,
 	refresh: <REFRESH />,
-	sketch: <SKETCH />,
-	highlight: <HIGHLIGHT />
+	sketch: <SKETCH />
 };
