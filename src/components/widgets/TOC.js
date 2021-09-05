@@ -86,6 +86,7 @@ const TOC = () => {
             message: err.message,
             visible: true
         }));
+        dispatch(triggerIsLoading());
     };
     const handleObjectReponse = (obj, title, layer) => {
         let fields;
@@ -116,6 +117,7 @@ const TOC = () => {
             message: 'Layer has been refreshed!',
             visible: true
         }));
+        dispatch(triggerIsLoading());
     };
     const handleRefresh = (title) => {
         dispatch(triggerIsLoading(true));
@@ -134,9 +136,6 @@ const TOC = () => {
             })
             .then(obj => handleObjectReponse(obj, title, layer))
             .catch(err => handleError(err))
-            .finally(
-                dispatch(triggerIsLoading())
-            )
     };
     return (
         <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerShowTOC())}>

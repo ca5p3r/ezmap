@@ -122,6 +122,7 @@ const AppNavBar = () => {
 				})
 			);
 		}
+		dispatch(triggerIsLoading());
 	};
 	const handleError = err => {
 		dispatch(
@@ -131,6 +132,7 @@ const AppNavBar = () => {
 				visible: true,
 			})
 		);
+		dispatch(triggerIsLoading());
 	};
 	const handleSave = () => {
 		dispatch(triggerIsLoading(true));
@@ -157,9 +159,6 @@ const AppNavBar = () => {
 			.then(response => response.json())
 			.then(obj => handleJSONReponse(obj))
 			.catch(err => handleError(err))
-			.finally(
-				dispatch(triggerIsLoading())
-			)
 	};
 	return (
 		<Navbar bg="light" expand="lg" className="navbar">

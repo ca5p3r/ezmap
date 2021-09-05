@@ -32,7 +32,7 @@ const handleProvider = provider => {
             break;
     }
     return [version, format];
-}
+};
 export const identify = (req, res) => {
     const layers = req.body.layers;
     const promises = [];

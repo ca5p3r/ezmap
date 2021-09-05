@@ -97,6 +97,7 @@ const SimpleSearch = () => {
                 })
             );
         }
+        dispatch(triggerIsLoading());
     };
     const hnadleFetchError = err => {
         if (err.name !== "AbortError") {
@@ -109,6 +110,7 @@ const SimpleSearch = () => {
             );
         }
         setResults([]);
+        dispatch(triggerIsLoading());
     };
     const handleSearch = () => {
         if (layer !== 'Selector' && field && field !== 'Selector' && value) {
@@ -134,9 +136,6 @@ const SimpleSearch = () => {
                 .then(res => handleInitialResponse(res))
                 .then(obj => handleJSONResponse(obj))
                 .catch(error => hnadleFetchError(error))
-                .finally(
-                    dispatch(triggerIsLoading())
-                )
         }
         else {
             dispatch(

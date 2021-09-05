@@ -36,6 +36,7 @@ const LoginModal = () => {
             message: error.toString(),
             visible: true
         }));
+        dispatch(triggerIsLoading());
     };
     const handleLogin = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
@@ -69,9 +70,6 @@ const LoginModal = () => {
                                     dispatch(triggerShowLogin());
                                 })
                                 .catch(err => handleError(err))
-                                .finally(
-                                    dispatch(triggerIsLoading())
-                                )
                         }
                         else {
                             dispatch(triggerToast({
@@ -80,11 +78,9 @@ const LoginModal = () => {
                                 visible: true
                             }));
                         }
+                        dispatch(triggerIsLoading());
                     })
                     .catch(err => handleError(err))
-                    .finally(
-                        dispatch(triggerIsLoading())
-                    )
             }
             else {
                 dispatch(triggerToast({

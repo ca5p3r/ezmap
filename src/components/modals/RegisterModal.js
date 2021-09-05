@@ -21,6 +21,7 @@ const RegisterModal = () => {
             message: error.toString(),
             visible: true
         }));
+        dispatch(triggerIsLoading());
     };
     const handleRegisterResponse = obj => {
         if (!obj.error) {
@@ -38,6 +39,7 @@ const RegisterModal = () => {
                 visible: true
             }));
         }
+        dispatch(triggerIsLoading());
     }
     const handleRegister = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
@@ -54,9 +56,6 @@ const RegisterModal = () => {
                     .then(response => response.json())
                     .then(obj => handleRegisterResponse(obj))
                     .catch(err => handleError(err))
-                    .finally(
-                        dispatch(triggerIsLoading())
-                    )
             }
             else {
                 dispatch(triggerToast({

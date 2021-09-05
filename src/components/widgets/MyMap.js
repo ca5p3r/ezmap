@@ -96,6 +96,7 @@ const MyMap = () => {
 				})
 			);
 		}
+		dispatch(triggerIsLoading());
 	};
 	const handleEsriData = item => {
 		let returnedData = [];
@@ -173,6 +174,7 @@ const MyMap = () => {
 					break;
 			}
 		}
+		dispatch(triggerIsLoading());
 	};
 	useEffect(() => {
 		olmap.setTarget("map");
@@ -327,9 +329,6 @@ const MyMap = () => {
 						.then(res => handleInitialResponse(res))
 						.then(obj => handleSpatialQuery(obj, 'identify'))
 						.catch(error => handleFetchError(error))
-						.finally(
-							dispatch(triggerIsLoading())
-						)
 				} else {
 					dispatch(
 						triggerToast({
@@ -369,9 +368,6 @@ const MyMap = () => {
 						.then(res => handleInitialResponse(res))
 						.then(obj => handleSpatialQuery(obj, 'spatialSearch'))
 						.catch(error => handleFetchError(error))
-						.finally(
-							dispatch(triggerIsLoading())
-						)
 				} else {
 					dispatch(
 						triggerToast({
