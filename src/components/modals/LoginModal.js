@@ -31,7 +31,6 @@ const LoginModal = () => {
         dispatch(setHistoricalLayers(obj.config.map.layers));
     };
     const handleError = error => {
-        dispatch(triggerIsLoading());
         dispatch(triggerToast({
             title: 'Danger',
             message: error.toString(),
@@ -66,14 +65,15 @@ const LoginModal = () => {
                                 .then(response => response.json())
                                 .then(settingsObj => {
                                     load_settings(settingsObj);
-                                    dispatch(triggerIsLoading());
                                     dispatch(triggerLogin(true));
                                     dispatch(triggerShowLogin());
                                 })
-                                .catch(err => handleError(err));
+                                .catch(err => handleError(err))
+                                .finally(
+                                    dispatch(triggerIsLoading())
+                                )
                         }
                         else {
-                            dispatch(triggerIsLoading());
                             dispatch(triggerToast({
                                 title: 'Warning',
                                 message: loginObj.error,
@@ -81,7 +81,10 @@ const LoginModal = () => {
                             }));
                         }
                     })
-                    .catch(err => handleError(err));
+                    .catch(err => handleError(err))
+                    .finally(
+                        dispatch(triggerIsLoading())
+                    )
             }
             else {
                 dispatch(triggerToast({

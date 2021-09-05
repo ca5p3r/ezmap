@@ -32,6 +32,7 @@ import {
 } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
 import { setter } from "../../utils";
+import { v4 as uuidv4 } from 'uuid';
 const MyMap = () => {
 	const dispatch = useDispatch();
 	const defaultExtent = useSelector(state => state.mapInfo.defaultExtent);
@@ -95,7 +96,6 @@ const MyMap = () => {
 				})
 			);
 		}
-		dispatch(triggerIsLoading());
 	};
 	const handleEsriData = item => {
 		let returnedData = [];
@@ -136,12 +136,13 @@ const MyMap = () => {
 			}
 			if (returnedData.length > 0) {
 				returnedData.forEach(feature => {
+					const uniqueID = uuidv4();
 					switch (item.provider) {
 						case 'EsriOGC':
-							result.push({ provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
+							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
 							break;
 						case 'GeoServer':
-							result.push({ provider: item.provider, name: item.name, id: item.id, feature })
+							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature })
 							break;
 						default:
 							break;
@@ -172,7 +173,6 @@ const MyMap = () => {
 					break;
 			}
 		}
-		dispatch(triggerIsLoading());
 	};
 	useEffect(() => {
 		olmap.setTarget("map");
@@ -326,7 +326,10 @@ const MyMap = () => {
 					})
 						.then(res => handleInitialResponse(res))
 						.then(obj => handleSpatialQuery(obj, 'identify'))
-						.catch(error => handleFetchError(error));
+						.catch(error => handleFetchError(error))
+						.finally(
+							dispatch(triggerIsLoading())
+						)
 				} else {
 					dispatch(
 						triggerToast({
@@ -365,7 +368,10 @@ const MyMap = () => {
 					})
 						.then(res => handleInitialResponse(res))
 						.then(obj => handleSpatialQuery(obj, 'spatialSearch'))
-						.catch(error => handleFetchError(error));
+						.catch(error => handleFetchError(error))
+						.finally(
+							dispatch(triggerIsLoading())
+						)
 				} else {
 					dispatch(
 						triggerToast({

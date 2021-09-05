@@ -97,7 +97,6 @@ const SimpleSearch = () => {
                 })
             );
         }
-        dispatch(triggerIsLoading());
     };
     const hnadleFetchError = err => {
         if (err.name !== "AbortError") {
@@ -109,7 +108,6 @@ const SimpleSearch = () => {
                 })
             );
         }
-        dispatch(triggerIsLoading());
         setResults([]);
     };
     const handleSearch = () => {
@@ -135,7 +133,10 @@ const SimpleSearch = () => {
             })
                 .then(res => handleInitialResponse(res))
                 .then(obj => handleJSONResponse(obj))
-                .catch(error => hnadleFetchError(error));
+                .catch(error => hnadleFetchError(error))
+                .finally(
+                    dispatch(triggerIsLoading())
+                )
         }
         else {
             dispatch(
