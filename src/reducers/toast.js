@@ -14,7 +14,8 @@ export const toastReducer = (
             message: action.payload.message ? action.payload.message : '',
             title: action.payload.title ? action.payload.title : '',
             visibility: action.payload.visible ? action.payload.visible : false,
-            color: action.payload.title ? action.payload.title.toLowerCase() : ''
+            color: action.payload.title ? action.payload.title.toLowerCase() : '',
+            toastID: action.payload.toastID ? action.payload.toastID : null
         };
     }
     else {

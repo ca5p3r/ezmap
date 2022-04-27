@@ -69,17 +69,17 @@ const WorkspaceModal = () => {
         setAvailability(false);
         dispatch(triggerIsLoading());
     }
-    const handleFetch = (fetchurl) => {
+    const handleFetch = (url) => {
         const serviceType = document.getElementById('serviceType').value;
         if (serviceType !== 'Selector') {
             setSelectedService(serviceType);
-            if (fetchurl && fetchurl !== '') {
+            if (url && url !== '') {
                 dispatch(triggerIsLoading(true));
-                fetch(`${fetchurl}?service=wfs&version=2.0.0&request=GetCapabilities`)
+                fetch(`${url}?service=wfs&version=2.0.0&request=GetCapabilities`)
                     .then(response => response.text())
                     .then(text => handleTextResponse(text, serviceType))
                     .then(arr => handleArray(arr))
-                    .catch(() => handleError)
+                    .catch(() => handleError())
             }
             else {
                 dispatch(triggerToast({

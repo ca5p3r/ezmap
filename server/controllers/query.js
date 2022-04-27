@@ -58,10 +58,7 @@ export const identify = (req, res) => {
     });
     Promise.all(promises)
         .then(response => {
-            return Promise.all(response)
-        })
-        .then(arr => {
-            return res.send({ error: false, success: true, response: arr })
+            return res.send({ error: false, success: true, response: response })
         })
         .catch(err => {
             return res.send({ error: err.message, success: false })
@@ -92,10 +89,7 @@ export const spatial_search = (req, res) => {
     });
     Promise.all(promises)
         .then(response => {
-            return Promise.all(response)
-        })
-        .then(arr => {
-            return res.send({ error: false, success: true, response: arr })
+            return res.send({ error: false, success: true, response })
         })
         .catch(err => {
             return res.send({ error: err.message, success: false })
