@@ -1,7 +1,7 @@
 import pkg from 'pg';
-const { Pool } = pkg;
 import { connection, projections } from '../settings/index.js';
 import proj4 from 'proj4';
+const { Pool } = pkg;
 
 const config = {
     host: connection.host || 'localhost',
@@ -31,7 +31,7 @@ export const makeBuffer = (geom, point) => {
     return [p1, p2, p3, p4, p5]
 };
 
-export const tranform = (source, target, point) => {
+export const transform = (source, target, point) => {
     const sourceProj = projections[source];
     const targetProj = projections[target];
     return proj4(sourceProj, targetProj, point)

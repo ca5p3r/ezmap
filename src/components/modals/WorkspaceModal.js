@@ -54,7 +54,6 @@ const WorkspaceModal = () => {
     };
     const handleArray = arr => {
         if (arr) {
-            console.log(arr);
             dispatch(updateLayers(arr));
             setAvailability(true);
         }
@@ -117,8 +116,8 @@ const WorkspaceModal = () => {
             let wmsURL;
             if (layerName && layerName !== 'Selector') {
                 dispatch(triggerIsLoading(true));
-                const p1 = transform(extentGeographic.split(' ').slice(0, 2), crs, 'EPSG:3857');
-                const p2 = transform(extentGeographic.split(' ').slice(2), crs, 'EPSG:3857');
+                const p1 = transform(extentGeographic.split(' ').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
+                const p2 = transform(extentGeographic.split(' ').slice(2), 'EPSG:4326', 'EPSG:3857');
                 fetch(`${addurl}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
                     .then(response => response.text())
                     .then(text => {

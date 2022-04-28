@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { makeBuffer, tranform } from '../helpers/index.js';
+import { makeBuffer, transform } from '../helpers/index.js';
 import convert from 'xml-js';
 
 const requestOptions = {
@@ -39,7 +39,7 @@ export const identify = (req, res) => {
     layers.forEach(layer => {
         const buffer = makeBuffer(layer.type, req.body.clickedPoint);
         const coords = buffer.map((point) =>
-            tranform("EPSG:3857", layer.crs, point).join(" ")
+            transform("EPSG:3857", layer.crs, point).join(" ")
         );
         const queryParam = coords.join(" ");
         const version = handleProvider(layer.provider)[0];
@@ -70,7 +70,7 @@ export const spatial_search = (req, res) => {
     layers.forEach(layer => {
         const buffer = req.body.drawnPolygon;
         const coords = buffer.map((point) =>
-            tranform("EPSG:3857", layer.crs, point).join(" ")
+            transform("EPSG:3857", layer.crs, point).join(" ")
         );
         const queryParam = coords.join(" ");
         const version = handleProvider(layer.provider)[0];
