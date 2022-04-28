@@ -40,13 +40,21 @@ const WorkspaceModal = () => {
             case 'EsriOGC':
                 return capabilityObject['wfs:FeatureTypeList']['wfs:FeatureType'];
             case 'GeoServer':
-                return capabilityObject.FeatureTypeList.FeatureType;
+                if (Array.isArray(capabilityObject.FeatureTypeList.FeatureType)) {
+                    return capabilityObject.FeatureTypeList.FeatureType;
+                }
+                else {
+                    let layersArr = [];
+                    layersArr.push(capabilityObject.FeatureTypeList.FeatureType);
+                    return layersArr
+                }
             default:
                 return null
         }
     };
     const handleArray = arr => {
         if (arr) {
+            console.log(arr);
             dispatch(updateLayers(arr));
             setAvailability(true);
         }
