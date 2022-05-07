@@ -228,12 +228,11 @@ const WorkspaceModal = () => {
                 <Modal.Title>Workspace</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>Please provider layers info below!</p>
                 <Form>
                     <Form.Group className="mt-2 mb-2" controlId="serviceType">
                         <Form.Label>Select service type</Form.Label>
                         <Form.Control as="select" onChange={handleServiceChange}>
-                            <option id="selector" value="Selector">Select</option>
+                            <option id="selector" value="Selector">Please select one of below types</option>
                             <option id="esri-ogc" value="EsriOGC">ESRI OGC</option>
                             <option id="geoserver" value="GeoServer">GeoServer</option>
                         </Form.Control>
@@ -246,6 +245,22 @@ const WorkspaceModal = () => {
                                 document.getElementById("fetchLayersButton").click();
                             }
                         }} />
+                        <Form.Check
+                            className="mt-2 mb-2"
+                            type="switch"
+                            id="custom-switch"
+                            label="is secured?"
+                        />
+                        <Form.Control className="mt-2 mb-2" as="select">
+                            <option id="selector" value="Selector">Please select authentication method</option>
+                            <option id="creds" value="Credentials">Credentials (User/Password)</option>
+                            <option id="token" value="Token">JWT Token (Keycloak)</option>
+                        </Form.Control>
+                        <Form.Control className="mt-2 mb-2" type="text" placeholder="Example: username@realm" />
+                        <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your username here" />
+                        <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your password here" />
+                        <Button className="mt-2 mb-2" variant="info">Generate</Button>
+                        <Button className="mt-2 mb-2" variant="info">Authenticate</Button>
                     </Form.Group>
                     {availability && <Form.Group className="mt-2 mb-2" controlId="formBasicLayer">
                         <Form.Label>Select a layer</Form.Label>
