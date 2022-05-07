@@ -20,7 +20,8 @@ import {
 import convert from 'xml-js';
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
-import { setter } from '../../utils';
+import { setter, contants } from '../../utils';
+const backend_service = contants.backend_service;
 const WorkspaceModal = () => {
     const dispatch = useDispatch();
     const [url, setUrl] = useState('');
@@ -28,6 +29,8 @@ const WorkspaceModal = () => {
     const [secured, setSecured] = useState(false);
     const [secureMethod, setSecureMethod] = useState('');
     const [availability, setAvailability] = useState(false);
+    const [tokenInfo, setTokenInfo] = useState({});
+    const [token, setToken] = useState('');
     const visibility = useSelector(state => state.workspace.visibility);
     const layers = useSelector(state => state.workspace.layers);
     const handleHide = () => {
@@ -77,6 +80,7 @@ const WorkspaceModal = () => {
         dispatch(resetLayers());
         setAvailability(false);
         dispatch(triggerIsLoading());
+        setToken('');
     }
     const handleFetch = (url) => {
         const serviceType = document.getElementById('serviceType').value;
@@ -264,15 +268,47 @@ const WorkspaceModal = () => {
                                 setSecureMethod(method);
                             }}>
                                 <option id="selector" value="Selector">Please select authentication method</option>
-                                <option id="creds" value="Credentials">Credentials (User/Password)</option>
+                                {/* <option id="creds" value="Credentials">Credentials (User/Password)</option> */}
                                 <option id="token" value="Token">JWT Token (Keycloak)</option>
                             </Form.Control>
                             {secureMethod && <>
-                                {secureMethod === 'Token' && <Form.Control className="mt-2 mb-2" type="text" placeholder="Example: username@realm" />}
+                                {secureMethod === 'Token' && <Form.Control className="mt-2 mb-2" type="text" placeholder="Example: username@realm" onChange={e => {
+                                    let info = { ...tokenInfo, user: e.target.value };
+                                    setTokenInfo(info);
+                                }} />}
                                 {secureMethod === 'Credentials' && <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your username here" />}
-                                <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your password here" />
-                                {secureMethod === 'Token' && <Button className="mt-2 mb-2" variant="info">Generate</Button>}
-                                {secureMethod === 'Credentials' && <Button className="mt-2 mb-2" variant="info">Authenticate</Button>}
+                                <Form.Control className="mt-2 mb-2" type="password" placeholder="Enter your password here" onChange={e => {
+                                    if (secureMethod === 'Token') {
+                                        let info = { ...tokenInfo, password: e.target.value };
+                                        setTokenInfo(info);
+                                    }
+                                }} />
+                                {secureMethod === 'Token' && <Button className="mt-2 mb-2" variant="secondary" onClick={() => {
+                                    if (tokenInfo.user && tokenInfo.password) {
+                                        let username = tokenInfo.user.split('@')[0];
+                                        let password = tokenInfo.password;
+                                        let realm = tokenInfo.user.split('@')[1];
+                                        fetch(`http://${backend_service}/authService/gen_token`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({ username, password, realm })
+                                        })
+                                            .then(response => response.json())
+                                            .then(result => {
+                                                setToken(result.token);
+                                                dispatch(triggerToast({
+                                                    title: 'Success',
+                                                    message: 'Token was generated successfully!',
+                                                    visible: true
+                                                }));
+                                                console.log(token);
+                                            })
+                                            .catch(() => handleError())
+                                    }
+                                }}>Generate</Button>}
+                                {secureMethod === 'Credentials' && <Button className="mt-2 mb-2" variant="secondary">Authenticate</Button>}
                             </>}
                         </>}
                     </Form.Group>

@@ -6,7 +6,7 @@ import {
     useSelector,
     useDispatch
 } from "react-redux";
-import { renderHeader } from '../../utils'
+import { renderHeader } from '../../utils';
 const Identify = () => {
     const dispatch = useDispatch();
     const results = useSelector(state => state.identify.result);

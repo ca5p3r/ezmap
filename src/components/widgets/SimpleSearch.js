@@ -9,7 +9,8 @@ import {
     useDispatch
 } from "react-redux";
 import { useState } from "react";
-import { renderHeader } from "../../utils";
+import { renderHeader, contants } from "../../utils";
+const backend_service = contants.backend_service;
 const SimpleSearch = () => {
     const [{ id, layer, field, value }, setData] = useState({
         id: "",
@@ -126,7 +127,7 @@ const SimpleSearch = () => {
                 queryParam: value
             };
             dispatch(triggerIsLoading(true));
-            fetch("http://localhost:9090/queryService/tsearch", {
+            fetch(`http://${backend_service}/queryService/tsearch`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

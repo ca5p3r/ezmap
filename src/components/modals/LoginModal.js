@@ -20,6 +20,8 @@ import {
     setHistoricalLayers,
     setUserID
 } from '../../actions';
+import { contants } from '../../utils';
+const backend_service = contants.backend_service;
 const LoginModal = () => {
     const dispatch = useDispatch();
     const showLogin = useSelector(state => state.login.visibility);
@@ -43,7 +45,7 @@ const LoginModal = () => {
             if (password.length >= 8 && password.length <= 16) {
                 dispatch(triggerIsLoading(true));
                 const data = { username, password };
-                fetch("http://localhost:9090/authService/login", {
+                fetch(`http://${backend_service}/authService/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -56,7 +58,7 @@ const LoginModal = () => {
                             dispatch(setUser(username));
                             dispatch(setUserID(loginObj.userID));
                             const userObj = { id: loginObj.userID };
-                            fetch("http://localhost:9090/configService/getSettings", {
+                            fetch(`http://${backend_service}/configService/getSettings`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'

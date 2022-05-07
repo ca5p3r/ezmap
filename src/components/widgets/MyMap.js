@@ -30,8 +30,9 @@ import {
 	triggerSpatialSearchVisibility
 } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
-import { setter } from "../../utils";
+import { setter, contants } from "../../utils";
 import { v4 as uuidv4 } from 'uuid';
+const backend_service = contants.backend_service;
 const MyMap = () => {
 	const dispatch = useDispatch();
 	const defaultExtent = useSelector(state => state.mapInfo.defaultExtent);
@@ -316,7 +317,7 @@ const MyMap = () => {
 					clickedPoint
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9090/queryService/identify", {
+					fetch(`http://${backend_service}/queryService/identify`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -355,7 +356,7 @@ const MyMap = () => {
 					drawnPolygon
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9090/queryService/ssearch", {
+					fetch(`http://${backend_service}/queryService/ssearch`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'

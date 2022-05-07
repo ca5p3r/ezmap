@@ -12,6 +12,8 @@ import {
     triggerToast,
     triggerIsLoading
 } from '../../actions';
+import { contants } from '../../utils';
+const backend_service = contants.backend_service;
 const RegisterModal = () => {
     const dispatch = useDispatch();
     const showRegister = useSelector(state => state.register.visibility);
@@ -46,7 +48,7 @@ const RegisterModal = () => {
             if (password.length >= 8 && password.length <= 20) {
                 dispatch(triggerIsLoading(true));
                 const data = { username, password };
-                fetch("http://localhost:9090/authService/register", {
+                fetch(`http://${backend_service}/authService/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

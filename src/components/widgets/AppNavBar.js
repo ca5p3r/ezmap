@@ -22,7 +22,9 @@ import {
 	setDrawnPolygon,
 	clearSpatialResult
 } from "../../actions";
+import { contants } from '../../utils';
 import { svg } from "../assets";
+const backend_service = contants.backend_service;
 const AppNavBar = () => {
 	const dispatch = useDispatch();
 	const userID = useSelector(state => state.login.userID);
@@ -149,7 +151,7 @@ const AppNavBar = () => {
 			id: userID,
 			obj: settingsObject,
 		};
-		fetch("http://localhost:9090/configService/saveSettings", {
+		fetch(`http://${backend_service}/configService/saveSettings`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

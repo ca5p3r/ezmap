@@ -45,3 +45,6 @@ export const renderHeader = (header, provider) => {
             return;
     }
 };
+export const contants = {
+    backend_service: 'localhost:9090'
+}
