@@ -4,7 +4,6 @@ import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { OSM, Vector as VectorSource } from "ol/source";
 import {
 	ZoomToExtent,
-	FullScreen,
 	OverviewMap,
 	ScaleLine,
 	defaults as defaultControls,
@@ -53,7 +52,6 @@ const MyMap = () => {
 				new ZoomToExtent({
 					extent: defaultExtent,
 				}),
-				new FullScreen(),
 				new OverviewMap({
 					layers: [
 						new TileLayer({
