@@ -25,6 +25,8 @@ const WorkspaceModal = () => {
     const dispatch = useDispatch();
     const [url, setUrl] = useState('');
     const [selectedService, setSelectedService] = useState('');
+    const [secured, setSecured] = useState(false);
+    const [secureMethod, setSecureMethod] = useState('');
     const [availability, setAvailability] = useState(false);
     const visibility = useSelector(state => state.workspace.visibility);
     const layers = useSelector(state => state.workspace.layers);
@@ -218,7 +220,7 @@ const WorkspaceModal = () => {
         setUrl(e.target.value);
         setAvailability(false);
     };
-    const handleServiceChange = e => {
+    const handleServiceChange = _ => {
         setUrl('');
         setAvailability(false);
     };
@@ -246,21 +248,33 @@ const WorkspaceModal = () => {
                             }
                         }} />
                         <Form.Check
+                            checked={secured}
+                            onChange={_ => setSecured(!secured)}
                             className="mt-2 mb-2"
                             type="switch"
-                            id="custom-switch"
+                            id="secured-switch"
                             label="is secured?"
                         />
-                        <Form.Control className="mt-2 mb-2" as="select">
-                            <option id="selector" value="Selector">Please select authentication method</option>
-                            <option id="creds" value="Credentials">Credentials (User/Password)</option>
-                            <option id="token" value="Token">JWT Token (Keycloak)</option>
-                        </Form.Control>
-                        <Form.Control className="mt-2 mb-2" type="text" placeholder="Example: username@realm" />
-                        <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your username here" />
-                        <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your password here" />
-                        <Button className="mt-2 mb-2" variant="info">Generate</Button>
-                        <Button className="mt-2 mb-2" variant="info">Authenticate</Button>
+                        {secured && <>
+                            <Form.Control className="mt-2 mb-2" as="select" onChange={e => {
+                                let method = e.target.value;
+                                if (method === 'Selector') {
+                                    method = '';
+                                }
+                                setSecureMethod(method);
+                            }}>
+                                <option id="selector" value="Selector">Please select authentication method</option>
+                                <option id="creds" value="Credentials">Credentials (User/Password)</option>
+                                <option id="token" value="Token">JWT Token (Keycloak)</option>
+                            </Form.Control>
+                            {secureMethod && <>
+                                {secureMethod === 'Token' && <Form.Control className="mt-2 mb-2" type="text" placeholder="Example: username@realm" />}
+                                {secureMethod === 'Credentials' && <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your username here" />}
+                                <Form.Control className="mt-2 mb-2" type="text" placeholder="Enter your password here" />
+                                {secureMethod === 'Token' && <Button className="mt-2 mb-2" variant="info">Generate</Button>}
+                                {secureMethod === 'Credentials' && <Button className="mt-2 mb-2" variant="info">Authenticate</Button>}
+                            </>}
+                        </>}
                     </Form.Group>
                     {availability && <Form.Group className="mt-2 mb-2" controlId="formBasicLayer">
                         <Form.Label>Select a layer</Form.Label>
