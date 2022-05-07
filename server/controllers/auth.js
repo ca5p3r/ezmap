@@ -1,8 +1,7 @@
 import saltedMd5 from 'salted-md5';
 import { pool } from '../helpers/index.js';
-import { config } from '../settings/index.js';
-
-const salt = 'f387d4f7781b57ac232c227fcef831d0';
+import { config, salt, client_secret, keycloakurl } from '../settings/index.js';
+import fetch from 'node-fetch';
 
 export const create_user = (req, res) => {
 	if (req.body.username && req.body.password) {
@@ -65,3 +64,44 @@ export const verify_login = (req, res) => {
 		return res.send({ error: 'Missing informarion!', success: false });
 	}
 };
+export const gen_kc_token = (req, res) => {
+	if (req.body.username && req.body.password && req.body.realm) {
+		let urlencoded = new URLSearchParams();
+		urlencoded.append("client_id", "MnA");
+		urlencoded.append("grant_type", "password");
+		urlencoded.append("client_secret", `${client_secret}`);
+		urlencoded.append("scope", "openid");
+		urlencoded.append("username", `${req.body.username}`);
+		urlencoded.append("password", `${req.body.password}`);
+		let requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: urlencoded,
+			redirect: 'follow'
+		};
+		fetch(`${keycloakurl}/realms/${req.body.realm}/protocol/openid-connect/token`, requestOptions)
+			.then(response => {
+				if (response.status === 404) {
+					return { code: 404, error: 'Invalid realm' }
+				}
+				else if (response.status === 401 || response.status === 403) {
+					return { code: response.status, error: 'Invalid credentials' }
+				}
+				else if (response.status === 200) {
+					return (response.json())
+				}
+			})
+			.then(response => {
+				if (!response.code) {
+					res.send({ code: 200, token: response.access_token })
+				}
+				else {
+					res.send(response)
+				}
+			})
+			.catch(error => res.send(error));
+	}
+	else {
+		return res.send({ error: 'Bad request', code: 400 });
+	}
+}
