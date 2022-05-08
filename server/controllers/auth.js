@@ -2,6 +2,11 @@ import saltedMd5 from 'salted-md5';
 import { pool } from '../helpers/index.js';
 import { config, salt, client_secret, keycloakurl } from '../settings/index.js';
 import fetch from 'node-fetch';
+import https from 'https';
+
+const httpsAgent = new https.Agent({
+	rejectUnauthorized: false,
+});
 
 export const create_user = (req, res) => {
 	if (req.body.username && req.body.password) {
@@ -67,19 +72,20 @@ export const verify_login = (req, res) => {
 export const gen_kc_token = (req, res) => {
 	if (req.body.username && req.body.password && req.body.realm) {
 		let urlencoded = new URLSearchParams();
-		urlencoded.append("client_id", "MnA");
+		urlencoded.append("client_id", "MnA_GE");
 		urlencoded.append("grant_type", "password");
 		urlencoded.append("client_secret", `${client_secret}`);
 		urlencoded.append("scope", "openid");
 		urlencoded.append("username", `${req.body.username}`);
 		urlencoded.append("password", `${req.body.password}`);
-		let requestOptions = {
+		let requestParams = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: urlencoded,
-			redirect: 'follow'
+			redirect: 'follow',
+			agent: httpsAgent
 		};
-		fetch(`${keycloakurl}/realms/${req.body.realm}/protocol/openid-connect/token`, requestOptions)
+		fetch(`${keycloakurl}/realms/${req.body.realm}/protocol/openid-connect/token`, requestParams)
 			.then(response => {
 				if (response.status === 404) {
 					return { code: 404, error: 'Invalid realm' }
