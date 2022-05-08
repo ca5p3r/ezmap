@@ -201,7 +201,7 @@ const WorkspaceModal = () => {
                         }));
                         dispatch(triggerIsLoading());
                     })
-                const wmsobject = setter(selectedService, url, uniqueID, layerTitle, layerName);
+                const wmsobject = setter(selectedService, url, uniqueID, layerTitle, layerName, 1, true, secured, tokenInfo);
                 dispatch(addPendingLayer(wmsobject));
             }
             else {

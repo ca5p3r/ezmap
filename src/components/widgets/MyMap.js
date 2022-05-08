@@ -201,7 +201,9 @@ const MyMap = () => {
 				item.title,
 				item.name,
 				item.opacity,
-				item.visible
+				item.visible,
+				item.secured,
+				item.tokenInfo
 			);
 			olmap.addLayer(obj);
 		});
