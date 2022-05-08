@@ -99,7 +99,7 @@ const TOC = () => {
         let formattedFields;
         const targetIndex = historicalData.findIndex(item => item.id === title.split('&')[1]);
         switch (layer.provider) {
-            case 'OGC':
+            case 'GeoServer':
                 fields = obj.featureTypes[0].properties;
                 formattedFields = fields.map(field => {
                     return { name: field.name, type: field.localType, local: '' }
@@ -132,7 +132,7 @@ const TOC = () => {
             .then(response => response.text())
             .then(text => {
                 switch (layer.provider) {
-                    case 'OGC':
+                    case 'GeoServer':
                         return JSON.parse(text);
                     case 'EsriOGC':
                         return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];

@@ -72,7 +72,7 @@ const SimpleSearch = () => {
         let queryResults = [];
         if (obj.response.length > 0) {
             switch (obj.provider) {
-                case 'OGC':
+                case 'GeoServer':
                     obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: item }));
                     break;
                 case 'EsriOGC':
@@ -200,7 +200,7 @@ const SimpleSearch = () => {
                                                     properties[head] = peropertyValue;
                                                 })
                                                 break;
-                                            case 'OGC':
+                                            case 'GeoServer':
                                                 properties = result.feature.properties
                                                 break;
                                             default:

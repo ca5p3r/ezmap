@@ -36,7 +36,7 @@ const SpatialSearch = () => {
                                                 properties[head] = value;
                                             })
                                             break;
-                                        case 'OGC':
+                                        case 'GeoServer':
                                             properties = result.feature.properties
                                             break;
                                         default:
