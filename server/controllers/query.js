@@ -8,7 +8,7 @@ const requestOptions = {
 };
 const handleTextResponse = (text, provider) => {
     switch (provider) {
-        case 'GeoServer':
+        case 'OGC':
             return JSON.parse(text);
         case 'EsriOGC':
             return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }));
@@ -24,7 +24,7 @@ const handleProvider = provider => {
             version = '1.0.0';
             format = 'GML2';
             break;
-        case 'GeoServer':
+        case 'OGC':
             version = '1.1.0';
             format = 'application/json';
             break;
@@ -105,7 +105,7 @@ export const simple_search = (req, res) => {
         .then(text => handleTextResponse(text, body.provider))
         .then(obj => {
             switch (body.provider) {
-                case 'GeoServer':
+                case 'OGC':
                     res.send({ provider: body.provider, response: obj.features });
                     break;
                 case 'EsriOGC':

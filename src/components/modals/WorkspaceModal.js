@@ -44,7 +44,7 @@ const WorkspaceModal = () => {
         switch (serviceType) {
             case 'EsriOGC':
                 return capabilityObject['wfs:FeatureTypeList']['wfs:FeatureType'];
-            case 'GeoServer':
+            case 'OGC':
                 if (Array.isArray(capabilityObject.FeatureTypeList.FeatureType)) {
                     return capabilityObject.FeatureTypeList.FeatureType;
                 }
@@ -128,7 +128,7 @@ const WorkspaceModal = () => {
                     .then(response => response.text())
                     .then(text => {
                         switch (selectedService) {
-                            case 'GeoServer':
+                            case 'OGC':
                                 return JSON.parse(text);
                             case 'EsriOGC':
                                 return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
@@ -143,7 +143,7 @@ const WorkspaceModal = () => {
                         let geomName;
                         let geomType;
                         switch (selectedService) {
-                            case 'GeoServer':
+                            case 'OGC':
                                 wmsURL = url;
                                 fields = obj.featureTypes[0].properties;
                                 formattedFields = fields.map(field => {
@@ -240,7 +240,7 @@ const WorkspaceModal = () => {
                         <Form.Control as="select" onChange={handleServiceChange}>
                             <option id="selector" value="Selector">Please select one of below types</option>
                             <option id="esri-ogc" value="EsriOGC">ESRI OGC</option>
-                            <option id="geoserver" value="GeoServer">GeoServer</option>
+                            <option id="geoserver" value="OGC">OGC</option>
                         </Form.Control>
                     </Form.Group>
                     <Form.Group className="mt-2 mb-2" controlId="formBasicUrl">
@@ -329,7 +329,7 @@ const WorkspaceModal = () => {
                                 layers.map(
                                     (layer, key) => {
                                         switch (selectedService) {
-                                            case 'GeoServer':
+                                            case 'OGC':
                                                 return <option id={`option${layer.Name._text}`} key={key} crs={layer.DefaultCRS._text.split('crs:')[1].replace('::', ':')} value={layer.Name._text} title={layer.Title._text} extent={layer['ows:WGS84BoundingBox']['ows:LowerCorner']._text.replace(',', ' ') + ' ' + layer['ows:WGS84BoundingBox']['ows:UpperCorner']._text.replace(',', ' ')}>{layer.Title._text}</option>;
                                             case 'EsriOGC':
                                                 return <option id={`option${layer['wfs:Name']._text}`} key={key} crs={layer['wfs:DefaultCRS']._text.split('crs:')[1].replace('::', ':')} value={layer['wfs:Name']._text} title={layer['wfs:Title']._text} extent={layer['ows:WGS84BoundingBox']['ows:LowerCorner']._text.replace(',', ' ') + ' ' + layer['ows:WGS84BoundingBox']['ows:UpperCorner']._text.replace(',', ' ')}>{layer['wfs:Title']._text}</option>;

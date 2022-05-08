@@ -36,7 +36,7 @@ const Identify = () => {
                                                 properties[head] = value;
                                             })
                                             break;
-                                        case 'GeoServer':
+                                        case 'OGC':
                                             properties = result.feature.properties
                                             break;
                                         default:

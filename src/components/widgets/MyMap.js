@@ -128,7 +128,7 @@ const MyMap = () => {
 				case 'EsriOGC':
 					returnedData = handleEsriData(item);
 					break;
-				case 'GeoServer':
+				case 'OGC':
 					returnedData = item.data.features;
 					break;
 				default:
@@ -141,7 +141,7 @@ const MyMap = () => {
 						case 'EsriOGC':
 							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
 							break;
-						case 'GeoServer':
+						case 'OGC':
 							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature })
 							break;
 						default:

@@ -5,7 +5,7 @@ export const setter = (provider, url, id, title, name, opacity = 1, visible = tr
     let layerURL;
     let LAYERS;
     switch (provider) {
-        case 'GeoServer':
+        case 'OGC':
             layerURL = url;
             LAYERS = [name];
             break;
@@ -39,7 +39,7 @@ export const renderHeader = (header, provider) => {
     switch (provider) {
         case 'EsriOGC':
             return header._attributes.fid.split('.')[1];
-        case 'GeoServer':
+        case 'OGC':
             return header.id.split('.')[1];
         default:
             return;
