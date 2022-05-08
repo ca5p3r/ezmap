@@ -203,7 +203,8 @@ const MyMap = () => {
 				item.opacity,
 				item.visible,
 				item.secured,
-				item.tokenInfo
+				item.tokenInfo,
+				item.selectedRole
 			);
 			olmap.addLayer(obj);
 		});

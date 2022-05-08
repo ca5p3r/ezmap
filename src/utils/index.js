@@ -1,6 +1,6 @@
 import ImageWMS from 'ol/source/ImageWMS';
 import Image from 'ol/layer/Image';
-export const setter = (provider, url, id, title, name, opacity = 1, visible = true, secured = false, tokenInfo = {}) => {
+export const setter = (provider, url, id, title, name, opacity = 1, visible = true, secured = false, tokenInfo = {}, role) => {
     const layerTitle = `${title}&${id}`;
     let layerURL;
     let LAYERS;
@@ -33,7 +33,7 @@ export const setter = (provider, url, id, title, name, opacity = 1, visible = tr
                         client.open('GET', src);
                         client.setRequestHeader('PentaOrgID', tokenInfo.realm);
                         client.setRequestHeader('PentaSelectedLocale', 'en');
-                        client.setRequestHeader('PentaUserRole', tokenInfo.role);
+                        client.setRequestHeader('PentaUserRole', role);
                         client.setRequestHeader('Authorization', 'Bearer ' + tokenInfo.token);
                         client.onload = () => {
                             var data = 'data:image/png;base64,' + btoa(unescape(encodeURIComponent(this.responseText)));

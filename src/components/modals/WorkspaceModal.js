@@ -20,6 +20,7 @@ import {
 import convert from 'xml-js';
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
+import jwt_decode from "jwt-decode";
 import { setter, constants } from '../../utils';
 const backend_service = constants.backend_service;
 const WorkspaceModal = () => {
@@ -31,6 +32,8 @@ const WorkspaceModal = () => {
     const [availability, setAvailability] = useState(false);
     const [tokenInfo, setTokenInfo] = useState({});
     const [token, setToken] = useState('');
+    const [roles, setRoles] = useState([]);
+    const [selectedRole, setSelectedRole] = useState('');
     const visibility = useSelector(state => state.workspace.visibility);
     const layers = useSelector(state => state.workspace.layers);
     const handleHide = () => {
@@ -38,6 +41,9 @@ const WorkspaceModal = () => {
         setAvailability(false);
         dispatch(resetLayers());
         setUrl('');
+        setToken('');
+        setSecured(false);
+        setSecureMethod('');
     };
     const handleTextResponse = (text, serviceType) => {
         const capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
@@ -172,6 +178,9 @@ const WorkspaceModal = () => {
                             title: layerTitle,
                             provider: selectedService,
                             url,
+                            secured,
+                            tokenInfo,
+                            selectedRole,
                             wmsURL,
                             extent: [...p1, ...p2],
                             type: geomType,
@@ -190,6 +199,9 @@ const WorkspaceModal = () => {
                             title: layerTitle,
                             provider: selectedService,
                             url,
+                            secured,
+                            tokenInfo,
+                            selectedRole,
                             wmsURL,
                             extent: [...p1, ...p2],
                             type: null,
@@ -201,7 +213,7 @@ const WorkspaceModal = () => {
                         }));
                         dispatch(triggerIsLoading());
                     })
-                const wmsobject = setter(selectedService, url, uniqueID, layerTitle, layerName, 1, true, secured, tokenInfo);
+                const wmsobject = setter(selectedService, url, uniqueID, layerTitle, layerName, 1, true, secured, tokenInfo, selectedRole);
                 dispatch(addPendingLayer(wmsobject));
             }
             else {
@@ -299,6 +311,11 @@ const WorkspaceModal = () => {
                                             .then(result => {
                                                 if (result.code === 200) {
                                                     setToken(result.token);
+                                                    let decoded = jwt_decode(result.token);
+                                                    let kcRoles = ['default-roles-myrealm', 'offline_access', 'uma_authorization'];
+                                                    let info = { ...tokenInfo, roles: [...decoded.realm_access.roles.filter(role => !kcRoles.includes(role))] };
+                                                    setTokenInfo(info);
+                                                    setRoles([...info.roles]);
                                                     dispatch(triggerToast({
                                                         title: 'Success',
                                                         message: 'Token was generated successfully!',
@@ -318,6 +335,24 @@ const WorkspaceModal = () => {
                                     }
                                 }}>Generate</Button>}
                                 {secureMethod === 'Credentials' && <Button className="mt-2 mb-2" variant="secondary">Authenticate</Button>}
+                                {token && <>
+                                    <Form.Control className="mt-2 mb-2" as="select" onChange={e => {
+                                        let role = e.target.value;
+                                        if (role === 'Selector') {
+                                            role = '';
+                                        }
+                                        setSelectedRole(role);
+                                    }}>
+                                        <option id="selector" value="Selector">Please select a role</option>
+                                        {
+                                            roles.map(
+                                                (role, key) => {
+                                                    return <option id={`option${role}`} key={key} value={role}>{role}</option>;
+                                                }
+                                            )
+                                        }
+                                    </Form.Control>
+                                </>}
                             </>}
                         </>}
                     </Form.Group>
