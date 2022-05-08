@@ -30,9 +30,9 @@ import {
 	triggerSpatialSearchVisibility
 } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
-import { setter, contants } from "../../utils";
+import { setter, constants } from "../../utils";
 import { v4 as uuidv4 } from 'uuid';
-const backend_service = contants.backend_service;
+const backend_service = constants.backend_service;
 const MyMap = () => {
 	const dispatch = useDispatch();
 	const defaultExtent = useSelector(state => state.mapInfo.defaultExtent);

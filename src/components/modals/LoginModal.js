@@ -20,8 +20,8 @@ import {
     setHistoricalLayers,
     setUserID
 } from '../../actions';
-import { contants } from '../../utils';
-const backend_service = contants.backend_service;
+import { constants } from '../../utils';
+const backend_service = constants.backend_service;
 const LoginModal = () => {
     const dispatch = useDispatch();
     const showLogin = useSelector(state => state.login.visibility);

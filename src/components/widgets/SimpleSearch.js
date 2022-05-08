@@ -9,8 +9,8 @@ import {
     useDispatch
 } from "react-redux";
 import { useState } from "react";
-import { renderHeader, contants } from "../../utils";
-const backend_service = contants.backend_service;
+import { renderHeader, constants } from "../../utils";
+const backend_service = constants.backend_service;
 const SimpleSearch = () => {
     const [{ id, layer, field, value }, setData] = useState({
         id: "",

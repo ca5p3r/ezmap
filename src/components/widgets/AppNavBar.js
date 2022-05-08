@@ -22,9 +22,9 @@ import {
 	setDrawnPolygon,
 	clearSpatialResult
 } from "../../actions";
-import { contants } from '../../utils';
+import { constants } from '../../utils';
 import { svg } from "../assets";
-const backend_service = contants.backend_service;
+const backend_service = constants.backend_service;
 const AppNavBar = () => {
 	const dispatch = useDispatch();
 	const userID = useSelector(state => state.login.userID);

@@ -20,8 +20,8 @@ import {
 import convert from 'xml-js';
 import { transform } from "ol/proj";
 import { v4 as uuidv4 } from 'uuid';
-import { setter, contants } from '../../utils';
-const backend_service = contants.backend_service;
+import { setter, constants } from '../../utils';
+const backend_service = constants.backend_service;
 const WorkspaceModal = () => {
     const dispatch = useDispatch();
     const [url, setUrl] = useState('');

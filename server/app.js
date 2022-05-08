@@ -33,7 +33,10 @@ pool.connect((connError, client, done) => {
 });
 
 let corsOptions = {
-    origin: ['http://localhost:3000']
+    origin: [
+        'http://localhost:3000',
+        'http://192.168.1.111:3000'
+    ]
 };
 
 safeApp.use(cors(corsOptions));
