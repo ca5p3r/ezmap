@@ -129,7 +129,7 @@ const MyMap = () => {
 					returnedData = handleEsriData(item);
 					break;
 				case 'GeoServer':
-					returnedData = item.data.features;
+					returnedData = item.data.features && item.data.features;
 					break;
 				default:
 					break;
