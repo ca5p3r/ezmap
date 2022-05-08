@@ -297,13 +297,22 @@ const WorkspaceModal = () => {
                                         })
                                             .then(response => response.json())
                                             .then(result => {
-                                                setToken(result.token);
-                                                dispatch(triggerToast({
-                                                    title: 'Success',
-                                                    message: 'Token was generated successfully!',
-                                                    visible: true
-                                                }));
-                                                console.log(token);
+                                                if (result.code === 200) {
+                                                    setToken(result.token);
+                                                    dispatch(triggerToast({
+                                                        title: 'Success',
+                                                        message: 'Token was generated successfully!',
+                                                        visible: true
+                                                    }));
+                                                }
+                                                else {
+                                                    setToken(result.token);
+                                                    dispatch(triggerToast({
+                                                        title: 'Danger',
+                                                        message: result.error,
+                                                        visible: true
+                                                    }));
+                                                }
                                             })
                                             .catch(() => handleError())
                                     }
