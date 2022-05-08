@@ -196,7 +196,7 @@ const MyMap = () => {
 		historicalData.forEach((item) => {
 			const obj = setter(
 				item.provider,
-				item.url,
+				item.wmsURL,
 				item.id,
 				item.title,
 				item.name,

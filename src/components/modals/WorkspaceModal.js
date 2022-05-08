@@ -150,7 +150,7 @@ const WorkspaceModal = () => {
                         let geomType;
                         switch (selectedService) {
                             case 'GeoServer':
-                                wmsURL = url;
+                                wmsURL = url.slice(0, -3) + 'wms';;
                                 fields = obj.featureTypes[0].properties;
                                 formattedFields = fields.map(field => {
                                     return { name: field.name, type: field.localType, local: '' }
@@ -236,7 +236,13 @@ const WorkspaceModal = () => {
         setUrl(e.target.value);
         setAvailability(false);
     };
-    const handleServiceChange = _ => {
+    const handleServiceChange = e => {
+        let value = e.target.value;
+        if (e.target.value === 'Selector') {
+            value = ''
+        }
+        setSelectedService(value);
+        setSecured(false);
         setUrl('');
         setAvailability(false);
     };
@@ -253,6 +259,7 @@ const WorkspaceModal = () => {
                             <option id="selector" value="Selector">Please select one of below types</option>
                             <option id="geoserver" value="GeoServer">GeoServer</option>
                             <option id="esri-ogc" value="EsriOGC">ESRI OGC</option>
+                            <option id="penta-ogc" value="PentaOGC">Guardian edition</option>
                         </Form.Control>
                     </Form.Group>
                     <Form.Group className="mt-2 mb-2" controlId="formBasicUrl">
@@ -263,14 +270,14 @@ const WorkspaceModal = () => {
                                 document.getElementById("fetchLayersButton").click();
                             }
                         }} />
-                        <Form.Check
+                        {selectedService === 'PentaOGC' && <Form.Check
                             checked={secured}
                             onChange={_ => setSecured(!secured)}
                             className="mt-2 mb-2"
                             type="switch"
                             id="secured-switch"
                             label="is secured?"
-                        />
+                        />}
                         {secured && <>
                             <Form.Control className="mt-2 mb-2" as="select" onChange={e => {
                                 let method = e.target.value;
