@@ -46,17 +46,29 @@ const WorkspaceModal = () => {
         setSecureMethod('');
     };
     const handleTextResponse = (text, serviceType) => {
-        const capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
+        let capabilityObject;
         switch (serviceType) {
             case 'EsriOGC':
+                capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
                 return capabilityObject['wfs:FeatureTypeList']['wfs:FeatureType'];
             case 'GeoServer':
+                capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['wfs:WFS_Capabilities'];
                 if (Array.isArray(capabilityObject.FeatureTypeList.FeatureType)) {
                     return capabilityObject.FeatureTypeList.FeatureType;
                 }
                 else {
                     let layersArr = [];
                     layersArr.push(capabilityObject.FeatureTypeList.FeatureType);
+                    return layersArr
+                }
+            case 'PentaOGC':
+                capabilityObject = JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['WMS_Capabilities']['Capability'];
+                if (Array.isArray(capabilityObject.Layer.Layer)) {
+                    return capabilityObject.Layer.Layer;
+                }
+                else {
+                    let layersArr = [];
+                    layersArr.push(capabilityObject.Layer.Layer);
                     return layersArr
                 }
             default:
@@ -88,13 +100,25 @@ const WorkspaceModal = () => {
         dispatch(triggerIsLoading());
         setToken('');
     }
-    const handleFetch = (url) => {
+    const handleFetch = () => {
         const serviceType = document.getElementById('serviceType').value;
         if (serviceType !== 'Selector') {
-            setSelectedService(serviceType);
             if (url && url !== '') {
                 dispatch(triggerIsLoading(true));
-                fetch(`${url}?service=wfs&version=2.0.0&request=GetCapabilities`)
+                let fetchURL = `${url}&service=wfs&version=2.0.0&request=GetCapabilities`;
+                let requestParams = {};
+                if (serviceType === 'PentaOGC') {
+                    requestParams = {
+                        method: 'GET',
+                        headers: {
+                            'PentaOrgID': tokenInfo.user.split('@')[1],
+                            'PentaUserRole': selectedRole,
+                            'PentaSelectedLocale': 'en',
+                            'Authorization': 'Bearer ' + token
+                        }
+                    };
+                }
+                fetch(fetchURL, requestParams)
                     .then(response => response.text())
                     .then(text => handleTextResponse(text, serviceType))
                     .then(arr => handleArray(arr))
@@ -116,7 +140,7 @@ const WorkspaceModal = () => {
             }));
         }
     };
-    const handleAdd = (addurl) => {
+    const handleAdd = () => {
         if (availability) {
             const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
             const layerName = document.getElementById('formBasicLayer').value;
@@ -126,11 +150,39 @@ const WorkspaceModal = () => {
             const uniqueID = uuidv4();
             const extentGeographic = selectedElement.getAttribute('extent');
             let wmsURL;
+            let wfsURL;
+            if (selectedService === 'PentaOGC') {
+                wmsURL = url.split('?')[0].slice(0, -12);
+                wfsURL = url.split('?')[0].slice(0, -15) + 'wfs';
+            }
+            else if (selectedService === 'GeoServer') {
+                wmsURL = url.slice(0, -3) + 'wms';
+                wfsURL = url;
+            }
+            else if (selectedService === 'EsriOGC') {
+                wmsURL = url.slice(0, -9) + 'WMSServer';
+                wfsURL = url;
+            }
             if (layerName && layerName !== 'Selector') {
                 dispatch(triggerIsLoading(true));
                 const p1 = transform(extentGeographic.split(' ').slice(0, 2), 'EPSG:4326', 'EPSG:3857');
                 const p2 = transform(extentGeographic.split(' ').slice(2), 'EPSG:4326', 'EPSG:3857');
-                fetch(`${addurl}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`)
+                let requestParams;
+                if (selectedService === 'PentaOGC') {
+                    requestParams = {
+                        method: 'GET',
+                        headers: {
+                            'PentaOrgID': tokenInfo.user.split('@')[1],
+                            'PentaUserRole': selectedRole,
+                            'PentaSelectedLocale': 'en',
+                            'Authorization': 'Bearer ' + token
+                        }
+                    };
+                }
+                else {
+                    requestParams = {}
+                }
+                fetch(`${wfsURL}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`, requestParams)
                     .then(response => response.text())
                     .then(text => {
                         switch (selectedService) {
@@ -138,6 +190,8 @@ const WorkspaceModal = () => {
                                 return JSON.parse(text);
                             case 'EsriOGC':
                                 return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
+                            case 'PentaOGC':
+                                return JSON.parse(text);
                             default:
                                 return null;
                         }
@@ -150,7 +204,7 @@ const WorkspaceModal = () => {
                         let geomType;
                         switch (selectedService) {
                             case 'GeoServer':
-                                wmsURL = url.slice(0, -3) + 'wms';;
+                                wmsURL = url.slice(0, -3) + 'wms';
                                 fields = obj.featureTypes[0].properties;
                                 formattedFields = fields.map(field => {
                                     return { name: field.name, type: field.localType, local: '' }
@@ -169,6 +223,9 @@ const WorkspaceModal = () => {
                                 geomName = geomField._attributes.name;
                                 geomType = geomField._attributes.type;
                                 break;
+                            case 'PentaOGC':
+                                wmsURL = url;
+                                break;
                             default:
                                 break;
                         }
@@ -181,7 +238,9 @@ const WorkspaceModal = () => {
                             secured,
                             tokenInfo,
                             selectedRole,
+                            token,
                             wmsURL,
+                            wfsURL,
                             extent: [...p1, ...p2],
                             type: geomType,
                             geometry: geomName,
@@ -201,8 +260,10 @@ const WorkspaceModal = () => {
                             url,
                             secured,
                             tokenInfo,
+                            token,
                             selectedRole,
                             wmsURL,
+                            wfsURL,
                             extent: [...p1, ...p2],
                             type: null,
                             geometry: null,
@@ -213,7 +274,7 @@ const WorkspaceModal = () => {
                         }));
                         dispatch(triggerIsLoading());
                     })
-                const wmsobject = setter(selectedService, url, uniqueID, layerTitle, layerName, 1, true, secured, tokenInfo, selectedRole);
+                const wmsobject = setter(selectedService, wmsURL, uniqueID, layerTitle, layerName, 1, true, secured, tokenInfo, selectedRole, token);
                 dispatch(addPendingLayer(wmsobject));
             }
             else {
@@ -257,9 +318,9 @@ const WorkspaceModal = () => {
                         <Form.Label>Select service type</Form.Label>
                         <Form.Control as="select" onChange={handleServiceChange}>
                             <option id="selector" value="Selector">Please select one of below types</option>
-                            <option id="geoserver" value="GeoServer">GeoServer</option>
-                            <option id="esri-ogc" value="EsriOGC">ESRI OGC</option>
-                            <option id="penta-ogc" value="PentaOGC">Guardian edition</option>
+                            <option id="geoserver" value="GeoServer">GeoServer (Public only)</option>
+                            <option id="esri-ogc" value="EsriOGC">ESRI OGC (Public only)</option>
+                            <option id="penta-ogc" value="PentaOGC">Guardian edition (Secured only)</option>
                         </Form.Control>
                     </Form.Group>
                     <Form.Group className="mt-2 mb-2" controlId="formBasicUrl">
@@ -307,6 +368,7 @@ const WorkspaceModal = () => {
                                         let username = tokenInfo.user.split('@')[0];
                                         let password = tokenInfo.password;
                                         let realm = tokenInfo.user.split('@')[1];
+                                        dispatch(triggerIsLoading(true));
                                         fetch(`http://${backend_service}/authService/gen_token`, {
                                             method: 'POST',
                                             headers: {
@@ -336,7 +398,8 @@ const WorkspaceModal = () => {
                                                         message: result.error,
                                                         visible: true
                                                     }));
-                                                }
+                                                };
+                                                dispatch(triggerIsLoading());
                                             })
                                             .catch(() => handleError())
                                     }
@@ -375,6 +438,8 @@ const WorkspaceModal = () => {
                                                 return <option id={`option${layer.Name._text}`} key={key} crs={layer.DefaultCRS._text.split('crs:')[1].replace('::', ':')} value={layer.Name._text} title={layer.Title._text} extent={layer['ows:WGS84BoundingBox']['ows:LowerCorner']._text.replace(',', ' ') + ' ' + layer['ows:WGS84BoundingBox']['ows:UpperCorner']._text.replace(',', ' ')}>{layer.Title._text}</option>;
                                             case 'EsriOGC':
                                                 return <option id={`option${layer['wfs:Name']._text}`} key={key} crs={layer['wfs:DefaultCRS']._text.split('crs:')[1].replace('::', ':')} value={layer['wfs:Name']._text} title={layer['wfs:Title']._text} extent={layer['ows:WGS84BoundingBox']['ows:LowerCorner']._text.replace(',', ' ') + ' ' + layer['ows:WGS84BoundingBox']['ows:UpperCorner']._text.replace(',', ' ')}>{layer['wfs:Title']._text}</option>;
+                                            case 'PentaOGC':
+                                                return <option id={`option${layer.Name._text}`} key={key} crs={layer.CRS[0]._text} value={layer.Name._text} title={layer.Title._text} extent={layer['EX_GeographicBoundingBox']['westBoundLongitude']._text + ' ' + layer['EX_GeographicBoundingBox']['southBoundLatitude']._text + ' ' + layer['EX_GeographicBoundingBox']['westBoundLongitude']._text + ' ' + layer['EX_GeographicBoundingBox']['northBoundLatitude']._text}>{layer.Title._text}</option>;
                                             default:
                                                 return null;
                                         }
@@ -386,8 +451,8 @@ const WorkspaceModal = () => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button id="fetchLayersButton" variant="primary" onClick={() => handleFetch(url)}>Fetch layers</Button>
-                <Button variant="success" onClick={() => handleAdd(url)}>Add layer</Button>
+                <Button id="fetchLayersButton" variant="primary" onClick={() => handleFetch()}>Fetch layers</Button>
+                <Button variant="success" onClick={() => handleAdd()}>Add layer</Button>
             </Modal.Footer>
         </Modal>
     );
