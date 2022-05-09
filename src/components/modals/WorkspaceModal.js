@@ -108,13 +108,16 @@ const WorkspaceModal = () => {
                 let fetchURL = `${url}&service=wfs&version=2.0.0&request=GetCapabilities`;
                 let requestParams = {};
                 if (serviceType === 'PentaOGC') {
-                    requestParams = {
-                        method: 'GET',
-                        headers: {
-                            'PentaOrgID': tokenInfo.user.split('@')[1],
-                            'PentaUserRole': selectedRole,
-                            'PentaSelectedLocale': 'en',
-                            'Authorization': 'Bearer ' + token
+                    if (token && tokenInfo.user) {
+                        requestParams = {
+                            method: 'GET',
+                            headers: {
+                                'PentaOrgID': tokenInfo.user.split('@')[1],
+                                'PentaUserRole': selectedRole,
+                                'PentaSelectedLocale': 'en',
+                                'Authorization': 'Bearer ' + token
+                            }
+
                         }
                     };
                 }
