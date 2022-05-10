@@ -105,9 +105,10 @@ const WorkspaceModal = () => {
         if (serviceType !== 'Selector') {
             if (url && url !== '') {
                 dispatch(triggerIsLoading(true));
-                let fetchURL = `${url}&service=wfs&version=2.0.0&request=GetCapabilities`;
+                let fetchURL;
                 let requestParams = {};
                 if (serviceType === 'PentaOGC') {
+                    fetchURL = `${url}&service=wfs&version=2.0.0&request=GetCapabilities`;
                     if (token && tokenInfo.user) {
                         requestParams = {
                             method: 'GET',
@@ -120,6 +121,9 @@ const WorkspaceModal = () => {
 
                         }
                     };
+                }
+                else {
+                    fetchURL = `${url}?srvice=wfs&version=2.0.0&request=GetCapabilities`;
                 }
                 fetch(fetchURL, requestParams)
                     .then(response => response.text())
