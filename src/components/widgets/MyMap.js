@@ -318,10 +318,11 @@ const MyMap = () => {
 				const queriableLayers = historicalData.filter(item => item.geometry !== null && item.visible === true);
 				const data = {
 					layers: queriableLayers,
-					clickedPoint
+					clickedPoint,
+					type: 'identify'
 				}
 				if (queriableLayers.length > 0) {
-					fetch(`http://${backend_service}/queryService/identify`, {
+					fetch(`http://${backend_service}/queryService/spatial_query`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -357,10 +358,11 @@ const MyMap = () => {
 				const queriableLayers = historicalData.filter(item => item.geometry !== null && item.visible === true);
 				const data = {
 					layers: queriableLayers,
-					drawnPolygon
+					drawnPolygon,
+					type: 'spatial_search'
 				}
 				if (queriableLayers.length > 0) {
-					fetch(`http://${backend_service}/queryService/ssearch`, {
+					fetch(`http://${backend_service}/queryService/spatial_query`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'

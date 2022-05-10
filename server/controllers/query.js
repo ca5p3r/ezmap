@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import { makeBuffer, transform } from '../helpers/index.js';
 import convert from 'xml-js';
-
 const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }
@@ -33,11 +32,18 @@ const handleProvider = provider => {
     }
     return [version, format];
 };
-export const identify = (req, res) => {
+export const ssearch = (req, res) => {
     const layers = req.body.layers;
     const promises = [];
+    const search_type = req.body.type;
     layers.forEach(layer => {
-        const buffer = makeBuffer(layer.type, req.body.clickedPoint);
+        let buffer;
+        if (search_type === 'identify') {
+            buffer = makeBuffer(layer.type, req.body.clickedPoint);
+        }
+        else {
+            buffer = req.body.drawnPolygon;
+        }
         const coords = buffer.map((point) =>
             transform("EPSG:3857", layer.crs, point).join(" ")
         );
@@ -64,38 +70,7 @@ export const identify = (req, res) => {
             return res.send({ error: err.message, success: false })
         });
 };
-export const spatial_search = (req, res) => {
-    const layers = req.body.layers;
-    const promises = [];
-    layers.forEach(layer => {
-        const buffer = req.body.drawnPolygon;
-        const coords = buffer.map((point) =>
-            transform("EPSG:3857", layer.crs, point).join(" ")
-        );
-        const queryParam = coords.join(" ");
-        const version = handleProvider(layer.provider)[0];
-        const format = handleProvider(layer.provider)[1];
-        const identifyBody = `<wfs:GetFeature service="WFS" outputFormat="${format}" version="${version}" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
-        promises.push(fetch(layer.url, { ...requestOptions, body: identifyBody })
-            .then(response => response.text())
-            .then(text => handleTextResponse(text, layer.provider))
-            .then(obj => {
-                return { id: layer.id, provider: layer.provider, name: layer.name, data: obj, error: null, success: true }
-            })
-            .catch(err => {
-                return { id: layer.id, provider: layer.provider, name: layer.name, data: null, error: err, success: false }
-            })
-        );
-    });
-    Promise.all(promises)
-        .then(response => {
-            return res.send({ error: false, success: true, response })
-        })
-        .catch(err => {
-            return res.send({ error: err.message, success: false })
-        });
-};
-export const simple_search = (req, res) => {
+export const tsearch = (req, res) => {
     const body = req.body;
     const version = handleProvider(body.provider)[0];
     const format = handleProvider(body.provider)[1];

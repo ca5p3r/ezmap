@@ -127,7 +127,7 @@ const SimpleSearch = () => {
                 queryParam: value
             };
             dispatch(triggerIsLoading(true));
-            fetch(`http://${backend_service}/queryService/tsearch`, {
+            fetch(`http://${backend_service}/queryService/tabular_query`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
