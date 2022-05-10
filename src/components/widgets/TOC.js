@@ -19,7 +19,6 @@ import {
     setLocalizedLayer,
     triggerIsLoading
 } from "../../actions";
-import convert from 'xml-js';
 import { svg } from "../assets";
 const TOC = () => {
     const dispatch = useDispatch();
@@ -100,6 +99,7 @@ const TOC = () => {
         const targetIndex = historicalData.findIndex(item => item.id === title.split('&')[1]);
         switch (layer.provider) {
             case 'GeoServer':
+            case 'PentaOGC':
                 fields = obj.featureTypes[0].properties;
                 formattedFields = fields.map(field => {
                     return { name: field.name, type: field.localType, local: '' }
@@ -128,14 +128,37 @@ const TOC = () => {
     const handleRefresh = (title) => {
         dispatch(triggerIsLoading(true));
         const layer = historicalData.filter(item => item.id === title.split('&')[1])[0];
-        fetch(`${layer.url}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layer.name}`)
-            .then(response => response.text())
-            .then(text => {
+        let addURL;
+        let requestParams;
+        if (layer.provider === 'PentaOGC') {
+            addURL = layer.url.split('?')[0].slice(0, -15) + `describeFeatureType?typeName=${layer.name}`;
+        }
+        else if (layer.provider === 'EsriOGC' || layer.provider === 'GeoServer') {
+            addURL = layer.url + `?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layer.name}`;
+        };
+        if (layer.provider === 'PentaOGC') {
+            requestParams = {
+                method: 'GET',
+                headers: {
+                    'PentaOrgID': layer.tokenInfo.user.split('@')[1],
+                    'PentaUserRole': layer.selectedRole,
+                    'PentaSelectedLocale': 'en',
+                    'Authorization': 'Bearer ' + layer.token
+                }
+            };
+        }
+        else {
+            requestParams = {}
+        };
+        fetch(addURL, requestParams)
+            .then(response => response.json())
+            .then(obj => {
                 switch (layer.provider) {
                     case 'GeoServer':
-                        return JSON.parse(text);
+                    case 'PentaOGC':
+                        return obj;
                     case 'EsriOGC':
-                        return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
+                        return obj['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
                     default:
                         return null;
                 }

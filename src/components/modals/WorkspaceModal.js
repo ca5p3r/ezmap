@@ -107,8 +107,9 @@ const WorkspaceModal = () => {
                 dispatch(triggerIsLoading(true));
                 let fetchURL;
                 let requestParams = {};
+                let separator;
                 if (serviceType === 'PentaOGC') {
-                    fetchURL = `${url}&service=wfs&version=2.0.0&request=GetCapabilities`;
+                    separator = '&';
                     if (token && tokenInfo.user) {
                         requestParams = {
                             method: 'GET',
@@ -123,8 +124,9 @@ const WorkspaceModal = () => {
                     };
                 }
                 else {
-                    fetchURL = `${url}?srvice=wfs&version=2.0.0&request=GetCapabilities`;
+                    separator = '?';
                 }
+                fetchURL = `${url}${separator}srvice=wfs&version=2.0.0&request=GetCapabilities`;
                 fetch(fetchURL, requestParams)
                     .then(response => response.text())
                     .then(text => handleTextResponse(text, serviceType))
@@ -158,17 +160,21 @@ const WorkspaceModal = () => {
             const extentGeographic = selectedElement.getAttribute('extent');
             let wmsURL;
             let wfsURL;
+            let addURL;
             if (selectedService === 'PentaOGC') {
                 wmsURL = url.split('?')[0].slice(0, -12);
                 wfsURL = url.split('?')[0].slice(0, -15) + 'wfs';
+                addURL = url.split('?')[0].slice(0, -15) + `describeFeatureType?typeName=${layerName}`;
             }
             else if (selectedService === 'GeoServer') {
                 wmsURL = url.slice(0, -3) + 'wms';
                 wfsURL = url;
+                addURL = url + `?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`;
             }
             else if (selectedService === 'EsriOGC') {
                 wmsURL = url.slice(0, -9) + 'WMSServer';
                 wfsURL = url;
+                addURL = url + `?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`;
             }
             if (layerName && layerName !== 'Selector') {
                 dispatch(triggerIsLoading(true));
@@ -189,21 +195,21 @@ const WorkspaceModal = () => {
                 else {
                     requestParams = {}
                 }
-                fetch(`${wfsURL}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layerName}`, requestParams)
-                    .then(response => response.text())
-                    .then(text => {
+                fetch(addURL, requestParams)
+                    .then(response => response.json())
+                    .then(obj => {
                         switch (selectedService) {
                             case 'GeoServer':
-                                return JSON.parse(text);
-                            case 'EsriOGC':
-                                return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
                             case 'PentaOGC':
-                                return JSON.parse(text);
+                                return obj;
+                            case 'EsriOGC':
+                                return obj['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
                             default:
                                 return null;
                         }
                     })
                     .then(obj => {
+                        console.log(obj);
                         let fields;
                         let formattedFields;
                         let geomField;
@@ -211,7 +217,7 @@ const WorkspaceModal = () => {
                         let geomType;
                         switch (selectedService) {
                             case 'GeoServer':
-                                wmsURL = url.slice(0, -3) + 'wms';
+                            case 'PentaOGC':
                                 fields = obj.featureTypes[0].properties;
                                 formattedFields = fields.map(field => {
                                     return { name: field.name, type: field.localType, local: '' }
@@ -221,7 +227,6 @@ const WorkspaceModal = () => {
                                 geomType = geomField.localType;
                                 break;
                             case 'EsriOGC':
-                                wmsURL = url.slice(0, -9) + 'WMSServer';
                                 fields = obj['xsd:sequence']['xsd:element'];
                                 formattedFields = fields.map(field => {
                                     return { name: field._attributes.name, type: field._attributes.type, local: '' }
@@ -229,9 +234,6 @@ const WorkspaceModal = () => {
                                 geomField = fields.filter(field => geometries.includes(field._attributes.type))[0];
                                 geomName = geomField._attributes.name;
                                 geomType = geomField._attributes.type;
-                                break;
-                            case 'PentaOGC':
-                                wmsURL = url;
                                 break;
                             default:
                                 break;
