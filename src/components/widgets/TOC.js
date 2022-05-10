@@ -19,6 +19,7 @@ import {
     setLocalizedLayer,
     triggerIsLoading
 } from "../../actions";
+import convert from 'xml-js';
 import { svg } from "../assets";
 const TOC = () => {
     const dispatch = useDispatch();
@@ -150,15 +151,14 @@ const TOC = () => {
         else {
             requestParams = {}
         };
-        fetch(addURL, requestParams)
-            .then(response => response.json())
-            .then(obj => {
+        fetch(addURL, requestParams).then(response => response.text())
+            .then(text => {
                 switch (layer.provider) {
                     case 'GeoServer':
                     case 'PentaOGC':
-                        return obj;
+                        return JSON.parse(text);
                     case 'EsriOGC':
-                        return obj['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
+                        return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
                     default:
                         return null;
                 }

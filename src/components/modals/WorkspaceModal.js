@@ -196,7 +196,18 @@ const WorkspaceModal = () => {
                     requestParams = {}
                 }
                 fetch(addURL, requestParams)
-                    .then(response => response.json())
+                    .then(response => response.text())
+                    .then(text => {
+                        switch (selectedService) {
+                            case 'GeoServer':
+                            case 'PentaOGC':
+                                return JSON.parse(text);
+                            case 'EsriOGC':
+                                return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
+                            default:
+                                return null;
+                        }
+                    })
                     .then(obj => {
                         switch (selectedService) {
                             case 'GeoServer':
