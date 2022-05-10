@@ -48,8 +48,7 @@ export const ssearch = (req, res) => {
             transform("EPSG:3857", layer.crs, point).join(" ")
         );
         const queryParam = coords.join(" ");
-        const version = handleProvider(layer.provider)[0];
-        const format = handleProvider(layer.provider)[1];
+        const [version, format] = handleProvider(layer.provider);
         const identifyBody = `<wfs:GetFeature service="WFS" outputFormat="${format}" version="${version}" xmlns:topp="http://www.openplans.org/topp" xmlns:wfs="http://www.opengis.net/wfs" xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"><wfs:Query typeName="${layer.name}"><Filter><Intersects><PropertyName>${layer.geometry}</PropertyName><gml:Polygon srsName="${layer.crs}"><gml:exterior><gml:LinearRing><gml:posList>${queryParam}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></Intersects></Filter></wfs:Query></wfs:GetFeature>`;
         promises.push(fetch(layer.url, { ...requestOptions, body: identifyBody })
             .then(response => response.text())
@@ -72,8 +71,7 @@ export const ssearch = (req, res) => {
 };
 export const tsearch = (req, res) => {
     const body = req.body;
-    const version = handleProvider(body.provider)[0];
-    const format = handleProvider(body.provider)[1];
+    const [version, format] = handleProvider(body.provider);
     const searchBody = `<wfs:GetFeature service="WFS" version="${version}" outputFormat="${format}" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd"><wfs:Query typeName="${body.layer}"><ogc:Filter><ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="." escapeChar="!"><ogc:PropertyName>${body.field}</ogc:PropertyName><ogc:Literal>*${body.queryParam}*</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></wfs:Query></wfs:GetFeature>`
     fetch(body.url, { ...requestOptions, body: searchBody })
         .then(response => response.text())
