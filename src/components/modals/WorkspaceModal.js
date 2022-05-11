@@ -126,7 +126,7 @@ const WorkspaceModal = () => {
                 else {
                     separator = '?';
                 }
-                fetchURL = `${url}${separator}srvice=wfs&version=2.0.0&request=GetCapabilities`;
+                fetchURL = `${url}${separator}service=wfs&version=2.0.0&request=GetCapabilities`;
                 fetch(fetchURL, requestParams)
                     .then(response => response.text())
                     .then(text => handleTextResponse(text, serviceType))
