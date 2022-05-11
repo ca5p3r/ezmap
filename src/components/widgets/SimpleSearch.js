@@ -24,7 +24,7 @@ const SimpleSearch = () => {
     const historicalData = useSelector(state => state.toc.historicalData);
     const queriableLayers = historicalData.filter(item => item.geometry !== null);
     const layers = queriableLayers.map(item => (
-        <option id={`option+${item.name}`} layerid={item.id} secured={item.secured ? 1 : 0} provider={item.provider} url={item.wfsURL} role={item.selectedRole} token={item.token} realm={item.tokenInfo.user.split('@')[1]} key={item.name} value={item.name}>
+        <option id={`option+${item.name}`} layerid={item.id} secured={item.secured ? 1 : 0} provider={item.provider} url={item.wfsURL} role={item.selectedRole} token={item.token} realm={item.secured ? item.tokenInfo.user.split('@')[1] : ''} key={item.name} value={item.name}>
             {item.title}
         </option>));
     const fields = queriableLayers.find(item => item.name === layer)?.properties.map(property => {

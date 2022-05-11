@@ -1,10 +1,6 @@
 import fetch from 'node-fetch';
 import { makeBuffer, transform } from '../helpers/index.js';
 import convert from 'xml-js';
-let requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/xml' }
-};
 const handleTextResponse = (text, provider) => {
     switch (provider) {
         case 'GeoServer':
@@ -45,6 +41,7 @@ export const ssearch = (req, res) => {
         let token;
         let realm;
         let locale;
+        let requestOptions = { method: 'POST' };
         let headers;
         if (secured) {
             role = layer.selectedRole;
@@ -59,7 +56,7 @@ export const ssearch = (req, res) => {
                 'Content-Type': 'application/xml'
             };
             requestOptions = { ...requestOptions, headers };
-        }
+        };
         if (search_type === 'identify') {
             buffer = makeBuffer(layer.type, req.body.clickedPoint);
         }
@@ -100,6 +97,7 @@ export const tsearch = (req, res) => {
     let token;
     let realm;
     let locale;
+    let requestOptions = { method: 'POST' };
     let headers;
     if (secured) {
         role = body.role;
@@ -115,9 +113,6 @@ export const tsearch = (req, res) => {
         };
         requestOptions = { ...requestOptions, headers };
     };
-    console.log(body);
-    console.log('URL: ', body.url);
-    console.log('Options: ', { ...requestOptions, body: searchBody });
     fetch(body.url, { ...requestOptions, body: searchBody })
         .then(response => response.text())
         .then(text => handleTextResponse(text, body.provider))
