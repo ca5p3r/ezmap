@@ -209,18 +209,6 @@ const WorkspaceModal = () => {
                         }
                     })
                     .then(obj => {
-                        switch (selectedService) {
-                            case 'GeoServer':
-                            case 'PentaOGC':
-                                return obj;
-                            case 'EsriOGC':
-                                return obj['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
-                            default:
-                                return null;
-                        }
-                    })
-                    .then(obj => {
-                        console.log(obj);
                         let fields;
                         let formattedFields;
                         let geomField;
