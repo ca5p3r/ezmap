@@ -1,30 +1,21 @@
 import { Table, Alert, Offcanvas } from "react-bootstrap";
 import {
-    triggerIdentifyVisibility
+    triggerSpatialSearchVisibility
 } from "../../actions";
 import {
     useSelector,
     useDispatch
 } from "react-redux";
-const Identify = () => {
+import { renderHeader } from "../../utils";
+const SpatialSearch = () => {
     const dispatch = useDispatch();
-    const results = useSelector(state => state.identify.result);
-    const show = useSelector(state => state.identify.visibility);
+    const results = useSelector(state => state.spatialSearch.result);
+    const show = useSelector(state => state.spatialSearch.visibility);
     const layers = useSelector(state => state.toc.historicalData);
-    const renderHeader = (header, provider) => {
-        switch (provider) {
-            case 'EsriOGC':
-                return header._attributes.fid.split('.')[1];
-            case 'GeoServer':
-                return header.id.split('.')[1];
-            default:
-                return;
-        }
-    };
     return (
-        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerIdentifyVisibility())}>
+        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerSpatialSearchVisibility())}>
             <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Identify result</Offcanvas.Title>
+                <Offcanvas.Title>Spatial search result</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
                 {results.length > 0 &&
@@ -46,11 +37,12 @@ const Identify = () => {
                                             })
                                             break;
                                         case 'GeoServer':
+                                        case 'PentaOGC':
                                             properties = result.feature.properties
                                             break;
                                         default:
                                             break;
-                                    };
+                                    }
                                     const resProps = layers.filter(layer => layer.id === result.id)[0].properties;
                                     return (
                                         <div key={key}>
@@ -59,11 +51,11 @@ const Identify = () => {
                                             </Alert>
                                             <Table striped bordered hover size="sm">
                                                 <tbody>
-                                                    {resProps.map((item, key) => {
+                                                    {resProps.map((item, resultKey) => {
                                                         const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
                                                         if (!geometries.includes(item.type)) {
                                                             return (
-                                                                <tr key={key}>
+                                                                <tr key={resultKey}>
                                                                     <td>{item.local ? item.local : item.name}</td>
                                                                     <td>{properties[item.name]}</td>
                                                                 </tr>
@@ -71,7 +63,7 @@ const Identify = () => {
                                                         }
                                                         else {
                                                             return null;
-                                                        };
+                                                        }
                                                     })}
                                                 </tbody>
                                             </Table>
@@ -86,4 +78,4 @@ const Identify = () => {
         </Offcanvas>
     );
 };
-export default Identify;
+export default SpatialSearch;

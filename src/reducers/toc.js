@@ -6,7 +6,7 @@ const myState = {
 };
 export const tocReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     switch (action.type) {
         case 'setActiveLayers':
@@ -38,5 +38,5 @@ export const tocReducer = (
             };
         default:
             return state;
-    };
+    }
 };

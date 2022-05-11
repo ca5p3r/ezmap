@@ -25,7 +25,7 @@ Feel free to clone the project and use it on your own or extend it to fit your n
   * Layer refresh
   * GoTo layer
   * Layer removal
-* Workspace manager, to fetch layers from remote spatial server (Currently only supports GeoServer)
+* Workspace manager, to fetch layers from remote spatial server (Currently only supports OGC)
 * Bookmarks manager
 * Identify, to get full information about clicked feature on the map
 * Simple search, to look a feature up using simple input
@@ -47,7 +47,7 @@ In the project directory, you can run:
 ### `node server/app.js`
 
 Runs the backend server in development mode.\
-Open [http://localhost:9000](http://localhost:9000) to view it in the browser.\
+Open [http://localhost:9090](http://localhost:9090) to view it in the browser.\
 Use Postman to easily post requests.
 
 ### `npm start`

@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { query } from '../controllers/query.js';
+import { ssearch, tsearch } from '../controllers/query.js';
 
 export const queryRouters = Router();
-queryRouters.post('/query', query);
+queryRouters.post('/spatial_query', ssearch);
+queryRouters.post('/tabular_query', tsearch);

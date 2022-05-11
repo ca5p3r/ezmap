@@ -4,16 +4,17 @@ const myState = {
 };
 export const bookmarksReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     const list = state.list;
     switch (action.type) {
         case 'addBookmark':
-            const newList = Array.from(list);
-            newList.push(action.payload);
+            // const newList = Array.from(list);
+            // const newList = [...list]
+            // newList.push(action.payload);
             return {
                 ...state,
-                list: newList
+                list: [...list, action.payload]
             };
         case 'removeBookmark':
             const updatedList = list.filter(bookmark => bookmark.title !== action.payload);
@@ -38,5 +39,5 @@ export const bookmarksReducer = (
             };
         default:
             return state;
-    };
+    }
 };

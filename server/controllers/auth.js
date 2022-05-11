@@ -1,9 +1,12 @@
 import saltedMd5 from 'salted-md5';
 import { pool } from '../helpers/index.js';
-import { config } from '../settings/index.js';
-
-const salt = 'f387d4f7781b57ac232c227fcef831d0';
-
+import { config, salt, client_secret, keycloakurl } from '../settings/index.js';
+import qs from 'qs';
+import https from 'https';
+import axios from 'axios';
+const httpsAgent = new https.Agent({
+	rejectUnauthorized: false,
+});
 export const create_user = (req, res) => {
 	if (req.body.username && req.body.password) {
 		const hashed = saltedMd5(req.body.password, salt);
@@ -21,11 +24,11 @@ export const create_user = (req, res) => {
 			}
 		})
 			().catch(err => {
-				switch (err.code) {
-					case '23505':
-						return res.send({ error: 'User already exists', success: false });
-					default:
-						return res.send({ error: err.detail, success: false });
+				if (err.code === '23505') {
+					return res.send({ error: 'User already exists', success: false });
+				}
+				else {
+					return res.send({ error: err.detail, success: false });
 				}
 			});
 	}
@@ -48,7 +51,7 @@ export const verify_login = (req, res) => {
 					}
 					else {
 						return res.send({ error: 'Wrong credentials!', success: false });
-					};
+					}
 				}
 				else {
 					return res.send({ error: 'User not found!', success: false });
@@ -58,13 +61,37 @@ export const verify_login = (req, res) => {
 			}
 		})
 			().catch(err => {
-				switch (err.code) {
-					default:
-						return res.send({ error: err.detail, success: false });
-				}
+				return res.send({ error: err.detail, success: false });
 			});
 	}
 	else {
 		return res.send({ error: 'Missing informarion!', success: false });
+	}
+};
+export const gen_kc_token = (req, res) => {
+	if (req.body.username && req.body.password && req.body.realm) {
+		let searchParams = qs.stringify({
+			'client_id': 'MnA_GE',
+			'grant_type': 'password',
+			'client_secret': client_secret,
+			'scope': 'openid',
+			'username': req.body.username,
+			'password': req.body.password
+		});
+		let config = {
+			method: 'post',
+			url: `${keycloakurl}/realms/${req.body.realm}/protocol/openid-connect/token`,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			httpsAgent: httpsAgent,
+			data: searchParams
+		};
+		axios(config)
+			.then(response => res.send({ code: 200, token: response.data.access_token }))
+			.catch(error => res.send({ error: error.response.data.error, code: error.response.status }));
+	}
+	else {
+		return res.send({ error: 'Bad request', code: 400 });
 	}
 };

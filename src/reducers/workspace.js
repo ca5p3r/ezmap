@@ -6,7 +6,7 @@ const myState = {
 
 export const workspaceReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     switch (action.type) {
         case 'triggerShowWorkspace':
@@ -36,5 +36,5 @@ export const workspaceReducer = (
             };
         default:
             return state;
-    };
+    }
 };

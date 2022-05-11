@@ -26,3 +26,14 @@ yarn-error.log*
 
 /server/node_modules
 /server/package-lock.json
+
+/.scannerwork
+sonar-project.properties
+
+/server/settings
+ezmap_comments.txt
+Git-Cheatsheet.pdf
+GitFlow.svg
+GraphQL_Image1.png
+techs.txt
+urls.txt

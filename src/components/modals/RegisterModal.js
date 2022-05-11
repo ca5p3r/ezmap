@@ -9,16 +9,46 @@ import {
 } from 'react-redux';
 import {
     triggerShowRegister,
-    triggerToast
+    triggerToast,
+    triggerIsLoading
 } from '../../actions';
+import { constants } from '../../utils';
+const backend_service = constants.backend_service;
 const RegisterModal = () => {
     const dispatch = useDispatch();
     const showRegister = useSelector(state => state.register.visibility);
+    const handleError = error => {
+        dispatch(triggerToast({
+            title: 'Danger',
+            message: error.toString(),
+            visible: true
+        }));
+        dispatch(triggerIsLoading());
+    };
+    const handleRegisterResponse = obj => {
+        if (!obj.error) {
+            dispatch(triggerShowRegister());
+            dispatch(triggerToast({
+                title: 'Success',
+                message: 'User has been created!',
+                visible: true
+            }));
+        }
+        else {
+            dispatch(triggerToast({
+                title: 'Warning',
+                message: obj.error,
+                visible: true
+            }));
+        }
+        dispatch(triggerIsLoading());
+    }
     const handleRegister = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
             if (password.length >= 8 && password.length <= 20) {
+                dispatch(triggerIsLoading(true));
                 const data = { username, password };
-                fetch("http://localhost:9000/authService/register", {
+                fetch(`http://${backend_service}/authService/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -26,30 +56,8 @@ const RegisterModal = () => {
                     body: JSON.stringify(data)
                 })
                     .then(response => response.json())
-                    .then(obj => {
-                        if (!obj.error) {
-                            dispatch(triggerShowRegister());
-                            dispatch(triggerToast({
-                                title: 'Success',
-                                message: 'User has been created!',
-                                visible: true
-                            }));
-                        }
-                        else {
-                            dispatch(triggerToast({
-                                title: 'Warning',
-                                message: obj.error,
-                                visible: true
-                            }));
-                        };
-                    })
-                    .catch(err => {
-                        dispatch(triggerToast({
-                            title: 'Danger',
-                            message: err.toString(),
-                            visible: true
-                        }));
-                    });
+                    .then(obj => handleRegisterResponse(obj))
+                    .catch(err => handleError(err))
             }
             else {
                 dispatch(triggerToast({
@@ -82,7 +90,7 @@ const RegisterModal = () => {
                     <Form.Group className="mb-3" controlId="registerPassword">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" onKeyDown={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 e.preventDefault();
                                 document.getElementById("registerButton").click();
                             }

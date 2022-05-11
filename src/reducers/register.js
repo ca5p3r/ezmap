@@ -3,15 +3,15 @@ const myState = {
 };
 export const registerReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
-    switch (action.type) {
-        case 'triggerShowRegister':
-            return {
-                ...state,
-                visibility: action.payload
-            };
-        default:
-            return state;
-    };
+    if (action.type === 'triggerShowRegister') {
+        return {
+            ...state,
+            visibility: action.payload
+        };
+    }
+    else {
+        return state;
+    }
 };

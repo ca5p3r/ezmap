@@ -4,7 +4,6 @@ import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { OSM, Vector as VectorSource } from "ol/source";
 import {
 	ZoomToExtent,
-	FullScreen,
 	OverviewMap,
 	ScaleLine,
 	defaults as defaultControls,
@@ -31,7 +30,9 @@ import {
 	triggerSpatialSearchVisibility
 } from "../../actions";
 import { useSelector, useDispatch } from "react-redux";
-import { setter } from "../../utils";
+import { setter, constants } from "../../utils";
+import { v4 as uuidv4 } from 'uuid';
+const backend_service = constants.backend_service;
 const MyMap = () => {
 	const dispatch = useDispatch();
 	const defaultExtent = useSelector(state => state.mapInfo.defaultExtent);
@@ -52,7 +53,6 @@ const MyMap = () => {
 				new ZoomToExtent({
 					extent: defaultExtent,
 				}),
-				new FullScreen(),
 				new OverviewMap({
 					layers: [
 						new TileLayer({
@@ -66,6 +66,117 @@ const MyMap = () => {
 			]),
 		})
 	);
+	const handleRemoveInteraction = () => {
+		olmap.getInteractions().forEach((interaction) => {
+			if (interaction instanceof Draw) {
+				olmap.removeInteraction(interaction);
+			}
+		});
+	};
+	const handleInitialResponse = response => {
+		if (!response.ok) {
+			dispatch(
+				triggerToast({
+					title: "Danger",
+					message: "Could not fetch data!",
+					visible: true,
+				})
+			);
+		}
+		return response.json();
+	};
+	const handleFetchError = error => {
+		if (error.name !== "AbortError") {
+			dispatch(
+				triggerToast({
+					title: "Danger",
+					message: error.toString(),
+					visible: true,
+				})
+			);
+		}
+		dispatch(triggerIsLoading());
+	};
+	const handleEsriData = item => {
+		let returnedData = [];
+		if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
+			if (item.data['wfs:FeatureCollection']['gml:featureMember'].length > 1) {
+				item.data['wfs:FeatureCollection']['gml:featureMember'].forEach(entry => {
+					returnedData.push(Object.entries(entry)[0]);
+				});
+			}
+			else {
+				returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
+			}
+		}
+		else {
+			dispatch(
+				triggerToast({
+					title: "Warning",
+					message: 'One or more layers did not return any data!',
+					visible: true,
+				})
+			);
+		}
+		return returnedData;
+	};
+	const handleSpatialQuery = (obj, operation) => {
+		const result = [];
+		obj.response.forEach(item => {
+			let returnedData = [];
+			switch (item.provider) {
+				case 'EsriOGC':
+					returnedData = handleEsriData(item);
+					break;
+				case 'GeoServer':
+				case 'PentaOGC':
+					returnedData = item.data.features && item.data.features;
+					break;
+				default:
+					break;
+			}
+			if (returnedData.length > 0) {
+				returnedData.forEach(feature => {
+					const uniqueID = uuidv4();
+					switch (item.provider) {
+						case 'EsriOGC':
+							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
+							break;
+						case 'GeoServer':
+						case 'PentaOGC':
+							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature })
+							break;
+						default:
+							break;
+					}
+				});
+			}
+			else {
+				dispatch(
+					triggerToast({
+						title: "Warning",
+						message: 'One or more layers did not return any data!',
+						visible: true,
+					})
+				);
+			}
+		});
+		if (result.length > 0) {
+			switch (operation) {
+				case 'identify':
+					dispatch(setResult(result));
+					dispatch(triggerIdentifyVisibility(true));
+					break;
+				case 'spatialSearch':
+					dispatch(setSpatialResult(result));
+					dispatch(triggerSpatialSearchVisibility(true));
+					break;
+				default:
+					break;
+			}
+		}
+		dispatch(triggerIsLoading());
+	};
 	useEffect(() => {
 		olmap.setTarget("map");
 		olmap.on("pointermove", (e) => {
@@ -87,12 +198,16 @@ const MyMap = () => {
 		historicalData.forEach((item) => {
 			const obj = setter(
 				item.provider,
-				item.url,
+				item.wmsURL,
 				item.id,
 				item.title,
 				item.name,
 				item.opacity,
-				item.visible
+				item.visible,
+				item.secured,
+				item.tokenInfo,
+				item.selectedRole,
+				item.token
 			);
 			olmap.addLayer(obj);
 		});
@@ -155,11 +270,7 @@ const MyMap = () => {
 			);
 			olmap.addInteraction(drawPoint);
 		} else {
-			olmap.getInteractions().forEach((interaction) => {
-				if (interaction instanceof Draw) {
-					olmap.removeInteraction(interaction);
-				}
-			});
+			handleRemoveInteraction();
 		}
 		// eslint-disable-next-line
 	}, [identifyState]);
@@ -192,12 +303,8 @@ const MyMap = () => {
 				dispatch(setDrawnPolygon(e.feature.getGeometry().getCoordinates()[0]));
 			});
 		} else {
-			olmap.getInteractions().forEach((interaction) => {
-				if (interaction instanceof Draw) {
-					olmap.removeInteraction(interaction);
-				}
-			});
-		};
+			handleRemoveInteraction();
+		}
 		return () => {
 			olmap.removeLayer(vector);
 			source.clear();
@@ -210,15 +317,14 @@ const MyMap = () => {
 			if (clickedPoint.length > 0) {
 				dispatch(triggerIsLoading(true));
 				dispatch(clearResult());
-				const queriableLayers = historicalData.filter(item => item.geometry !== null);
+				const queriableLayers = historicalData.filter(item => item.geometry !== null && item.visible === true);
 				const data = {
 					layers: queriableLayers,
 					clickedPoint,
-					type: 'query',
-					subtype: 'identify'
+					type: 'identify'
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9000/queryService/query", {
+					fetch(`http://${backend_service}/queryService/spatial_query`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -226,92 +332,9 @@ const MyMap = () => {
 						body: JSON.stringify(data),
 						signal: controller.signal
 					})
-						.then(res => {
-							if (!res.ok) {
-								dispatch(
-									triggerToast({
-										title: "Danger",
-										message: "Could not fetch data!",
-										visible: true,
-									})
-								);
-							}
-							return res.json();
-						})
-						.then(obj => {
-							const result = [];
-							obj.response.forEach(item => {
-								let returnedData = [];
-								switch (item.provider) {
-									case 'EsriOGC':
-										if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
-											if (item.data['wfs:FeatureCollection']['gml:featureMember'].length > 1) {
-												item.data['wfs:FeatureCollection']['gml:featureMember'].forEach(entry => {
-													returnedData.push(Object.entries(entry)[0]);
-												});
-											}
-											else {
-												returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
-											};
-										}
-										else {
-											dispatch(
-												triggerToast({
-													title: "Warning",
-													message: 'One or more layers did not return any data!',
-													visible: true,
-												})
-											);
-										};
-										break;
-									case 'GeoServer':
-										returnedData = item.data.features;
-										break;
-									default:
-										break;
-								}
-								if (returnedData.length > 0) {
-									returnedData.forEach(feature => {
-										switch (item.provider) {
-											case 'EsriOGC':
-												result.push({ provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
-												break;
-											case 'GeoServer':
-												result.push({ provider: item.provider, name: item.name, id: item.id, feature })
-												break;
-											default:
-												break;
-										}
-									});
-								}
-								else {
-									dispatch(
-										triggerToast({
-											title: "Warning",
-											message: 'One or more layers did not return any data!',
-											visible: true,
-										})
-									);
-								}
-							});
-							if (result.length > 0) {
-								dispatch(setResult(result));
-								dispatch(triggerIdentifyVisibility(true));
-							}
-							dispatch(triggerIsLoading());
-						})
-						.catch((error) => {
-							if (error.name !== "AbortError") {
-								dispatch(
-									triggerToast({
-										title: "Danger",
-										message: error.toString(),
-										visible: true,
-									})
-								);
-							}
-							dispatch(triggerIsLoading());
-						});
+						.then(res => handleInitialResponse(res))
+						.then(obj => handleSpatialQuery(obj, 'identify'))
+						.catch(error => handleFetchError(error))
 				} else {
 					dispatch(
 						triggerToast({
@@ -323,9 +346,8 @@ const MyMap = () => {
 					dispatch(triggerIsLoading());
 				}
 			}
-		};
+		}
 		return () => {
-			dispatch(triggerIsLoading());
 			controller.abort()
 		};
 		// eslint-disable-next-line
@@ -335,15 +357,14 @@ const MyMap = () => {
 		if (spatialSearchState) {
 			if (drawnPolygon.length > 3) {
 				dispatch(triggerIsLoading(true));
-				const queriableLayers = historicalData.filter(item => item.geometry !== null);
+				const queriableLayers = historicalData.filter(item => item.geometry !== null && item.visible === true);
 				const data = {
 					layers: queriableLayers,
 					drawnPolygon,
-					type: 'query',
-					subtype: 'spatialSearch'
+					type: 'spatial_search'
 				}
 				if (queriableLayers.length > 0) {
-					fetch("http://localhost:9000/queryService/query", {
+					fetch(`http://${backend_service}/queryService/spatial_query`, {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
@@ -351,92 +372,9 @@ const MyMap = () => {
 						body: JSON.stringify(data),
 						signal: controller.signal
 					})
-						.then(res => {
-							if (!res.ok) {
-								dispatch(
-									triggerToast({
-										title: "Danger",
-										message: "Could not fetch data!",
-										visible: true,
-									})
-								);
-							}
-							return res.json();
-						})
-						.then(obj => {
-							const result = [];
-							obj.response.forEach(item => {
-								let returnedData = [];
-								switch (item.provider) {
-									case 'EsriOGC':
-										if (item.data['wfs:FeatureCollection']['gml:featureMember']) {
-											if (item.data['wfs:FeatureCollection']['gml:featureMember'].length > 1) {
-												item.data['wfs:FeatureCollection']['gml:featureMember'].forEach(entry => {
-													returnedData.push(Object.entries(entry)[0]);
-												});
-											}
-											else {
-												returnedData = Object.entries(item.data['wfs:FeatureCollection']['gml:featureMember']);
-											};
-										}
-										else {
-											dispatch(
-												triggerToast({
-													title: "Warning",
-													message: 'One or more layers did not return any data!',
-													visible: true,
-												})
-											);
-										};
-										break;
-									case 'GeoServer':
-										returnedData = item.data.features;
-										break;
-									default:
-										break;
-								}
-								if (returnedData.length > 0) {
-									returnedData.forEach(feature => {
-										switch (item.provider) {
-											case 'EsriOGC':
-												result.push({ provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
-												break;
-											case 'GeoServer':
-												result.push({ provider: item.provider, name: item.name, id: item.id, feature })
-												break;
-											default:
-												break;
-										}
-									});
-								}
-								else {
-									dispatch(
-										triggerToast({
-											title: "Warning",
-											message: 'One or more layers did not return any data!',
-											visible: true,
-										})
-									);
-								}
-							});
-							if (result.length > 0) {
-								dispatch(setSpatialResult(result));
-								dispatch(triggerSpatialSearchVisibility(true));
-							};
-							dispatch(triggerIsLoading());
-						})
-						.catch((error) => {
-							if (error.name !== "AbortError") {
-								dispatch(
-									triggerToast({
-										title: "Danger",
-										message: error.toString(),
-										visible: true,
-									})
-								);
-							}
-							dispatch(triggerIsLoading());
-						});
+						.then(res => handleInitialResponse(res))
+						.then(obj => handleSpatialQuery(obj, 'spatialSearch'))
+						.catch(error => handleFetchError(error))
 				} else {
 					dispatch(
 						triggerToast({
@@ -448,9 +386,8 @@ const MyMap = () => {
 					dispatch(triggerIsLoading());
 				}
 			}
-		};
+		}
 		return () => {
-			dispatch(triggerIsLoading());
 			controller.abort()
 		};
 		// eslint-disable-next-line

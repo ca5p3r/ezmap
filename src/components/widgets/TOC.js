@@ -39,12 +39,18 @@ const TOC = () => {
                 layer.values_.visible = !layer.values_.visible
             }
         });
-        historicalData.forEach(layer => {
-            if (layer.id === title.split('&')[1]) {
-                layer.visible = !layer.visible
-            }
-        });
-        dispatch(setHistoricalLayers(historicalData));
+        dispatch(setHistoricalLayers(historicalData.map(layer =>
+            layer.id === title.split('&')[1] ? {
+                ...layer,
+                visible: !layer.visible
+            } : layer
+        )))
+        // historicalData.forEach(layer => {
+        //     if (layer.id === title.split('&')[1]) {
+        //         layer.visible = !layer.visible
+        //     }
+        // });
+        // dispatch(setHistoricalLayers(historicalData));
         dispatch(setActiveLayers(null));
         dispatch(setActiveLayers(activeLayers));
         dispatch(triggerTOCChange(true));
@@ -80,14 +86,76 @@ const TOC = () => {
         dispatch(triggerShowTOC());
         dispatch(setLocalizedLayer(title.split('&')[1]));
     };
+    const handleError = err => {
+        dispatch(triggerToast({
+            title: 'Danger',
+            message: err.message,
+            visible: true
+        }));
+        dispatch(triggerIsLoading());
+    };
+    const handleObjectReponse = (obj, title, layer) => {
+        let fields;
+        let formattedFields;
+        const targetIndex = historicalData.findIndex(item => item.id === title.split('&')[1]);
+        switch (layer.provider) {
+            case 'GeoServer':
+            case 'PentaOGC':
+                fields = obj.featureTypes[0].properties;
+                formattedFields = fields.map(field => {
+                    return { name: field.name, type: field.localType, local: '' }
+                });
+                break;
+            case 'EsriOGC':
+                fields = obj['xsd:sequence']['xsd:element'];
+                formattedFields = fields.map(field => {
+                    return { name: field._attributes.name, type: field._attributes.type, local: '' }
+                });
+                break;
+            default:
+                return null;
+        }
+        layer.properties = formattedFields;
+        historicalData.splice(targetIndex, 1);
+        historicalData.splice(targetIndex, 0, layer);
+        dispatch(setHistoricalLayers(historicalData));
+        dispatch(triggerToast({
+            title: 'Success',
+            message: 'Layer has been refreshed!',
+            visible: true
+        }));
+        dispatch(triggerIsLoading());
+    };
     const handleRefresh = (title) => {
         dispatch(triggerIsLoading(true));
         const layer = historicalData.filter(item => item.id === title.split('&')[1])[0];
-        fetch(`${layer.url}?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layer.name}`)
-            .then(response => response.text())
+        let addURL;
+        let requestParams;
+        if (layer.provider === 'PentaOGC') {
+            addURL = layer.url.split('?')[0].slice(0, -15) + `describeFeatureType?typeName=${layer.name}`;
+        }
+        else if (layer.provider === 'EsriOGC' || layer.provider === 'GeoServer') {
+            addURL = layer.url + `?service=wfs&request=DescribeFeatureType&outputFormat=application/json&typeName=${layer.name}`;
+        };
+        if (layer.provider === 'PentaOGC') {
+            requestParams = {
+                method: 'GET',
+                headers: {
+                    'PentaOrgID': layer.tokenInfo.user.split('@')[1],
+                    'PentaUserRole': layer.selectedRole,
+                    'PentaSelectedLocale': 'en',
+                    'Authorization': 'Bearer ' + layer.token
+                }
+            };
+        }
+        else {
+            requestParams = {}
+        };
+        fetch(addURL, requestParams).then(response => response.text())
             .then(text => {
                 switch (layer.provider) {
                     case 'GeoServer':
+                    case 'PentaOGC':
                         return JSON.parse(text);
                     case 'EsriOGC':
                         return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
@@ -95,46 +163,8 @@ const TOC = () => {
                         return null;
                 }
             })
-            .then(obj => {
-                let fields;
-                let formattedFields;
-                const targetIndex = historicalData.findIndex(layer => layer.id === title.split('&')[1]);
-                switch (layer.provider) {
-                    case 'GeoServer':
-                        fields = obj.featureTypes[0].properties;
-                        formattedFields = fields.map(field => {
-                            const obj = { name: field.name, type: field.localType, local: '' }
-                            return obj
-                        });
-                        break;
-                    case 'EsriOGC':
-                        fields = obj['xsd:sequence']['xsd:element'];
-                        formattedFields = fields.map(field => {
-                            const obj = { name: field._attributes.name, type: field._attributes.type, local: '' }
-                            return obj
-                        });
-                        break;
-                    default:
-                        return null;
-                }
-                layer.properties = formattedFields;
-                historicalData.splice(targetIndex, 1);
-                historicalData.splice(targetIndex, 0, layer);
-                dispatch(setHistoricalLayers(historicalData));
-                dispatch(triggerToast({
-                    title: 'Success',
-                    message: 'Layer has been refreshed!',
-                    visible: true
-                }));
-                dispatch(triggerIsLoading());
-            })
-            .catch(err => {
-                dispatch(triggerToast({
-                    title: 'Danger',
-                    message: err.message,
-                    visible: true
-                }));
-            });
+            .then(obj => handleObjectReponse(obj, title, layer))
+            .catch(err => handleError(err))
     };
     return (
         <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerShowTOC())}>
@@ -144,14 +174,14 @@ const TOC = () => {
             <Offcanvas.Body>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="toc-list">
-                        {(provided) => (
-                            <ul {...provided.droppableProps} ref={provided.innerRef} className="container">
+                        {dropProvided => (
+                            <ul {...dropProvided.droppableProps} ref={dropProvided.innerRef} className="container">
                                 {activeLayers && activeLayers.map((layer, index) => {
                                     if (layer.values_.title.split('&')[1] !== 'h79mm8h') {
                                         return (
                                             <Draggable key={layer.values_.title} index={index} draggableId={layer.values_.title}>
-                                                {(provided) => (
-                                                    <li className="mb-3" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                {dragProvided => (
+                                                    <li className="mb-3" ref={dragProvided.innerRef} {...dragProvided.draggableProps} {...dragProvided.dragHandleProps}>
                                                         <div className="form-check form-switch">
                                                             <input
                                                                 type="checkbox"
@@ -238,7 +268,7 @@ const TOC = () => {
                                     }
                                 }
                                 )}
-                                {provided.placeholder}
+                                {dropProvided.placeholder}
                             </ul>
                         )
                         }

@@ -7,9 +7,11 @@ const MyToast = () => {
   const visibility = useSelector(state => state.toast.visibility);
   const title = useSelector(state => state.toast.title);
   const message = useSelector(state => state.toast.message);
+  const toastID = useSelector(state => state.toast.toastID);
   return (
     <div className="toast-message">
       <Toast
+        key={toastID}
         className={`bg-${color}`}
         onClose={() => dispatch(triggerToast())}
         show={visibility}

@@ -22,7 +22,9 @@ import {
 	setDrawnPolygon,
 	clearSpatialResult
 } from "../../actions";
+import { constants } from '../../utils';
 import { svg } from "../assets";
+const backend_service = constants.backend_service;
 const AppNavBar = () => {
 	const dispatch = useDispatch();
 	const userID = useSelector(state => state.login.userID);
@@ -104,9 +106,39 @@ const AppNavBar = () => {
 		dispatch(triggerIdentifyVisibility());
 		dispatch(triggerSpatialSearch());
 	};
+	const handleJSONReponse = obj => {
+		if (obj.success) {
+			dispatch(
+				triggerToast({
+					title: "Success",
+					message: "Settings have been saved!",
+					visible: true,
+				})
+			);
+		} else {
+			dispatch(
+				triggerToast({
+					title: "Danger",
+					message: obj.error,
+					visible: true,
+				})
+			);
+		}
+		dispatch(triggerIsLoading());
+	};
+	const handleError = err => {
+		dispatch(
+			triggerToast({
+				title: "Danger",
+				message: err.toString(),
+				visible: true,
+			})
+		);
+		dispatch(triggerIsLoading());
+	};
 	const handleSave = () => {
 		dispatch(triggerIsLoading(true));
-		const obj = {
+		const settingsObject = {
 			bookmarks: bookmarks,
 			map: {
 				center: mapCenter,
@@ -117,46 +149,18 @@ const AppNavBar = () => {
 		};
 		const body = {
 			id: userID,
-			obj,
+			obj: settingsObject,
 		};
-		fetch("http://localhost:9000/configService/saveSettings", {
+		fetch(`http://${backend_service}/configService/saveSettings`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(body),
 		})
-			.then((response) => response.json())
-			.then((obj) => {
-				dispatch(triggerIsLoading());
-				if (obj.success) {
-					dispatch(
-						triggerToast({
-							title: "Success",
-							message: "Settings have been saved!",
-							visible: true,
-						})
-					);
-				} else {
-					dispatch(
-						triggerToast({
-							title: "Danger",
-							message: obj.error,
-							visible: true,
-						})
-					);
-				}
-			})
-			.catch((err) => {
-				dispatch(triggerIsLoading());
-				dispatch(
-					triggerToast({
-						title: "Danger",
-						message: err.toString(),
-						visible: true,
-					})
-				);
-			});
+			.then(response => response.json())
+			.then(obj => handleJSONReponse(obj))
+			.catch(err => handleError(err))
 	};
 	return (
 		<Navbar bg="light" expand="lg" className="navbar">
@@ -173,7 +177,8 @@ const AppNavBar = () => {
 							<Nav.Link title="Routing">{svg.routing}</Nav.Link>
 							<Nav.Link title="Export file">{svg.export}</Nav.Link>
 							<Nav.Link title="Import file">{svg.import}</Nav.Link>
-							<Nav.Link title="Sketching">{svg.sketching}</Nav.Link>
+							<Nav.Link title="Sketching">{svg.sketch}</Nav.Link>
+							<Nav.Link title="Measurements">{svg.measure}</Nav.Link>
 							<Nav.Link title="Editing">{svg.editing}</Nav.Link>
 							<Nav.Link title="Tabular search">{svg.tabularSearch}</Nav.Link>
 							<Nav.Link onClick={handleSpatialSearchClick} title="Spatial search">

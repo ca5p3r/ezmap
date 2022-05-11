@@ -5,7 +5,7 @@ const myState = {
 };
 export const spatialSearchReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     switch (action.type) {
         case 'triggerSpatialSearch':
@@ -30,5 +30,5 @@ export const spatialSearchReducer = (
             };
         default:
             return state;
-    };
+    }
 };

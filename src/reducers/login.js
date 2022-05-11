@@ -4,7 +4,7 @@ const myState = {
   userID: null,
   visibility: false,
 };
-export const loginReducer = (state = myState, action) => {
+export const loginReducer = (state = myState, action = {}) => {
   switch (action.type) {
     case "triggerLogin":
       return {

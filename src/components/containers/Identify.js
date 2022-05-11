@@ -1,30 +1,21 @@
 import { Table, Alert, Offcanvas } from "react-bootstrap";
 import {
-    triggerSpatialSearchVisibility
+    triggerIdentifyVisibility
 } from "../../actions";
 import {
     useSelector,
     useDispatch
 } from "react-redux";
-const SpatialSearch = () => {
+import { renderHeader } from '../../utils';
+const Identify = () => {
     const dispatch = useDispatch();
-    const results = useSelector(state => state.spatialSearch.result);
-    const show = useSelector(state => state.spatialSearch.visibility);
+    const results = useSelector(state => state.identify.result);
+    const show = useSelector(state => state.identify.visibility);
     const layers = useSelector(state => state.toc.historicalData);
-    const renderHeader = (header, provider) => {
-        switch (provider) {
-            case 'EsriOGC':
-                return header._attributes.fid.split('.')[1];
-            case 'GeoServer':
-                return header.id.split('.')[1];
-            default:
-                return;
-        }
-    };
     return (
-        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerSpatialSearchVisibility())}>
+        <Offcanvas className="custom" placement="end" backdrop={false} scroll={false} show={show} onHide={() => dispatch(triggerIdentifyVisibility())}>
             <Offcanvas.Header closeButton>
-                <Offcanvas.Title>Spatial search result</Offcanvas.Title>
+                <Offcanvas.Title>Identify result</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
                 {results.length > 0 &&
@@ -34,7 +25,7 @@ const SpatialSearch = () => {
                         </Alert>
                         {
                             results.map(
-                                (result, key) => {
+                                (result, layerKey) => {
                                     let properties = {};
                                     switch (result.provider) {
                                         case 'EsriOGC':
@@ -46,24 +37,25 @@ const SpatialSearch = () => {
                                             })
                                             break;
                                         case 'GeoServer':
+                                        case 'PentaOGC':
                                             properties = result.feature.properties
                                             break;
                                         default:
                                             break;
-                                    };
+                                    }
                                     const resProps = layers.filter(layer => layer.id === result.id)[0].properties;
                                     return (
-                                        <div key={key}>
+                                        <div key={layerKey}>
                                             <Alert className="mt-4 text-center" variant='info'>
                                                 Feature: {result.name}.{renderHeader(result.feature, result.provider)}
                                             </Alert>
                                             <Table striped bordered hover size="sm">
                                                 <tbody>
-                                                    {resProps.map((item, key) => {
+                                                    {resProps.map((item, resultKey) => {
                                                         const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
                                                         if (!geometries.includes(item.type)) {
                                                             return (
-                                                                <tr key={key}>
+                                                                <tr key={resultKey}>
                                                                     <td>{item.local ? item.local : item.name}</td>
                                                                     <td>{properties[item.name]}</td>
                                                                 </tr>
@@ -71,7 +63,7 @@ const SpatialSearch = () => {
                                                         }
                                                         else {
                                                             return null;
-                                                        };
+                                                        }
                                                     })}
                                                 </tbody>
                                             </Table>
@@ -86,4 +78,4 @@ const SpatialSearch = () => {
         </Offcanvas>
     );
 };
-export default SpatialSearch;
+export default Identify;

@@ -20,12 +20,12 @@ const LocalizationModal = () => {
     const visibility = useSelector(state => state.localization.visibility);
     const layerID = useSelector(state => state.localization.layerID);
     const data = useSelector(state => state.toc.historicalData);
-    const handleChange = e => {
-        if (e.target.files[0].name.endsWith('.json')) {
+    const handleChange = changeEvent => {
+        if (changeEvent.target.files[0].name.endsWith('.json')) {
             const fileReader = new FileReader();
-            fileReader.readAsText(e.target.files[0], "UTF-8");
-            fileReader.onload = e => {
-                setLocals(JSON.parse(e.target.result));
+            fileReader.readAsText(changeEvent.target.files[0], "UTF-8");
+            fileReader.onload = loadEvent => {
+                setLocals(JSON.parse(loadEvent.target.result));
             };
         }
         else {
@@ -35,7 +35,7 @@ const LocalizationModal = () => {
                 message: 'Only JSON files are supported!',
                 visible: true
             }));
-        };
+        }
     };
     const handleHide = () => {
         setLocals(null);
@@ -63,7 +63,7 @@ const LocalizationModal = () => {
                 message: 'Please upload a valid localization file!',
                 visible: true
             }));
-        };
+        }
     };
     return (
         <Modal show={visibility} onHide={handleHide}>

@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const triggerLogin = (x = false) => {
     return {
         type: 'triggerLogin',
@@ -122,9 +124,10 @@ export const triggerTOCChange = (x = false) => {
     };
 };
 export const triggerToast = (x = {}) => {
+    const toastID = uuidv4();
     return {
         type: 'triggerToast',
-        payload: x
+        payload: { ...x, toastID }
     };
 };
 export const insertHistoricalLayer = (x = {}) => {

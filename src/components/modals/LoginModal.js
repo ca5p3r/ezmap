@@ -20,6 +20,8 @@ import {
     setHistoricalLayers,
     setUserID
 } from '../../actions';
+import { constants } from '../../utils';
+const backend_service = constants.backend_service;
 const LoginModal = () => {
     const dispatch = useDispatch();
     const showLogin = useSelector(state => state.login.visibility);
@@ -30,12 +32,20 @@ const LoginModal = () => {
         dispatch(setDefaultExtent(obj.config.map.extent));
         dispatch(setHistoricalLayers(obj.config.map.layers));
     };
+    const handleError = error => {
+        dispatch(triggerToast({
+            title: 'Danger',
+            message: error.toString(),
+            visible: true
+        }));
+        dispatch(triggerIsLoading());
+    };
     const handleLogin = (username, password) => {
         if (username.length >= 4 && username.length <= 16) {
             if (password.length >= 8 && password.length <= 16) {
                 dispatch(triggerIsLoading(true));
                 const data = { username, password };
-                fetch("http://localhost:9000/authService/login", {
+                fetch(`http://${backend_service}/authService/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -43,12 +53,12 @@ const LoginModal = () => {
                     body: JSON.stringify(data)
                 })
                     .then(response => response.json())
-                    .then(obj => {
-                        if (!obj.error) {
+                    .then(loginObj => {
+                        if (!loginObj.error) {
                             dispatch(setUser(username));
-                            dispatch(setUserID(obj.userID));
-                            const userObj = { id: obj.userID };
-                            fetch("http://localhost:9000/configService/getSettings", {
+                            dispatch(setUserID(loginObj.userID));
+                            const userObj = { id: loginObj.userID };
+                            fetch(`http://${backend_service}/configService/getSettings`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -56,38 +66,23 @@ const LoginModal = () => {
                                 body: JSON.stringify(userObj)
                             })
                                 .then(response => response.json())
-                                .then(obj => {
-                                    load_settings(obj);
-                                    dispatch(triggerIsLoading());
+                                .then(settingsObj => {
+                                    load_settings(settingsObj);
                                     dispatch(triggerLogin(true));
                                     dispatch(triggerShowLogin());
                                 })
-                                .catch(err => {
-                                    dispatch(triggerIsLoading());
-                                    dispatch(triggerToast({
-                                        title: 'Danger',
-                                        message: err.toString(),
-                                        visible: true
-                                    }));
-                                });
+                                .catch(err => handleError(err))
                         }
                         else {
-                            dispatch(triggerIsLoading());
                             dispatch(triggerToast({
                                 title: 'Warning',
-                                message: obj.error,
+                                message: loginObj.error,
                                 visible: true
                             }));
-                        };
-                    })
-                    .catch(err => {
+                        }
                         dispatch(triggerIsLoading());
-                        dispatch(triggerToast({
-                            title: 'Danger',
-                            message: err.toString(),
-                            visible: true
-                        }));
-                    });
+                    })
+                    .catch(err => handleError(err))
             }
             else {
                 dispatch(triggerToast({
@@ -103,7 +98,7 @@ const LoginModal = () => {
                 message: 'Username should be of length 4-16',
                 visible: true
             }));
-        };
+        }
     };
     return (
         <Modal show={showLogin} onHide={() => dispatch(triggerShowLogin(!showLogin))}>
@@ -120,7 +115,7 @@ const LoginModal = () => {
                     <Form.Group className="mb-3" controlId="loginPassword">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" onKeyDown={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 e.preventDefault();
                                 document.getElementById("loginButton").click();
                             }

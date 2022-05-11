@@ -24,12 +24,12 @@ const Bookmarks = () => {
     const show = useSelector(state => state.bookmarks.visibility);
     const mapCenter = useSelector(state => state.mapInfo.mapCenter);
     const mapZoom = useSelector(state => state.mapInfo.mapZoom);
-    const handleSave = (title) => {
-        if (title) {
+    const handleSave = (savedTitle) => {
+        if (savedTitle) {
             const myObj = {
                 center: mapCenter,
                 zoom: mapZoom,
-                title
+                title: savedTitle
             };
             dispatch(addBookmark(myObj));
             dispatch(triggerToast({
@@ -44,7 +44,7 @@ const Bookmarks = () => {
                 message: 'Please enter bookmark title!',
                 visible: true
             }));
-        };
+        }
     };
     const handleRemoveAll = () => {
         dispatch(removeAllBookmarks());
@@ -70,7 +70,7 @@ const Bookmarks = () => {
                 message: 'Please select a bookmark first!',
                 visible: true
             }));
-        };
+        }
     };
     const handleLoad = () => {
         const selectedBookmark = document.getElementById('bookmarks-dropdown').value;
@@ -91,7 +91,7 @@ const Bookmarks = () => {
                     <Form.Group controlId="bookmarktitle">
                         <Form.Label>Bookmark title</Form.Label>
                         <Form.Control type="text" placeholder="Enter a title:" value={title} onChange={e => setTitle(e.target.value)} onKeyDown={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 e.preventDefault();
                                 document.getElementById("bookmarksSaveButton").click();
                             }

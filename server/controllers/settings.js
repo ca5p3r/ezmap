@@ -23,10 +23,7 @@ export const load_settings = (req, res) => {
         }
     })
         ().catch(err => {
-            switch (err.code) {
-                default:
-                    return res.send({ error: err.detail, success: false });
-            }
+            return res.send({ error: err.detail, success: false });
         });
 };
 export const save_settings = (req, res) => {
@@ -47,9 +44,6 @@ export const save_settings = (req, res) => {
         }
     })
         ().catch(err => {
-            switch (err.code) {
-                default:
-                    return res.send({ error: err.detail, success: false });
-            }
+            return res.send({ error: err.detail, success: false });
         });
 };

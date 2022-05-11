@@ -5,7 +5,7 @@ const myState = {
 };
 export const identifyReducer = (
     state = myState,
-    action
+    action = {}
 ) => {
     switch (action.type) {
         case 'triggerIdentify':
@@ -30,5 +30,5 @@ export const identifyReducer = (
             };
         default:
             return state;
-    };
+    }
 };
