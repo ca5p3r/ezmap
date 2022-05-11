@@ -129,6 +129,7 @@ const MyMap = () => {
 					returnedData = handleEsriData(item);
 					break;
 				case 'GeoServer':
+				case 'PentaOGC':
 					returnedData = item.data.features && item.data.features;
 					break;
 				default:
@@ -142,6 +143,7 @@ const MyMap = () => {
 							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature: feature[1] })
 							break;
 						case 'GeoServer':
+						case 'PentaOGC':
 							result.push({ uniqueID, crs: item.crs, provider: item.provider, name: item.name, id: item.id, feature })
 							break;
 						default:

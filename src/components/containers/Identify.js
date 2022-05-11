@@ -37,6 +37,7 @@ const Identify = () => {
                                             })
                                             break;
                                         case 'GeoServer':
+                                        case 'PentaOGC':
                                             properties = result.feature.properties
                                             break;
                                         default:

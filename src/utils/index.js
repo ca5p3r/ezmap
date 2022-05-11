@@ -72,6 +72,7 @@ export const renderHeader = (header, provider) => {
         case 'EsriOGC':
             return header._attributes.fid.split('.')[1];
         case 'GeoServer':
+        case 'PentaOGC':
             return header.id.split('.')[1];
         default:
             return;

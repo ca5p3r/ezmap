@@ -24,10 +24,9 @@ const SimpleSearch = () => {
     const historicalData = useSelector(state => state.toc.historicalData);
     const queriableLayers = historicalData.filter(item => item.geometry !== null);
     const layers = queriableLayers.map(item => (
-        <option id={`option+${item.name}`} layerid={item.id} provider={item.provider} url={item.url} key={item.name} value={item.name}>
+        <option id={`option+${item.name}`} layerid={item.id} secured={item.secured ? 1 : 0} provider={item.provider} url={item.wfsURL} role={item.selectedRole} token={item.token} realm={item.tokenInfo.user.split('@')[1]} key={item.name} value={item.name}>
             {item.title}
-        </option>
-    ));
+        </option>));
     const fields = queriableLayers.find(item => item.name === layer)?.properties.map(property => {
         const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
         if (!geometries.includes(property.type)) {
@@ -73,6 +72,7 @@ const SimpleSearch = () => {
         if (obj.response.length > 0) {
             switch (obj.provider) {
                 case 'GeoServer':
+                case 'PentaOGC':
                     obj.response.forEach(item => queryResults.push({ provider: obj.provider, feature: item }));
                     break;
                 case 'EsriOGC':
@@ -119,11 +119,19 @@ const SimpleSearch = () => {
             const selectedElement = document.getElementById(`option+${selectedLayer}`);
             const url = selectedElement.getAttribute('url');
             const provider = selectedElement.getAttribute('provider');
+            const role = selectedElement.getAttribute('role');
+            const token = selectedElement.getAttribute('token');
+            const secured = selectedElement.getAttribute('secured');
+            const realm = selectedElement.getAttribute('realm');
             const data = {
                 url,
                 layer,
+                secured,
                 field,
                 provider,
+                role,
+                token,
+                realm,
                 queryParam: value
             };
             dispatch(triggerIsLoading(true));
@@ -201,6 +209,7 @@ const SimpleSearch = () => {
                                                 })
                                                 break;
                                             case 'GeoServer':
+                                            case 'PentaOGC':
                                                 properties = result.feature.properties
                                                 break;
                                             default:
