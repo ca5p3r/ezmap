@@ -316,7 +316,7 @@ const WorkspaceModal = () => {
         setAvailability(false);
     };
     return (
-        <Modal show={visibility} onHide={handleHide}>
+        <Modal dialogClassName="contribute" show={visibility} onHide={handleHide}>
             <Modal.Header closeButton>
                 <Modal.Title>Workspace</Modal.Title>
             </Modal.Header>
@@ -332,13 +332,15 @@ const WorkspaceModal = () => {
                         </Form.Control>
                     </Form.Group>
                     <Form.Group className="mt-2 mb-2" controlId="formBasicUrl">
-                        <Form.Label>URL</Form.Label>
-                        <Form.Control type="text" placeholder="Example: https://example.com/geoserver/wfs" value={url} onChange={handleURLChange} onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                document.getElementById("fetchLayersButton").click();
-                            }
-                        }} />
+                        {selectedService && <>
+                            <Form.Label>URL</Form.Label>
+                            <Form.Control type="text" placeholder={selectedService === 'GeoServer' ? "https://example.com/geoserver/wfs" : selectedService === 'PentaOGC' ? "https://example.com/wmsCapabilities/Role?serverId=layerID" : "http://example.com/arcgis/services/FOLDER/SERVICE/MapServer/WFSServer"} value={url} onChange={handleURLChange} onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    document.getElementById("fetchLayersButton").click();
+                                }
+                            }} />
+                        </>}
                         {selectedService === 'PentaOGC' && <Form.Check
                             checked={secured}
                             onChange={_ => setSecured(!secured)}
