@@ -333,8 +333,8 @@ const WorkspaceModal = () => {
                     </Form.Group>
                     <Form.Group className="mt-2 mb-2" controlId="formBasicUrl">
                         {selectedService && <>
-                            <Form.Label>URL</Form.Label>
-                            <Form.Control type="text" placeholder={selectedService === 'GeoServer' ? "https://example.com/geoserver/wfs" : selectedService === 'PentaOGC' ? "https://example.com/wmsCapabilities/Role?serverId=layerID" : "http://example.com/arcgis/services/FOLDER/SERVICE/MapServer/WFSServer"} value={url} onChange={handleURLChange} onKeyDown={e => {
+                            <Form.Label>{selectedService === 'GeoServer' || selectedService === 'EsriOGC' ? 'WFS URL' : 'WMS Capability URL'}</Form.Label>
+                            <Form.Control type="text" placeholder={selectedService === 'GeoServer' ? "https://example.com/geoserver/wfs" : selectedService === 'PentaOGC' ? "https://example.com/wmsCapabilities?serverId=layerID" : "http://example.com/arcgis/services/FOLDER/SERVICE/MapServer/WFSServer"} value={url} onChange={handleURLChange} onKeyDown={e => {
                                 if (e.key === 'Enter') {
                                     e.preventDefault();
                                     document.getElementById("fetchLayersButton").click();
