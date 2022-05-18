@@ -1,0 +1,2 @@
+http://devstable.eastus.cloudapp.azure.com:8083/wmsCapabilities?serverId=132361
+http://ec2-54-86-95-151.compute-1.amazonaws.com:6062/arcgis/services/BaseMap/BasicMap/MapServer/WFSServer

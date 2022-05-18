@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  ezmap:
+    image: ezmap-service:latest
+    container_name: ezmap-service
+    ports:
+      - "8089:9090"
+
+  ezmap-front:
+    image: ezmap-front:latest
+    container_name: ezmap-front
+    ports:
+      - "82:80"
