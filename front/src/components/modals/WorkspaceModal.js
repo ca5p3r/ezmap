@@ -34,6 +34,7 @@ const WorkspaceModal = () => {
     const [token, setToken] = useState('');
     const [roles, setRoles] = useState([]);
     const [selectedRole, setSelectedRole] = useState('');
+    const [pentaLocale, setPentaLocale] = useState('');
     const visibility = useSelector(state => state.workspace.visibility);
     const layers = useSelector(state => state.workspace.layers);
     const handleHide = () => {
@@ -116,7 +117,7 @@ const WorkspaceModal = () => {
                             headers: {
                                 'PentaOrgID': tokenInfo.user.split('@')[1],
                                 'PentaUserRole': selectedRole,
-                                'PentaSelectedLocale': 'en',
+                                'PentaSelectedLocale': pentaLocale,
                                 'Authorization': 'Bearer ' + token
                             }
 
@@ -187,7 +188,7 @@ const WorkspaceModal = () => {
                         headers: {
                             'PentaOrgID': tokenInfo.user.split('@')[1],
                             'PentaUserRole': selectedRole,
-                            'PentaSelectedLocale': 'en',
+                            'PentaSelectedLocale': pentaLocale,
                             'Authorization': 'Bearer ' + token
                         }
                     };
@@ -246,6 +247,7 @@ const WorkspaceModal = () => {
                             secured,
                             tokenInfo,
                             selectedRole,
+                            pentaLocale,
                             token,
                             wmsURL,
                             wfsURL,
@@ -270,6 +272,7 @@ const WorkspaceModal = () => {
                             tokenInfo,
                             token,
                             selectedRole,
+                            pentaLocale,
                             wmsURL,
                             wfsURL,
                             extent: [...p1, ...p2],
@@ -282,7 +285,7 @@ const WorkspaceModal = () => {
                         }));
                         dispatch(triggerIsLoading());
                     })
-                const wmsobject = setter(selectedService, wmsURL, uniqueID, layerTitle, layerName, 1, true, secured, tokenInfo, selectedRole, token);
+                const wmsobject = setter(selectedService, wmsURL, uniqueID, layerTitle, layerName, 1, true, secured, tokenInfo, selectedRole, token, pentaLocale);
                 dispatch(addPendingLayer(wmsobject));
             }
             else {
@@ -341,14 +344,33 @@ const WorkspaceModal = () => {
                                 }
                             }} />
                         </>}
-                        {selectedService === 'PentaOGC' && <Form.Check
-                            checked={secured}
-                            onChange={_ => setSecured(!secured)}
-                            className="mt-2 mb-2"
-                            type="switch"
-                            id="secured-switch"
-                            label="is secured?"
-                        />}
+                        {selectedService === 'PentaOGC' &&
+                            <>
+                                <Form.Label className="mt-2 mb-2">Select language</Form.Label>
+                                <Form.Control className="mt-2 mb-2" as="select" onChange={e => {
+                                    let lang = e.target.value;
+                                    if (lang === 'Selector') {
+                                        lang = '';
+                                    }
+                                    setPentaLocale(lang);
+                                }}>
+                                    <option id="selector" value="Selector">Please select one of below langugages</option>
+                                    <option id="geoserver" value="en">English</option>
+                                    <option id="esri-ogc" value="it">Italiano</option>
+                                    <option id="penta-ogc" value="es">Español</option>
+                                    <option id="penta-ogc" value="ar">عربي</option>
+                                    <option id="penta-ogc" value="fr">Français</option>
+                                    <option id="penta-ogc" value="de">Deutsch</option>
+                                </Form.Control>
+                                <Form.Check
+                                    checked={secured}
+                                    onChange={_ => setSecured(!secured)}
+                                    className="mt-2 mb-2"
+                                    type="switch"
+                                    id="secured-switch"
+                                    label="is secured?"
+                                />
+                            </>}
                         {secured && <>
                             <Form.Control className="mt-2 mb-2" as="select" onChange={e => {
                                 let method = e.target.value;

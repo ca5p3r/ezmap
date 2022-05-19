@@ -207,7 +207,8 @@ const MyMap = () => {
 				item.secured,
 				item.tokenInfo,
 				item.selectedRole,
-				item.token
+				item.token,
+				item.pentaLocale
 			);
 			olmap.addLayer(obj);
 		});

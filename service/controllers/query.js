@@ -40,18 +40,16 @@ export const ssearch = (req, res) => {
         let role;
         let token;
         let realm;
-        let locale;
         let requestOptions = { method: 'POST' };
         let headers;
         if (secured) {
             role = layer.selectedRole;
             token = layer.token;
             realm = layer.tokenInfo.user.split('@')[1];
-            locale = 'en';
             headers = {
                 'PentaOrgID': realm,
                 'PentaUserRole': role,
-                'PentaSelectedLocale': locale,
+                'PentaSelectedLocale': layer.pentaLocale,
                 'Authorization': 'Bearer ' + token,
                 'Content-Type': 'application/xml'
             };
@@ -98,16 +96,14 @@ export const tsearch = (req, res) => {
     let realm;
     let locale;
     let requestOptions = { method: 'POST' };
-    let headers;
     if (secured) {
         role = body.role;
         token = body.token;
         realm = body.realm;
-        locale = 'en';
         headers = {
             'PentaOrgID': realm,
             'PentaUserRole': role,
-            'PentaSelectedLocale': locale,
+            'PentaSelectedLocale': body.pentaLocale,
             'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/xml'
         };

@@ -143,7 +143,7 @@ const TOC = () => {
                 headers: {
                     'PentaOrgID': layer.tokenInfo.user.split('@')[1],
                     'PentaUserRole': layer.selectedRole,
-                    'PentaSelectedLocale': 'en',
+                    'PentaSelectedLocale': layer.pentaLocale,
                     'Authorization': 'Bearer ' + layer.token
                 }
             };

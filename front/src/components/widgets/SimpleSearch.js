@@ -24,7 +24,7 @@ const SimpleSearch = () => {
     const historicalData = useSelector(state => state.toc.historicalData);
     const queriableLayers = historicalData.filter(item => item.geometry !== null);
     const layers = queriableLayers.map(item => (
-        <option id={`option+${item.name}`} layerid={item.id} secured={item.secured ? 1 : 0} provider={item.provider} url={item.wfsURL} role={item.selectedRole} token={item.token} realm={item.secured ? item.tokenInfo.user.split('@')[1] : ''} key={item.name} value={item.name}>
+        <option id={`option+${item.name}`} layerid={item.id} secured={item.secured ? 1 : 0} provider={item.provider} url={item.wfsURL} role={item.selectedRole} token={item.token} realm={item.secured ? item.tokenInfo.user.split('@')[1] : ''} locale={item.pentaLocale} key={item.name} value={item.name} >
             {item.title}
         </option>));
     const fields = queriableLayers.find(item => item.name === layer)?.properties.map(property => {
@@ -123,6 +123,7 @@ const SimpleSearch = () => {
             const token = selectedElement.getAttribute('token');
             const secured = selectedElement.getAttribute('secured');
             const realm = selectedElement.getAttribute('realm');
+            const pentaLocale = selectedElement.getAttribute('locale');
             const data = {
                 url,
                 layer,
@@ -132,7 +133,8 @@ const SimpleSearch = () => {
                 role,
                 token,
                 realm,
-                queryParam: value
+                queryParam: value,
+                pentaLocale
             };
             dispatch(triggerIsLoading(true));
             fetch(`${backend_service}/queryService/tabular_query`, {

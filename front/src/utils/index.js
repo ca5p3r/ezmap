@@ -1,7 +1,7 @@
 import ImageWMS from 'ol/source/ImageWMS';
 import Image from 'ol/layer/Image';
 import axios from 'axios';
-export const setter = (provider, url, id, title, name, opacity = 1, visible = true, secured = false, tokenInfo = {}, role, token) => {
+export const setter = (provider, url, id, title, name, opacity = 1, visible = true, secured = false, tokenInfo = {}, role, token, locale = 'en') => {
     const layerTitle = `${title}&${id}`;
     let layerURL;
     let LAYERS;
@@ -35,7 +35,7 @@ export const setter = (provider, url, id, title, name, opacity = 1, visible = tr
                             headers: {
                                 Authorization: 'Bearer ' + token,
                                 PentaOrgID: tokenInfo.user.split('@')[1],
-                                PentaSelectedLocale: 'en',
+                                PentaSelectedLocale: locale,
                                 PentaUserRole: role
                             },
                             responseType: 'arraybuffer'
