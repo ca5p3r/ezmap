@@ -2,3 +2,10 @@
 /front/.dockerignore
 /service/node_modules
 /service/.dockerignore
+docker-compose.yml
+/service/.env
+/service/Dockerfile
+/service/package-lock.json
+/front/.env
+/front/Dockerfile
+/front/package-lock.json
