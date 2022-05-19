@@ -100,16 +100,16 @@ const TOC = () => {
         const targetIndex = historicalData.findIndex(item => item.id === title.split('&')[1]);
         switch (layer.provider) {
             case 'GeoServer':
-            case 'PentaOGC':
                 fields = obj.featureTypes[0].properties;
                 formattedFields = fields.map(field => {
                     return { name: field.name, type: field.localType, local: '' }
                 });
                 break;
             case 'EsriOGC':
+            case 'PentaOGC':
                 fields = obj['xsd:sequence']['xsd:element'];
                 formattedFields = fields.map(field => {
-                    return { name: field._attributes.name, type: field._attributes.type, local: '' }
+                    return { name: field._attributes.name, type: field._attributes.type, local: field._attributes.alias ? field._attributes.alias : '' }
                 });
                 break;
             default:
@@ -155,9 +155,9 @@ const TOC = () => {
             .then(text => {
                 switch (layer.provider) {
                     case 'GeoServer':
-                    case 'PentaOGC':
                         return JSON.parse(text);
                     case 'EsriOGC':
+                    case 'PentaOGC':
                         return JSON.parse(convert.xml2json(text, { compact: true, spaces: 4 }))['xsd:schema']['xsd:complexType']['xsd:complexContent']['xsd:extension'];
                     default:
                         return null;

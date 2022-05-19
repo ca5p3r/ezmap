@@ -52,7 +52,7 @@ const Identify = () => {
                                             <Table striped bordered hover size="sm">
                                                 <tbody>
                                                     {resProps.map((item, resultKey) => {
-                                                        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
+                                                        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType', 'gml:SurfacePropertyType'];
                                                         if (!geometries.includes(item.type)) {
                                                             return (
                                                                 <tr key={resultKey}>

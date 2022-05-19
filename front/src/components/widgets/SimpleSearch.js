@@ -28,7 +28,7 @@ const SimpleSearch = () => {
             {item.title}
         </option>));
     const fields = queriableLayers.find(item => item.name === layer)?.properties.map(property => {
-        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
+        const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType', 'gml:SurfacePropertyType'];
         if (!geometries.includes(property.type)) {
             return (<option key={property.name} value={property.name}>
                 {property.local ? property.local : property.name}
@@ -224,7 +224,7 @@ const SimpleSearch = () => {
                                                 <Table className="mt-4" striped bordered hover size="sm">
                                                     <tbody>
                                                         {resProps.map((item, resultKey) => {
-                                                            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
+                                                            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType', 'gml:SurfacePropertyType'];
                                                             if (!geometries.includes(item.type)) {
                                                                 return (
                                                                     <tr key={resultKey}>

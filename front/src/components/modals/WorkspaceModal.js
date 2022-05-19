@@ -151,7 +151,7 @@ const WorkspaceModal = () => {
     };
     const handleAdd = () => {
         if (availability) {
-            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType'];
+            const geometries = ['Point', 'LineString', 'Polygon', 'MultiPoint', 'MultiPolygon', 'MultiLineString', 'GeometryCollection', 'gml:MultiCurvePropertyType', 'gml:MultiSurfacePropertyType', 'gml:SurfacePropertyType'];
             const layerName = document.getElementById('formBasicLayer').value;
             const selectedElement = document.getElementById(`option${layerName}`);
             const layerTitle = selectedElement.getAttribute('title');
@@ -228,7 +228,7 @@ const WorkspaceModal = () => {
                             case 'PentaOGC':
                                 fields = obj['xsd:sequence']['xsd:element'];
                                 formattedFields = fields.map(field => {
-                                    return { name: field._attributes.name, type: field._attributes.type, local: '' }
+                                    return { name: field._attributes.name, type: field._attributes.type, local: field._attributes.alias ? field._attributes.alias : '' }
                                 });
                                 geomField = fields.filter(field => geometries.includes(field._attributes.type))[0];
                                 geomName = geomField._attributes.name;
