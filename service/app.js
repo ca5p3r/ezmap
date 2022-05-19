@@ -10,6 +10,7 @@ import { authRouters } from './routes/auth.js';
 import { settingsRouters } from './routes/settings.js';
 import { queryRouters } from './routes/query.js';
 import { pool } from './helpers/index.js';
+import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,7 +28,7 @@ pool.connect((connError, client, done) => {
         done();
         if (clientError) console.log(clientError);
         else {
-            safeApp.listen(9090, '0.0.0.0');
+            safeApp.listen(process.env.SERVER_PORT);
         };
     });
 });

@@ -4,10 +4,12 @@ services:
     image: ezmap-service:latest
     container_name: ezmap-service
     ports:
-      - "8089:9090"
+      - "9090:9090"
 
   ezmap-front:
     image: ezmap-front:latest
     container_name: ezmap-front
     ports:
-      - "82:80"
+      - "8080:80"
+    environment:
+      REACT_APP_BACKEND_SERVICE: http://10.0.0.145:9090

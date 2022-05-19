@@ -1,6 +1,0 @@
-code smells => duplications
-selectors should be in functions
-backend should unify response of queries to frontend
-simplify action return => remove return statement
-immutable change ==> revise
-use time instead of boolean when listening on triggers
