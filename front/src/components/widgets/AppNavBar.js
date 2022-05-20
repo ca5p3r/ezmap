@@ -30,6 +30,7 @@ const AppNavBar = () => {
 	const userID = useSelector(state => state.login.userID);
 	const visibility = useSelector(state => state.login.visibility);
 	const isLogged = useSelector(state => state.login.isLogged);
+	const username = useSelector(state => state.login.user);
 	const showRegister = useSelector(state => state.register.visibility);
 	const showBookmarks = useSelector(state => state.bookmarks.visibility);
 	const bookmarks = useSelector(state => state.bookmarks.list);
@@ -164,12 +165,13 @@ const AppNavBar = () => {
 	};
 	return (
 		<Navbar bg="light" expand="lg" className="navbar">
-			<Navbar.Brand>{svg.logo} EasyMap</Navbar.Brand>
+			<Navbar.Brand>{svg.logo}</Navbar.Brand>
 			<Navbar.Toggle aria-controls="responsive-navbar-nav" />
+			{isLogged && <Navbar.Brand>Welcome, {username}</Navbar.Brand>}
 			<Navbar.Collapse id="responsive-navbar-nav">
 				<Nav className="me-auto"></Nav>
 				<Nav className="menavbar-nav ml-auto">
-					{isLogged && (
+					{isLogged &&
 						<>
 							<Nav.Link onClick={handleSave} title="Save">
 								{svg.save}
@@ -203,7 +205,7 @@ const AppNavBar = () => {
 								{svg.logout}
 							</Nav.Link>
 						</>
-					)}
+					}
 					{!isLogged && (
 						<Nav.Link
 							onClick={() => dispatch(triggerShowRegister(!showRegister))}
