@@ -90,17 +90,16 @@ export const tsearch = (req, res) => {
     const body = req.body;
     const [version, format] = handleProvider(body.provider);
     const searchBody = `<wfs:GetFeature service="WFS" version="${version}" outputFormat="${format}" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd"><wfs:Query typeName="${body.layer}"><ogc:Filter><ogc:PropertyIsLike matchCase="false" wildCard="*" singleChar="." escapeChar="!"><ogc:PropertyName>${body.field}</ogc:PropertyName><ogc:Literal>*${body.queryParam}*</ogc:Literal></ogc:PropertyIsLike></ogc:Filter></wfs:Query></wfs:GetFeature>`
-    let secured = body.secured === 1 ? true : false;
+    let secured = body.secured == 1 ? true : false;
     let role;
     let token;
     let realm;
-    let locale;
     let requestOptions = { method: 'POST' };
     if (secured) {
         role = body.role;
         token = body.token;
         realm = body.realm;
-        headers = {
+        let headers = {
             'PentaOrgID': realm,
             'PentaUserRole': role,
             'PentaSelectedLocale': body.pentaLocale,
